@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "cli": {
+      "minLength": 1,
+      "title": "Cli",
+      "type": "string"
+    },
+    "environment_assumptions": {
+      "minLength": 1,
+      "title": "Environment Assumptions",
+      "type": "string"
+    },
+    "harness": {
+      "minLength": 1,
+      "title": "Harness",
+      "type": "string"
+    },
+    "model_assumptions": {
+      "minLength": 1,
+      "title": "Model Assumptions",
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "skill_catalog": {
+      "minLength": 1,
+      "title": "Skill Catalog",
+      "type": "string"
+    },
+    "templates": {
+      "minLength": 1,
+      "title": "Templates",
+      "type": "string"
+    },
+    "tool_contracts": {
+      "minLength": 1,
+      "title": "Tool Contracts",
+      "type": "string"
+    }
+  },
+  "required": [
+    "cli",
+    "schema_version",
+    "templates",
+    "skill_catalog",
+    "harness",
+    "tool_contracts",
+    "model_assumptions",
+    "environment_assumptions"
+  ],
+  "title": "VersionVector",
+  "type": "object"
+}

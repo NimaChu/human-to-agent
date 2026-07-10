@@ -1,0 +1,94 @@
+{
+  "$defs": {
+    "ChangeKind": {
+      "enum": [
+        "skill_contract",
+        "harness_core",
+        "tool_permission",
+        "tool_side_effect",
+        "schema_major",
+        "golden_case",
+        "invalidated_assumption"
+      ],
+      "title": "ChangeKind",
+      "type": "string"
+    },
+    "MaterialChange": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "minLength": 1,
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "description": {
+          "default": "Material contract change",
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ChangeKind"
+        }
+      },
+      "required": [
+        "kind",
+        "asset_id"
+      ],
+      "title": "MaterialChange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "asset_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Asset Ids",
+      "type": "array"
+    },
+    "blocking": {
+      "title": "Blocking",
+      "type": "boolean"
+    },
+    "catalog_version": {
+      "minLength": 1,
+      "title": "Catalog Version",
+      "type": "string"
+    },
+    "change": {
+      "$ref": "#/$defs/MaterialChange"
+    },
+    "reasons": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Reasons",
+      "type": "array"
+    },
+    "required_evaluations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Required Evaluations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "change",
+    "catalog_version",
+    "asset_ids",
+    "required_evaluations",
+    "reasons",
+    "blocking"
+  ],
+  "title": "RecertificationPlan",
+  "type": "object"
+}
