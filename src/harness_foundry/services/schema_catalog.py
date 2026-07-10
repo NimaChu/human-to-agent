@@ -12,6 +12,7 @@ from harness_foundry.domain.assets import ASSET_MODELS
 from harness_foundry.domain.common import AssetMetadata
 from harness_foundry.domain.evidence import Evidence
 from harness_foundry.domain.readiness import READINESS_MODELS
+from harness_foundry.domain.stages import STAGE_MODELS
 from harness_foundry.domain.unknowns import UNKNOWN_MODELS
 
 DEFAULT_MODELS: dict[str, type[BaseModel]] = {
@@ -20,6 +21,7 @@ DEFAULT_MODELS: dict[str, type[BaseModel]] = {
     **ASSET_MODELS,
     **UNKNOWN_MODELS,
     **READINESS_MODELS,
+    **STAGE_MODELS,
 }
 
 

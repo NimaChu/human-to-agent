@@ -1,0 +1,164 @@
+{
+  "$defs": {
+    "AssessmentFact": {
+      "enum": [
+        "real_task",
+        "basic_goal_understood",
+        "inputs_identified",
+        "outputs_identified",
+        "manual_modifications_recorded",
+        "initial_unknowns_recorded",
+        "time_baseline_recorded",
+        "initial_success_criteria",
+        "owner_confirmed_usable",
+        "third_party_understands_goal_output",
+        "task_contract_exists",
+        "skill_prototype_exists",
+        "original_case_rerun",
+        "manual_modifications_linked",
+        "key_unknowns_classified",
+        "next_case_plan_exists",
+        "normal_paths_stable",
+        "common_failures_detected",
+        "result_evaluable",
+        "skill_boundaries_clear",
+        "independent_skill_run",
+        "key_unknowns_managed",
+        "skill_version_explainable",
+        "end_to_end_harness_run",
+        "steps_traceable",
+        "harness_goal_and_completion",
+        "context_defined",
+        "state_defined",
+        "policies_defined",
+        "human_gates_defined",
+        "exceptions_defined",
+        "local_evaluators_defined",
+        "final_evaluator_defined",
+        "autonomy_approved",
+        "noncreator_harness_run",
+        "business_goal_clear",
+        "task_contract_complete",
+        "core_skill_validated",
+        "unknowns_managed",
+        "input_output_state_boundaries_clear",
+        "key_exceptions_detectable",
+        "high_risk_actions_have_human_gates",
+        "stop_recovery_escalation_defined",
+        "noncreator_can_maintain",
+        "loop_readiness_conclusion"
+      ],
+      "title": "AssessmentFact",
+      "type": "string"
+    },
+    "CaseKind": {
+      "enum": [
+        "normal",
+        "boundary",
+        "failure",
+        "golden"
+      ],
+      "title": "CaseKind",
+      "type": "string"
+    },
+    "ReadinessResult": {
+      "enum": [
+        "not_ready",
+        "conditional_ready",
+        "controlled_ready",
+        "bounded_ready",
+        "production_candidate"
+      ],
+      "title": "ReadinessResult",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "case_evaluation_refs": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Case Evaluation Refs",
+      "type": "array"
+    },
+    "current_stage": {
+      "maximum": 5,
+      "minimum": 1,
+      "title": "Current Stage",
+      "type": "integer"
+    },
+    "evaluated_case_kinds": {
+      "items": {
+        "$ref": "#/$defs/CaseKind"
+      },
+      "title": "Evaluated Case Kinds",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "evidence": {
+      "additionalProperties": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/AssessmentFact"
+      },
+      "title": "Evidence",
+      "type": "object"
+    },
+    "facts": {
+      "items": {
+        "$ref": "#/$defs/AssessmentFact"
+      },
+      "title": "Facts",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "readiness_evidence_refs": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Readiness Evidence Refs",
+      "type": "array"
+    },
+    "readiness_result": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReadinessResult"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "skill_count": {
+      "minimum": 0,
+      "title": "Skill Count",
+      "type": "integer"
+    },
+    "workspace_id": {
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "workspace_id",
+    "current_stage",
+    "facts",
+    "evidence",
+    "evaluated_case_kinds",
+    "case_evaluation_refs",
+    "skill_count",
+    "readiness_result",
+    "readiness_evidence_refs"
+  ],
+  "title": "AssessmentSnapshot",
+  "type": "object"
+}
