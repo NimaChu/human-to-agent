@@ -8,4 +8,6 @@
 - Never invent a business rule to make a stage gate pass.
 - Never store credentials or secrets in normative sources or event logs.
 - Keep Codex and OpenCode adapters thin; shared methods live in `skills/` and `agents/`.
-
+- External and irreversible actions may only produce an unexecuted action package; obey every Human Gate and recovery entry.
+- Before recording source changes, run `uv run hf validate --workspace <id> --format json` and `uv run hf diff --workspace <id> --format json`.
+- Before claiming completion, run `uv run ruff check .`, `uv run mypy src tests`, and `uv run pytest -q` plus the relevant release or event verification command.

@@ -31,52 +31,48 @@ META = {
 def evidence(
     evidence_id: str = "ev-rule", kind: EvidenceType = EvidenceType.formal_rule
 ) -> Evidence:
-    return Evidence(
-        **(
-            META
-            | {
-                "id": evidence_id,
-                "type": kind,
-                "source": "PR/Harness Foundry PR.md",
-                "locator": "§10.4",
-                "captured_by": "reviewer",
-                "captured_at": NOW,
-                "content_summary": "Unknown closure requires evidence.",
-                "claim": "The rule is confirmed",
-                "basis": EvidenceBasis.observed,
-                "applicability_scope": ("ws-pilot",),
-                "validity_conditions": ("PR remains normative",),
-                "invalidation_conditions": ("Owner supersedes the rule",),
-                "content_sha256": "1" * 64,
-            }
-        )
+    return Evidence.model_validate(
+        META
+        | {
+            "id": evidence_id,
+            "type": kind,
+            "source": "PR/Harness Foundry PR.md",
+            "locator": "§10.4",
+            "captured_by": "reviewer",
+            "captured_at": NOW,
+            "content_summary": "Unknown closure requires evidence.",
+            "claim": "The rule is confirmed",
+            "basis": EvidenceBasis.observed,
+            "applicability_scope": ("ws-pilot",),
+            "validity_conditions": ("PR remains normative",),
+            "invalidation_conditions": ("Owner supersedes the rule",),
+            "content_sha256": "1" * 64,
+        }
     )
 
 
 def unknown() -> Unknown:
-    return Unknown(
-        **(
-            META
-            | {
-                "id": "unknown.rule-priority",
-                "title": "Rule priority is unclear",
-                "description": "Two rules can conflict.",
-                "category": UnknownCategory.rule,
-                "unknown_status": UnknownStatus.evidence,
-                "impact_dimensions": ("correctness", "automation-boundary"),
-                "impact_narrative": "The wrong rule may be applied.",
-                "occurrence_conditions": ("Two rules match",),
-                "affected_assets": ("skill.extract",),
-                "confidence_basis": EvidenceBasis.unverified,
-                "owner_id": "owner",
-                "expected_responder_role": "business-owner",
-                "cheapest_probe": "Ask the Owner using one conflict case.",
-                "prompt_patch": "Stop and request rule precedence when two rules match.",
-                "automation_restriction": "Remain human-only on conflicting rules.",
-                "allowed_closure_evidence": (EvidenceType.formal_rule,),
-                "fact_resolved": False,
-            }
-        )
+    return Unknown.model_validate(
+        META
+        | {
+            "id": "unknown.rule-priority",
+            "title": "Rule priority is unclear",
+            "description": "Two rules can conflict.",
+            "category": UnknownCategory.rule,
+            "unknown_status": UnknownStatus.evidence,
+            "impact_dimensions": ("correctness", "automation-boundary"),
+            "impact_narrative": "The wrong rule may be applied.",
+            "occurrence_conditions": ("Two rules match",),
+            "affected_assets": ("skill.extract",),
+            "confidence_basis": EvidenceBasis.unverified,
+            "owner_id": "owner",
+            "expected_responder_role": "business-owner",
+            "cheapest_probe": "Ask the Owner using one conflict case.",
+            "prompt_patch": "Stop and request rule precedence when two rules match.",
+            "automation_restriction": "Remain human-only on conflicting rules.",
+            "allowed_closure_evidence": (EvidenceType.formal_rule,),
+            "fact_resolved": False,
+        }
     )
 
 

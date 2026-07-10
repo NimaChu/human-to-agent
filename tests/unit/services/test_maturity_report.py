@@ -3,6 +3,7 @@ from harness_foundry.domain.readiness import ReadinessResult
 from harness_foundry.domain.stages import (
     AssessmentFact,
     AssessmentSnapshot,
+    GateReport,
     GateStatus,
     Stage,
     assess_stage,
@@ -10,7 +11,7 @@ from harness_foundry.domain.stages import (
 from harness_foundry.services.maturity import render_maturity_json, render_maturity_markdown
 
 
-def mixed_report():
+def mixed_report() -> GateReport:
     facts = frozenset({AssessmentFact.real_task, AssessmentFact.inputs_identified})
     snapshot = AssessmentSnapshot(
         workspace_id="ws-report",

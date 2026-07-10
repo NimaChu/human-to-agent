@@ -12,6 +12,8 @@ from typing import Any
 
 import yaml
 
+from harness_foundry.cli.errors import FoundryError
+from harness_foundry.cli.result import CommandResult
 from harness_foundry.domain.events import EventDraft, EventScope
 from harness_foundry.repositories.events import EventStore
 from harness_foundry.repositories.transactions import FileMutation, MutationPlan, TransactionManager
@@ -117,3 +119,24 @@ class MigrationService:
         )
         TransactionManager(self.root, self.event_store).commit(plan, event)
         return MigrationResult(start, current, True, scope)
+
+
+def migration_status(
+    root: Path, workspace_id: str, target_version: str, *, dry_run: bool
+) -> CommandResult:
+    path = root / "workspaces" / workspace_id / "workspace.yaml"
+    if not path.is_file():
+        raise FoundryError("schema", "workspace.missing", f"Workspace is missing: {workspace_id}")
+    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    current = str(raw.get("schema_version")) if isinstance(raw, dict) else "invalid"
+    if current != target_version:
+        raise FoundryError(
+            "migration",
+            "migration.path_missing",
+            f"No registered migration path from {current} to {target_version}.",
+        )
+    return CommandResult(
+        command="migrate",
+        status="dry-run" if dry_run else "ok",
+        next_actions=[f"schema_version={current}", "No migration required."],
+    )

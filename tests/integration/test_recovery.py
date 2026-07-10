@@ -17,7 +17,9 @@ from harness_foundry.services.recovery import RecoveryService
 NOW = datetime(2026, 7, 10, tzinfo=UTC)
 
 
-def setup(root: Path, crash_phase: TransactionPhase):
+def setup(
+    root: Path, crash_phase: TransactionPhase
+) -> tuple[Path, EventScope, MutationPlan, EventDraft, TransactionManager]:
     workspace = root / "workspaces" / "pilot"
     workspace.mkdir(parents=True)
     (workspace / "data.txt").write_text("old")

@@ -34,18 +34,16 @@ BASE = {
 
 def test_low_confidence_claim_requires_cheapest_probe() -> None:
     with pytest.raises(ValidationError, match="cheapest_probe"):
-        Evidence(**(BASE | {"basis": EvidenceBasis.assumption}))
+        Evidence.model_validate(BASE | {"basis": EvidenceBasis.assumption})
 
 
 def test_low_confidence_claim_accepts_a_concrete_probe() -> None:
-    evidence = Evidence(
-        **(
-            BASE
-            | {
-                "basis": EvidenceBasis.unverified,
-                "cheapest_probe": "Ask the business Owner to confirm PR §10.4.",
-            }
-        )
+    evidence = Evidence.model_validate(
+        BASE
+        | {
+            "basis": EvidenceBasis.unverified,
+            "cheapest_probe": "Ask the business Owner to confirm PR §10.4.",
+        }
     )
     assert evidence.cheapest_probe is not None
 
@@ -65,9 +63,9 @@ def test_low_confidence_claim_accepts_a_concrete_probe() -> None:
 )
 def test_evidence_requires_exact_source_and_validity(field: str, value: object) -> None:
     with pytest.raises(ValidationError):
-        Evidence(**(BASE | {field: value}))
+        Evidence.model_validate(BASE | {field: value})
 
 
 def test_metadata_rejects_naive_timestamps() -> None:
     with pytest.raises(ValidationError, match="timezone"):
-        Evidence(**(BASE | {"captured_at": datetime(2026, 7, 10)}))
+        Evidence.model_validate(BASE | {"captured_at": datetime(2026, 7, 10)})

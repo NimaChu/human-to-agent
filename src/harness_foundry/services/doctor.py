@@ -4,6 +4,10 @@ import re
 from pathlib import Path
 
 from harness_foundry.cli.result import CommandResult
+from harness_foundry.domain.events import EventScope
+from harness_foundry.repositories.events import EventStore
+from harness_foundry.services.adapters import verify_adapter_sources
+from harness_foundry.services.recovery import RecoveryService
 
 SECRET_PATTERNS = (
     re.compile(rb"AKIA[0-9A-Z]{16}"),
@@ -16,6 +20,7 @@ EXCLUDED = {".foundry", ".git", ".venv", "dist", "state", "__pycache__"}
 
 def inspect_workspace(root: Path) -> CommandResult:
     diagnostics: list[dict[str, object]] = []
+    recovered = RecoveryService(root, EventStore()).recover_all()
     workspace_root = root / "workspaces"
     if workspace_root.exists():
         for path in sorted(item for item in workspace_root.rglob("*") if item.is_file()):
@@ -31,9 +36,34 @@ def inspect_workspace(root: Path) -> CommandResult:
                         "path": path.relative_to(root).as_posix(),
                     }
                 )
+        for workspace in sorted(path for path in workspace_root.iterdir() if path.is_dir()):
+            scope = EventScope(
+                scope_id=workspace.name,
+                log_path=workspace / ".foundry" / "events.jsonl",
+            )
+            verification = EventStore().verify(scope)
+            diagnostics.extend(
+                {
+                    "category": "event",
+                    "code": "event.invalid",
+                    "message": message,
+                    "path": str(scope.log_path.relative_to(root)),
+                }
+                for message in verification.errors
+            )
+    if (root / "skills" / "catalog.yaml").is_file():
+        diagnostics.extend(
+            item.model_dump(mode="json", exclude_none=True)
+            for item in verify_adapter_sources(root).diagnostics
+        )
+    exit_by_category = {"policy": 6, "adapter": 7, "event": 9}
+    exit_code = max(
+        (exit_by_category.get(str(item["category"]), 0) for item in diagnostics), default=0
+    )
     return CommandResult(
         command="doctor",
         status="ok" if not diagnostics else "error",
-        exit_code=0 if not diagnostics else 6,
+        exit_code=exit_code,
         diagnostics=diagnostics,
+        next_actions=[f"recovered_transaction={item.transaction_id}" for item in recovered],
     )

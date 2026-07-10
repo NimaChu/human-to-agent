@@ -1,6 +1,7 @@
 import json
 from hashlib import sha256
 from pathlib import Path
+from typing import cast
 
 import yaml
 from typer.testing import CliRunner
@@ -97,22 +98,37 @@ def test_e2e_harness_run_is_traceable() -> None:
     workflow = load(PILOT / "WORKFLOW/workflow.yaml")
     run = RunRecord.model_validate(load(PILOT / "RUNS/independent-verification/run.yaml"))
     assert run.workflow_ref == workflow["id"]
-    assert len(workflow["steps"]) == 7 and run.evaluation_refs and run.passed
+    assert len(cast(list[object], workflow["steps"])) == 7 and run.evaluation_refs and run.passed
 
 
 def test_unknowns_gates_and_exceptions_are_managed() -> None:
     unknown = load(PILOT / "UNKNOWNS/release-environment.yaml")
     gate = load(PILOT / "HUMAN-GATES/human-gates.yaml")
     exception = load(PILOT / "EXCEPTIONS/exceptions.yaml")
-    assert unknown["owner_id"] and unknown["closure"]["disposition"] == "accepted_risk"
+    closure = cast(dict[str, object], unknown["closure"])
+    assert unknown["owner_id"] and closure["disposition"] == "accepted_risk"
     assert gate["recovery_entry"] and exception["creates_unknown"] is True
 
 
 def test_init_capture_five_stage_advance_and_release(tmp_path: Path) -> None:
     assert RUNNER.invoke(app, ["init", "--root", str(tmp_path)]).exit_code == 0
     assert RUNNER.invoke(app, ["workspace", "new", "pilot", "--root", str(tmp_path)]).exit_code == 0
+    capture_input = tmp_path / "real-task.txt"
+    capture_input.write_text("real input and owner-reviewed output\n")
     assert (
-        RUNNER.invoke(app, ["capture", "record", "--root", str(tmp_path), "-w", "pilot"]).exit_code
+        RUNNER.invoke(
+            app,
+            [
+                "capture",
+                "record",
+                "--root",
+                str(tmp_path),
+                "-w",
+                "pilot",
+                "--input",
+                str(capture_input),
+            ],
+        ).exit_code
         == 0
     )
     foundry = tmp_path / "workspaces/pilot/.foundry"
@@ -127,10 +143,30 @@ def test_init_capture_five_stage_advance_and_release(tmp_path: Path) -> None:
         app, ["build", "--root", str(tmp_path), "-w", "pilot", "--release", "--format", "json"]
     )
     assert release.exit_code == 0, release.stdout
+    reopened = RUNNER.invoke(
+        app,
+        [
+            "stage",
+            "reopen",
+            "--root",
+            str(tmp_path),
+            "-w",
+            "pilot",
+            "--target",
+            "3",
+            "--evidence",
+            "evidence.contradiction",
+        ],
+    )
+    assert reopened.exit_code == 0, reopened.stdout
+    assert (
+        yaml.safe_load((tmp_path / "workspaces/pilot/workspace.yaml").read_text())["current_stage"]
+        == 3
+    )
     verify = RUNNER.invoke(
         app, ["events", "verify", "--root", str(tmp_path), "-w", "pilot", "--format", "json"]
     )
-    assert json.loads(verify.stdout)["next_actions"] == ["events=4"]
+    assert json.loads(verify.stdout)["next_actions"] == ["events=6"]
 
 
 def test_new_contradictory_case_reopens_prior_stage() -> None:

@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+from typing import Any
 
 import pytest
 from pydantic import ValidationError
@@ -17,7 +18,7 @@ from harness_foundry.domain.assets import (
 )
 
 NOW = datetime(2026, 7, 10, tzinfo=UTC)
-META = {
+META: dict[str, Any] = {
     "schema_version": "1",
     "workspace_id": "ws-pilot",
     "revision": 1,
@@ -31,7 +32,7 @@ META = {
 }
 
 
-def valid_skill() -> dict[str, object]:
+def valid_skill() -> dict[str, Any]:
     return META | {
         "id": "skill.extract",
         "goal": "Extract normative requirements",

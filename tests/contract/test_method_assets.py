@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from typing import cast
 
 import yaml
 
@@ -36,7 +37,7 @@ SECTIONS = {
 
 
 def frontmatter(text: str) -> dict[str, str]:
-    return yaml.safe_load(text.split("---", 2)[1])
+    return cast(dict[str, str], yaml.safe_load(text.split("---", 2)[1]))
 
 
 def test_all_method_skills_follow_contract() -> None:

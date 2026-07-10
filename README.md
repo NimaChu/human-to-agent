@@ -1,22 +1,78 @@
 # Harness Foundry
 
-Harness Foundry is a file-first mother workspace for evolving a real task through
-work reproduction, task contracts, validated Skills, controlled Harnesses, and
-Loop Readiness certification.
+Harness Foundry is a file-first mother workspace for turning a real task into an evidence-backed Task Contract, validated Skills and cases, a controlled E/T/C/S/L/V Harness, and a Loop Readiness decision. Markdown, YAML, and JSONL under `workspaces/` are authoritative; `dist/` is generated and never becomes business input.
 
-Business facts live in Markdown, YAML, and JSONL. The `hf` CLI validates and
-generates deterministic child workspaces; it is not a second source of truth.
-
-## Development
+## Bootstrap
 
 ```powershell
 python -m pip install uv
-uv sync --all-groups
+uv sync --frozen --all-groups
 uv run hf version --format json
-uv run pytest -q
+uv run hf init
 ```
 
-See `docs/superpowers/specs/2026-07-10-harness-foundry-design.md` and
-`docs/superpowers/plans/2026-07-10-harness-foundry-implementation.md` for the
-approved design and implementation plan.
+## Five-stage happy path
 
+All commands are non-interactive. Replace `<workspace>` with the child-workspace slug.
+
+```powershell
+uv run hf workspace new <workspace>
+uv run hf capture record --workspace <workspace>
+uv run hf unknown add --workspace <workspace>
+uv run hf stage assess --workspace <workspace>
+uv run hf stage advance --workspace <workspace>
+# Repeat assess/advance through stages 2-5 after recording direct gate evidence.
+uv run hf readiness assess --workspace <workspace>
+uv run hf validate --workspace <workspace> --format json
+uv run hf record-change --workspace <workspace>
+uv run hf build --workspace <workspace> --draft
+```
+
+The supplied real pilot is already release-gated:
+
+```powershell
+uv run hf validate --workspace harness-foundry-pilot --format json
+uv run hf events verify --workspace harness-foundry-pilot --format json
+uv run hf build --workspace harness-foundry-pilot --release
+```
+
+## Draft versus release
+
+Draft builds are allowed at any stage and contain a visible `DRAFT` warning. Release builds require a passing complete-release gate, at least conditional Readiness, and an artifact index matching every normative source byte. `BUILD-MANIFEST.json` contains deterministic versions, source digest, and per-file digests—never a clock or random ID.
+
+The first release has no interactive UI and does not execute external or irreversible actions. It can prepare an action package; a Human Gate records approve, reject, or modify, while a separate executor remains out of scope.
+
+## Operations
+
+- Architecture: `docs/architecture/overview.md`
+- Five stages: `docs/methodology/five-stages.md`
+- Crash recovery: `docs/operations/recovery.md`
+- Schema migration: `docs/operations/migration.md`
+- Change re-certification: `docs/operations/recertification.md`
+- Requirement proof: `docs/traceability/completion-audit.md`
+
+Run `uv run hf doctor --format json` for configuration, secret, transaction, event, and adapter checks. `hf events verify` detects truncation, sequence gaps, predecessor mismatch, and payload tampering.
+
+## Exit codes
+
+| Code | Meaning |
+|---:|---|
+| 0 | Success |
+| 2 | Usage or root configuration |
+| 3 | Schema |
+| 4 | Reference |
+| 5 | Evidence or stage/release gate |
+| 6 | Policy or Human Gate |
+| 7 | Version, migration, or adapter |
+| 8 | Filesystem, lock, or transaction |
+| 9 | Event integrity or replay |
+
+## Development verification
+
+```powershell
+uv run ruff format --check .
+uv run ruff check .
+uv run mypy src tests
+uv run python -m harness_foundry.services.schema_catalog --check schemas/v1
+uv run pytest -q
+```

@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 from typer.testing import CliRunner
@@ -37,7 +38,7 @@ def test_every_command_is_registered_and_supports_json_help(command: tuple[str, 
     assert result.exit_code == 0, result.stdout
 
 
-def test_schema_failure_maps_to_exit_3(tmp_path) -> None:
+def test_schema_failure_maps_to_exit_3(tmp_path: Path) -> None:
     result = runner.invoke(app, ["validate", "--root", str(tmp_path), "--format", "json"])
     payload = json.loads(result.stdout)
     assert result.exit_code == payload["exit_code"] == 3

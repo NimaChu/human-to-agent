@@ -13,11 +13,28 @@ from harness_foundry.cli.output import emit
 from harness_foundry.cli.result import CommandResult
 from harness_foundry.domain.builds import BuildMode
 from harness_foundry.domain.events import EventScope
+from harness_foundry.domain.unknowns import UnknownCategory, UnknownDisposition
 from harness_foundry.repositories.events import EventStore
 from harness_foundry.services.build import Builder
+from harness_foundry.services.capture import record_capture
 from harness_foundry.services.changes import record_change as record_source_change
 from harness_foundry.services.doctor import inspect_workspace
-from harness_foundry.services.stage_transitions import advance_stage as apply_stage_advance
+from harness_foundry.services.migrations import migration_status
+from harness_foundry.services.stage_transitions import (
+    advance_stage as apply_stage_advance,
+)
+from harness_foundry.services.stage_transitions import (
+    reopen_stage as apply_stage_reopen,
+)
+from harness_foundry.services.status_views import assess_stage_view, diff_view, readiness_view
+from harness_foundry.services.unknown_operations import (
+    add_unknown as create_unknown,
+)
+from harness_foundry.services.unknown_operations import (
+    close_unknown_asset,
+    reopen_unknown_asset,
+    update_unknown_asset,
+)
 from harness_foundry.services.validation import validate_root
 from harness_foundry.services.workspaces import (
     create_workspace,
@@ -61,15 +78,6 @@ def _run(command: str, output_format: OutputFormat, operation: Callable[[], Comm
             ],
         )
     emit(result, output_format)
-
-
-def _pending(command: str, root: Path, workspace: str, dry_run: bool = False) -> CommandResult:
-    require_workspace(root, workspace)
-    return CommandResult(
-        command=command,
-        status="dry-run" if dry_run else "ok",
-        next_actions=["Provide or update the evidence-backed normative asset files."],
-    )
 
 
 @app.command()
@@ -131,23 +139,16 @@ def capture_record(
     output_format: FormatOption = OutputFormat.text,
     root: RootOption = Path("."),
     workspace: WorkspaceOption = "workspace",
+    input_path: Annotated[Path | None, typer.Option("--input")] = None,
     dry_run: DryRunOption = False,
 ) -> None:
     """Record a work-reproduction capture."""
     _run(
         "capture record",
         output_format,
-        lambda: _pending("capture record", root.resolve(), workspace, dry_run),
-    )
-
-
-def _unknown_command(
-    name: str, output_format: OutputFormat, root: Path, workspace: str, dry_run: bool
-) -> None:
-    _run(
-        f"unknown {name}",
-        output_format,
-        lambda: _pending(f"unknown {name}", root.resolve(), workspace, dry_run),
+        lambda: record_capture(
+            root.resolve(), workspace, input_path, actor="maintainer", dry_run=dry_run
+        ),
     )
 
 
@@ -156,10 +157,27 @@ def unknown_add(
     output_format: FormatOption = OutputFormat.text,
     root: RootOption = Path("."),
     workspace: WorkspaceOption = "workspace",
+    title: Annotated[str, typer.Option("--title")] = "Unspecified business question",
+    description: Annotated[str, typer.Option("--description")] = "The fact is not yet established.",
+    category: Annotated[UnknownCategory, typer.Option("--category")] = UnknownCategory.judgment,
+    owner: Annotated[str, typer.Option("--owner")] = "owner",
     dry_run: DryRunOption = False,
 ) -> None:
     """Add an Unknown without inventing missing facts."""
-    _unknown_command("add", output_format, root, workspace, dry_run)
+    _run(
+        "unknown add",
+        output_format,
+        lambda: create_unknown(
+            root.resolve(),
+            workspace,
+            title=title,
+            description=description,
+            category=category,
+            owner=owner,
+            actor="maintainer",
+            dry_run=dry_run,
+        ),
+    )
 
 
 @unknown_app.command("update")
@@ -167,10 +185,23 @@ def unknown_update(
     output_format: FormatOption = OutputFormat.text,
     root: RootOption = Path("."),
     workspace: WorkspaceOption = "workspace",
+    unknown_id: Annotated[str, typer.Option("--id")] = "unknown.unspecified",
+    input_path: Annotated[Path | None, typer.Option("--input")] = None,
     dry_run: DryRunOption = False,
 ) -> None:
     """Update an Unknown."""
-    _unknown_command("update", output_format, root, workspace, dry_run)
+    _run(
+        "unknown update",
+        output_format,
+        lambda: update_unknown_asset(
+            root.resolve(),
+            workspace,
+            unknown_id=unknown_id,
+            input_path=input_path,
+            actor="maintainer",
+            dry_run=dry_run,
+        ),
+    )
 
 
 @unknown_app.command("close")
@@ -178,10 +209,29 @@ def unknown_close(
     output_format: FormatOption = OutputFormat.text,
     root: RootOption = Path("."),
     workspace: WorkspaceOption = "workspace",
+    unknown_id: Annotated[str, typer.Option("--id")] = "unknown.unspecified",
+    evidence: Annotated[str, typer.Option("--evidence")] = "evidence.unspecified",
+    disposition: Annotated[
+        UnknownDisposition, typer.Option("--disposition")
+    ] = UnknownDisposition.resolved,
+    conclusion: Annotated[str, typer.Option("--conclusion")] = "The owner resolved the Unknown.",
     dry_run: DryRunOption = False,
 ) -> None:
     """Close an Unknown with evidence."""
-    _unknown_command("close", output_format, root, workspace, dry_run)
+    _run(
+        "unknown close",
+        output_format,
+        lambda: close_unknown_asset(
+            root.resolve(),
+            workspace,
+            unknown_id=unknown_id,
+            evidence_id=evidence,
+            disposition=disposition,
+            conclusion=conclusion,
+            actor="owner",
+            dry_run=dry_run,
+        ),
+    )
 
 
 @unknown_app.command("reopen")
@@ -189,10 +239,25 @@ def unknown_reopen(
     output_format: FormatOption = OutputFormat.text,
     root: RootOption = Path("."),
     workspace: WorkspaceOption = "workspace",
+    unknown_id: Annotated[str, typer.Option("--id")] = "unknown.unspecified",
+    evidence: Annotated[str, typer.Option("--evidence")] = "evidence.unspecified",
+    reason: Annotated[str, typer.Option("--reason")] = "New contradictory evidence appeared.",
     dry_run: DryRunOption = False,
 ) -> None:
     """Reopen an Unknown while preserving its history."""
-    _unknown_command("reopen", output_format, root, workspace, dry_run)
+    _run(
+        "unknown reopen",
+        output_format,
+        lambda: reopen_unknown_asset(
+            root.resolve(),
+            workspace,
+            unknown_id=unknown_id,
+            evidence_id=evidence,
+            reason=reason,
+            actor="maintainer",
+            dry_run=dry_run,
+        ),
+    )
 
 
 @app.command("validate")
@@ -205,16 +270,6 @@ def validate_command(
     emit(validate_root(root.resolve(), workspace), output_format)
 
 
-def _stage_command(
-    name: str, output_format: OutputFormat, root: Path, workspace: str, dry_run: bool = False
-) -> None:
-    _run(
-        f"stage {name}",
-        output_format,
-        lambda: _pending(f"stage {name}", root.resolve(), workspace, dry_run),
-    )
-
-
 @stage_app.command("assess")
 def stage_assess(
     output_format: FormatOption = OutputFormat.text,
@@ -222,7 +277,11 @@ def stage_assess(
     workspace: WorkspaceOption = "workspace",
 ) -> None:
     """Assess the current stage gate."""
-    _stage_command("assess", output_format, root, workspace)
+    _run(
+        "stage assess",
+        output_format,
+        lambda: assess_stage_view(root.resolve(), workspace),
+    )
 
 
 @stage_app.command("advance")
@@ -245,10 +304,25 @@ def stage_reopen(
     output_format: FormatOption = OutputFormat.text,
     root: RootOption = Path("."),
     workspace: WorkspaceOption = "workspace",
+    target: Annotated[int, typer.Option("--target", min=1, max=4)] = 1,
+    evidence: Annotated[str, typer.Option("--evidence")] = "evidence.contradiction",
+    reason: Annotated[str, typer.Option("--reason")] = "Material contradictory evidence appeared.",
     dry_run: DryRunOption = False,
 ) -> None:
     """Reopen a prior stage after material change."""
-    _stage_command("reopen", output_format, root, workspace, dry_run)
+    _run(
+        "stage reopen",
+        output_format,
+        lambda: apply_stage_reopen(
+            root.resolve(),
+            workspace,
+            target=target,
+            evidence_ref=evidence,
+            reason=reason,
+            actor="maintainer",
+            dry_run=dry_run,
+        ),
+    )
 
 
 @readiness_app.command("assess")
@@ -261,7 +335,7 @@ def readiness_assess(
     _run(
         "readiness assess",
         output_format,
-        lambda: _pending("readiness assess", root.resolve(), workspace),
+        lambda: readiness_view(root.resolve(), workspace),
     )
 
 
@@ -272,7 +346,7 @@ def diff_command(
     workspace: WorkspaceOption = "workspace",
 ) -> None:
     """Compare source files with their recorded artifact index."""
-    _run("diff", output_format, lambda: _pending("diff", root.resolve(), workspace))
+    _run("diff", output_format, lambda: diff_view(root.resolve(), workspace))
 
 
 @app.command("record-change")
@@ -295,10 +369,15 @@ def migrate_command(
     output_format: FormatOption = OutputFormat.text,
     root: RootOption = Path("."),
     workspace: WorkspaceOption = "workspace",
+    target_version: Annotated[str, typer.Option("--target-version")] = "1",
     dry_run: DryRunOption = False,
 ) -> None:
     """Run sequential, recoverable Schema migrations."""
-    _run("migrate", output_format, lambda: _pending("migrate", root.resolve(), workspace, dry_run))
+    _run(
+        "migrate",
+        output_format,
+        lambda: migration_status(root.resolve(), workspace, target_version, dry_run=dry_run),
+    )
 
 
 @app.command("build")

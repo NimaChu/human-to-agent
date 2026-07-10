@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: uv sync --frozen --all-groups
+      - run: uv run ruff format --check .
+      - run: uv run ruff check .
+      - run: uv run mypy src tests
+      - run: uv run python -m harness_foundry.services.schema_catalog --check schemas/v1
+      - run: uv run pytest -q
+      - run: uv run pytest tests/contract/test_traceability.py tests/contract/test_completion_audit.py -q
+      - run: uv run hf doctor --format json
+      - run: uv run hf validate --workspace harness-foundry-pilot --format json
+      - run: uv run hf build --workspace harness-foundry-pilot --release
+      - run: uv run python scripts/verify_deterministic_build.py harness-foundry-pilot
+      - run: uv build --out-dir build/python-dist
+      - run: uv run python scripts/verify_wheel_install.py build/python-dist
+      - run: git diff --exit-code
