@@ -1,0 +1,5 @@
+schema_version: "1"
+workspace_root: workspaces
+distribution_root: dist
+state_root: state
+
