@@ -1,0 +1,11 @@
+schema_version: "1"
+inputs:
+  - path: PR/Harness Foundry PR.md
+    sha256: 749a8438afb46d0bd9ca0ccdd0921b11f7bd34dc63819c3aa41db5f5f731fde7
+  - path: PR/supplements/Agent-Harness.md
+    sha256: 9a04cbd969e0760992b706bd0d0f5bd61cc450f9dae84fe9919e5d7ecb3092b5
+  - path: PR/supplements/Know your unknowns - complete.html
+    sha256: 9ecdbfa730f54ff6bb312334e0bc6a0e98940697d65663f7d9f18a7b00f17dbe
+  - path: PR/supplements/Loop Engineering.md
+    sha256: a924e5bc98ae9de19acf11979f0dfa35b51eba4e2d85a9eeff73492100c63ce5
+

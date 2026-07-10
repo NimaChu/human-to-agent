@@ -1,0 +1,114 @@
+{
+  "schema_version": "1",
+  "requirements": [
+    {
+      "id": "HF-001",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§1 Product goal",
+      "statement": "Build a transferable mother workspace from real work."
+    },
+    {
+      "id": "HF-002",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§4 Principles",
+      "statement": "Use files as business source of truth."
+    },
+    {
+      "id": "HF-003",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§8 Stage 1",
+      "statement": "Reproduce a real task and record initial Unknowns."
+    },
+    {
+      "id": "HF-004",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§9 Stage 2",
+      "statement": "Create a task contract and Skill prototype."
+    },
+    {
+      "id": "HF-005",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§10 Stage 3",
+      "statement": "Validate normal, boundary, and failure cases."
+    },
+    {
+      "id": "HF-006",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§11 Stage 4",
+      "statement": "Compose an E,T,C,S,L,V Harness."
+    },
+    {
+      "id": "HF-007",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12 Stage 5",
+      "statement": "Assess Loop Readiness and autonomy separately."
+    },
+    {
+      "id": "HF-008",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§13 Consistency",
+      "statement": "Use locked WAL transactions and append-only event chains."
+    },
+    {
+      "id": "HF-009",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14 Build",
+      "statement": "Create deterministic draft and gated release distributions."
+    },
+    {
+      "id": "HF-010",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§15 Agents and Skills",
+      "statement": "Provide shared methods and separated roles."
+    },
+    {
+      "id": "HF-011",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§16 Permissions",
+      "statement": "Prepare but do not execute external action packages."
+    },
+    {
+      "id": "HF-012",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§18 Verification",
+      "statement": "Require non-creator reproduction."
+    },
+    {
+      "id": "HF-013",
+      "source": "PR/supplements/Agent-Harness.md",
+      "locator": "Harness semantic model",
+      "statement": "Map external Harness semantics without overriding E,T,C,S,L,V."
+    },
+    {
+      "id": "HF-014",
+      "source": "PR/supplements/Know your unknowns - complete.html",
+      "locator": "Method cards",
+      "statement": "Use discovery, during-work, and post-work Unknown methods."
+    },
+    {
+      "id": "HF-015",
+      "source": "PR/supplements/Loop Engineering.md",
+      "locator": "Loop readiness",
+      "statement": "Define stop, budget, retry, escalation, recovery, and observability."
+    },
+    {
+      "id": "HF-016",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12 CLI",
+      "statement": "Expose stable non-interactive commands and exit codes."
+    },
+    {
+      "id": "HF-017",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§17 Change impact",
+      "statement": "Re-certify on material version-vector changes."
+    },
+    {
+      "id": "HF-018",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§20 First release",
+      "statement": "Exclude interactive UI and external execution from the first release."
+    }
+  ]
+}
+

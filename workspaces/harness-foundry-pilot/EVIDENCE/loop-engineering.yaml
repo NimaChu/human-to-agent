@@ -1,0 +1,35 @@
+{
+  "schema_version": "1",
+  "id": "evidence.loop-engineering",
+  "workspace_id": "harness-foundry-pilot",
+  "revision": 1,
+  "status": "validated",
+  "owners": [
+    "owner"
+  ],
+  "created_at": "2026-07-10T00:00:00Z",
+  "updated_at": "2026-07-10T00:00:00Z",
+  "provenance": "Harness Foundry pilot",
+  "links": [],
+  "evidence_refs": [],
+  "type": "system_definition",
+  "source": "PR/supplements/Loop Engineering.md",
+  "locator": "Entire file",
+  "captured_by": "maintainer",
+  "captured_at": "2026-07-10T00:00:00Z",
+  "content_summary": "Direct source or repeatable verification evidence for the Harness Foundry pilot.",
+  "claim": "The referenced source or validation supports the traced pilot requirement.",
+  "basis": "observed",
+  "applicability_scope": [
+    "harness-foundry-pilot"
+  ],
+  "validity_conditions": [
+    "Recorded content hash remains unchanged."
+  ],
+  "invalidation_conditions": [
+    "Source or verification behavior changes."
+  ],
+  "content_sha256": "a924e5bc98ae9de19acf11979f0dfa35b51eba4e2d85a9eeff73492100c63ce5",
+  "cheapest_probe": null
+}
+

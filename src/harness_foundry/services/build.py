@@ -82,8 +82,11 @@ class Builder:
             raise ValueError("source changed after build planning")
         changed = tuple(
             sorted(
-                [*PUBLIC_ROOT_FILES, "BUILD-MANIFEST.json"]
-                + [item.path for item in snapshot.files if self._is_public(item.path)]
+                {
+                    *PUBLIC_ROOT_FILES,
+                    "BUILD-MANIFEST.json",
+                    *(item.path for item in snapshot.files if self._is_public(item.path)),
+                }
             )
         )
         if plan.dry_run:

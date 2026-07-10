@@ -1,0 +1,26 @@
+{
+  "schema_version": "1",
+  "id": "eval.acme-default-rejection",
+  "workspace_id": "harness-foundry-pilot",
+  "revision": 1,
+  "status": "validated",
+  "owners": [
+    "owner"
+  ],
+  "created_at": "2026-07-10T00:00:00Z",
+  "updated_at": "2026-07-10T00:00:00Z",
+  "provenance": "Harness Foundry pilot",
+  "links": [],
+  "evidence_refs": [],
+  "subject_ref": "skill.source-to-requirement-mapping",
+  "case_ref": "case.acme-default-rejection",
+  "evaluator_id": "independent-verifier",
+  "result": "passed",
+  "actual_output_ref": "evidence.output",
+  "criteria_results": [
+    "Source locator retained",
+    "Classification explicit",
+    "No default invented"
+  ]
+}
+

@@ -7,6 +7,8 @@ import yaml
 
 from harness_foundry.cli.errors import FoundryError
 from harness_foundry.cli.result import CommandResult
+from harness_foundry.repositories.filesystem import SourceRepository
+from harness_foundry.services.changes import build_artifact_index, render_artifact_index
 
 SOURCE_DIRECTORIES = (
     "TASK-CONTRACT",
@@ -83,6 +85,10 @@ def create_workspace(root: Path, slug: str, *, owner: str, dry_run: bool) -> Com
             yaml.safe_dump(manifest, sort_keys=False, allow_unicode=True),
             encoding="utf-8",
             newline="\n",
+        )
+        snapshot = SourceRepository(root).snapshot(slug)
+        (workspace / ".foundry" / "artifact-index.yaml").write_bytes(
+            render_artifact_index(build_artifact_index(snapshot))
         )
     return CommandResult(command="workspace new", changed_files=[] if dry_run else changed)
 

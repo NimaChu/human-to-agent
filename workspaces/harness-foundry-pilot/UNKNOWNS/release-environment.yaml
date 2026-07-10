@@ -1,0 +1,56 @@
+{
+  "schema_version": "1",
+  "id": "unknown.release-environment",
+  "workspace_id": "harness-foundry-pilot",
+  "revision": 1,
+  "status": "validated",
+  "owners": [
+    "owner"
+  ],
+  "created_at": "2026-07-10T00:00:00Z",
+  "updated_at": "2026-07-10T00:00:00Z",
+  "provenance": "Harness Foundry pilot",
+  "links": [],
+  "evidence_refs": [],
+  "title": "Production environment certification boundary",
+  "description": "The file-only release is verified locally; production runtime certification is outside the first release.",
+  "category": "boundary",
+  "unknown_status": "accepted_risk",
+  "impact_dimensions": [
+    "deployment",
+    "operations"
+  ],
+  "impact_narrative": "Does not block file-only mother workspace; blocks production runtime claims.",
+  "occurrence_conditions": [
+    "A production runtime deployment is proposed."
+  ],
+  "affected_assets": [
+    "workspace.harness-foundry-pilot"
+  ],
+  "confidence_basis": "observed",
+  "owner_id": "owner",
+  "expected_responder_role": "operations owner",
+  "cheapest_probe": "Run environment-specific certification before deployment.",
+  "prompt_patch": "State that production runtime is out of scope.",
+  "automation_restriction": "Do not claim production readiness or deploy.",
+  "allowed_closure_evidence": [
+    "risk_decision"
+  ],
+  "fact_resolved": false,
+  "closure": {
+    "disposition": "accepted_risk",
+    "owner_id": "owner",
+    "actor": "owner",
+    "at": "2026-07-10T00:00:00Z",
+    "conclusion": "Accept for the file-only first release.",
+    "impact": "Production deployment remains prohibited.",
+    "evidence_refs": [
+      "evidence.pr"
+    ],
+    "propagated_to": [
+      "workspace.harness-foundry-pilot"
+    ]
+  },
+  "history": []
+}
+

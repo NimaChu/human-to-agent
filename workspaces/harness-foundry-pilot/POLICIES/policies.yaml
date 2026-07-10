@@ -1,0 +1,29 @@
+{
+  "schema_version": "1",
+  "id": "policy.pilot",
+  "workspace_id": "harness-foundry-pilot",
+  "revision": 1,
+  "status": "validated",
+  "owners": [
+    "owner"
+  ],
+  "created_at": "2026-07-10T00:00:00Z",
+  "updated_at": "2026-07-10T00:00:00Z",
+  "provenance": "Harness Foundry pilot",
+  "links": [],
+  "evidence_refs": [],
+  "rules": [
+    "Read-only source inspection is permitted.",
+    "Normative writes require validation and transaction.",
+    "External and irreversible actions require Human Gates.",
+    "Forbidden actions have no adapter."
+  ],
+  "permitted_action_classes": [
+    "read_only",
+    "internal_write"
+  ],
+  "human_gate_refs": [
+    "human-gate.release"
+  ]
+}
+

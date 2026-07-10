@@ -1,0 +1,61 @@
+{
+  "schema_version": "1",
+  "id": "workflow.source-to-release",
+  "workspace_id": "harness-foundry-pilot",
+  "revision": 1,
+  "status": "validated",
+  "owners": [
+    "owner"
+  ],
+  "created_at": "2026-07-10T00:00:00Z",
+  "updated_at": "2026-07-10T00:00:00Z",
+  "provenance": "Harness Foundry pilot",
+  "links": [],
+  "evidence_refs": [],
+  "goal": "Convert four authoritative inputs into a verified release.",
+  "skill_refs": [
+    "skill.source-to-requirement-mapping"
+  ],
+  "steps": [
+    {
+      "id": "inventory",
+      "action": "inventory sources"
+    },
+    {
+      "id": "extract",
+      "action": "extract requirements"
+    },
+    {
+      "id": "conflicts",
+      "action": "analyze conflicts and Unknowns"
+    },
+    {
+      "id": "specify",
+      "action": "write specification"
+    },
+    {
+      "id": "implement",
+      "action": "implement with tests"
+    },
+    {
+      "id": "verify",
+      "action": "independent verification"
+    },
+    {
+      "id": "release",
+      "action": "release assessment"
+    }
+  ],
+  "state_model_ref": "state.pilot",
+  "policy_refs": [
+    "policy.pilot"
+  ],
+  "human_gate_refs": [
+    "human-gate.release"
+  ],
+  "exception_refs": [
+    "exception.source-conflict"
+  ],
+  "final_evaluator_ref": "evaluator.source-mapping"
+}
+

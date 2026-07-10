@@ -15,7 +15,9 @@ from harness_foundry.domain.builds import BuildMode
 from harness_foundry.domain.events import EventScope
 from harness_foundry.repositories.events import EventStore
 from harness_foundry.services.build import Builder
+from harness_foundry.services.changes import record_change as record_source_change
 from harness_foundry.services.doctor import inspect_workspace
+from harness_foundry.services.stage_transitions import advance_stage as apply_stage_advance
 from harness_foundry.services.validation import validate_root
 from harness_foundry.services.workspaces import (
     create_workspace,
@@ -92,7 +94,7 @@ def init_command(
 
 @workspace_app.command("new")
 def workspace_new(
-    slug: str = "workspace",
+    slug: Annotated[str, typer.Argument()] = "workspace",
     output_format: FormatOption = OutputFormat.text,
     root: RootOption = Path("."),
     owner: Annotated[str, typer.Option("--owner")] = "maintainer",
@@ -231,7 +233,11 @@ def stage_advance(
     dry_run: DryRunOption = False,
 ) -> None:
     """Advance only after the prospective gate passes."""
-    _stage_command("advance", output_format, root, workspace, dry_run)
+    _run(
+        "stage advance",
+        output_format,
+        lambda: apply_stage_advance(root.resolve(), workspace, actor="maintainer", dry_run=dry_run),
+    )
 
 
 @stage_app.command("reopen")
@@ -280,7 +286,7 @@ def record_change(
     _run(
         "record-change",
         output_format,
-        lambda: _pending("record-change", root.resolve(), workspace, dry_run),
+        lambda: record_source_change(root.resolve(), workspace, dry_run=dry_run),
     )
 
 

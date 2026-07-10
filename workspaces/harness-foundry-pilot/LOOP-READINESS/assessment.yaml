@@ -1,0 +1,178 @@
+{
+  "assessment_id": "readiness.pilot",
+  "workspace_id": "harness-foundry-pilot",
+  "policy_version": "1",
+  "result": "conditional_ready",
+  "dimensions": {
+    "goal": {
+      "dimension": "goal",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "state": {
+      "dimension": "state",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "action": {
+      "dimension": "action",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "evaluator": {
+      "dimension": "evaluator",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "stop": {
+      "dimension": "stop",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "budget": {
+      "dimension": "budget",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "retry": {
+      "dimension": "retry",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "escalation": {
+      "dimension": "escalation",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "recovery": {
+      "dimension": "recovery",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "observability": {
+      "dimension": "observability",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "trigger_cadence": {
+      "dimension": "trigger_cadence",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "discovery_triage": {
+      "dimension": "discovery_triage",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "concurrency_isolation": {
+      "dimension": "concurrency_isolation",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "tool_connector_availability": {
+      "dimension": "tool_connector_availability",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "independent_verifier": {
+      "dimension": "independent_verifier",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    },
+    "version_drift_recertification": {
+      "dimension": "version_drift_recertification",
+      "status": "satisfied",
+      "evidence_refs": [
+        "evidence.output"
+      ],
+      "gaps": [],
+      "risks": [],
+      "next_action": null
+    }
+  },
+  "evidence_gaps": [],
+  "risks": [
+    "Production runtime remains outside scope."
+  ],
+  "next_actions": [
+    "Re-certify after tool, model, policy, source, or environment change."
+  ],
+  "recommended_ceiling": "h1",
+  "approved_autonomy": null
+}
+

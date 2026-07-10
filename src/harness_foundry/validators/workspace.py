@@ -31,6 +31,7 @@ def _infer_schema_name(path: str) -> str | None:
         "EVALUATORS": "evaluator",
         "LOOP-READINESS": "readiness-assessment",
         "RUNS": "run",
+        "HARNESS": "harness",
         "EVIDENCE": "evidence",
     }
     return roots.get(parts[0]) if parts else None

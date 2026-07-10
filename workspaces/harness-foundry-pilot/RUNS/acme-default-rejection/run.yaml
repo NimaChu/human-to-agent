@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "id": "run.acme-default-rejection",
+  "workspace_id": "harness-foundry-pilot",
+  "revision": 1,
+  "status": "validated",
+  "owners": [
+    "owner"
+  ],
+  "created_at": "2026-07-10T00:00:00Z",
+  "updated_at": "2026-07-10T00:00:00Z",
+  "provenance": "Harness Foundry pilot",
+  "links": [],
+  "evidence_refs": [],
+  "actor_id": "verifier-1",
+  "actor_role": "independent_verifier",
+  "input_tree_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "steps": [
+    "load recorded sources",
+    "execute mapping",
+    "evaluate result"
+  ],
+  "skill_ref": "skill.source-to-requirement-mapping",
+  "case_ref": "case.acme-default-rejection",
+  "workflow_ref": "workflow.source-to-release",
+  "evaluation_refs": [
+    "eval.acme-default-rejection"
+  ],
+  "passed": true
+}
+
