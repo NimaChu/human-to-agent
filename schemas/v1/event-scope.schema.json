@@ -1,0 +1,21 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "log_path": {
+      "format": "path",
+      "title": "Log Path",
+      "type": "string"
+    },
+    "scope_id": {
+      "minLength": 1,
+      "title": "Scope Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "scope_id",
+    "log_path"
+  ],
+  "title": "EventScope",
+  "type": "object"
+}

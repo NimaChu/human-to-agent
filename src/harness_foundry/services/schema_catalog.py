@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from harness_foundry.domain.assets import ASSET_MODELS
 from harness_foundry.domain.common import AssetMetadata
+from harness_foundry.domain.events import EVENT_MODELS
 from harness_foundry.domain.evidence import Evidence
 from harness_foundry.domain.readiness import READINESS_MODELS
 from harness_foundry.domain.recertification import RECERTIFICATION_MODELS
@@ -19,6 +20,7 @@ from harness_foundry.domain.unknowns import UNKNOWN_MODELS
 DEFAULT_MODELS: dict[str, type[BaseModel]] = {
     "asset-metadata": AssetMetadata,
     "evidence": Evidence,
+    **EVENT_MODELS,
     **ASSET_MODELS,
     **UNKNOWN_MODELS,
     **READINESS_MODELS,

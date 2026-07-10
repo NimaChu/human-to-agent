@@ -1,0 +1,106 @@
+{
+  "$defs": {
+    "StoredEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "minLength": 1,
+          "title": "Actor",
+          "type": "string"
+        },
+        "after_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "After Digest",
+          "type": "string"
+        },
+        "asset_refs": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Asset Refs",
+          "type": "array"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "before_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Before Digest",
+          "type": "string"
+        },
+        "command": {
+          "minLength": 1,
+          "title": "Command",
+          "type": "string"
+        },
+        "digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Digest",
+          "type": "string"
+        },
+        "event_id": {
+          "minLength": 1,
+          "title": "Event Id",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "title": "Payload",
+          "type": "object"
+        },
+        "prev_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prev Digest",
+          "type": "string"
+        },
+        "result": {
+          "minLength": 1,
+          "title": "Result",
+          "type": "string"
+        },
+        "sequence": {
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "workspace_id",
+        "at",
+        "actor",
+        "command",
+        "before_digest",
+        "after_digest",
+        "result",
+        "sequence",
+        "prev_digest",
+        "digest"
+      ],
+      "title": "StoredEvent",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "events": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StoredEvent"
+      },
+      "title": "Events",
+      "type": "array"
+    }
+  },
+  "title": "ReplayResult",
+  "type": "object"
+}

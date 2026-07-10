@@ -1,0 +1,71 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "actor": {
+      "minLength": 1,
+      "title": "Actor",
+      "type": "string"
+    },
+    "after_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "After Digest",
+      "type": "string"
+    },
+    "asset_refs": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Asset Refs",
+      "type": "array"
+    },
+    "at": {
+      "format": "date-time",
+      "title": "At",
+      "type": "string"
+    },
+    "before_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Before Digest",
+      "type": "string"
+    },
+    "command": {
+      "minLength": 1,
+      "title": "Command",
+      "type": "string"
+    },
+    "event_id": {
+      "minLength": 1,
+      "title": "Event Id",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "result": {
+      "minLength": 1,
+      "title": "Result",
+      "type": "string"
+    },
+    "workspace_id": {
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_id",
+    "workspace_id",
+    "at",
+    "actor",
+    "command",
+    "before_digest",
+    "after_digest",
+    "result"
+  ],
+  "title": "EventDraft",
+  "type": "object"
+}

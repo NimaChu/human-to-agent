@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "errors": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "event_count": {
+      "minimum": 0,
+      "title": "Event Count",
+      "type": "integer"
+    },
+    "last_digest": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Digest"
+    },
+    "valid": {
+      "title": "Valid",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "valid",
+    "event_count"
+  ],
+  "title": "EventVerification",
+  "type": "object"
+}
