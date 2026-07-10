@@ -1,0 +1,6 @@
+schema_version: "1"
+agents:
+  - practitioner-guide
+  - asset-maintainer
+  - maturity-reviewer
+  - independent-verifier

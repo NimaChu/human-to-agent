@@ -1,0 +1,4 @@
+name = "independent-verifier"
+source = "../../agents/independent-verifier.md"
+description = "Thin adapter; follow the source role and hf verification."
+

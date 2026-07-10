@@ -1,0 +1,25 @@
+schema_version: "1"
+skills:
+  - work-reproduction
+  - task-contract
+  - unknown-evidence
+  - skill-candidates
+  - case-evaluation
+  - harness-composition
+  - stage-review
+  - loop-readiness
+  - deviation-log
+  - independent-reproduction
+  - workspace-maintenance
+source_digests:
+  case-evaluation: 98487b78daff8a249f0b8d7ff2ddaae8e57c38d574f392a79a4e04197311dc4a
+  deviation-log: bf446931e7faee4bdc25ea66245be35149e0adb1130eeccb4e67f6814e5edcfa
+  harness-composition: 10c623667b2054e992ad846bc9ac8ae7bb3863479e47a4e867180dbcf0a0eb6d
+  independent-reproduction: b7dd0e35bde4ebb2757c689769546e50f2a19c26b65806e194e62d86c7080ab7
+  loop-readiness: e614f03f1e0e2f1c716bd9939a1871e1aa947766f1581ea3d194ce745f0dd8f0
+  skill-candidates: b2ba91d9725330686d175373c9c20296c2aa2cc20e2d9c1c18c3d8212a06090a
+  stage-review: 4da8a18912acb64833c6e412ad10a5fc9bf781b92435403b4311f903e0a2dc98
+  task-contract: 00c48d825a40989c77392d20ee1f3f446f79130ebe34c59406e16f74cc0ace33
+  unknown-evidence: 5b009550ab5a90627efb50325aeee7c23903a5c92a18b625a8dbda3bdfcbd3bf
+  work-reproduction: 2d6859e963fbf024cabb17ea459127c358d80f3df3475db1e8c75cc4c1caf7fc
+  workspace-maintenance: f91660bf50a2dcbbc247df750474ee93fe937b98f2917402d49c9e1fb910c437

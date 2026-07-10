@@ -1,0 +1,4 @@
+name = "maturity-reviewer"
+source = "../../agents/maturity-reviewer.md"
+description = "Thin adapter; follow the source role and hf verification."
+
