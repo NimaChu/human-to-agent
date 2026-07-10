@@ -1,0 +1,177 @@
+{
+  "$defs": {
+    "ActionClass": {
+      "enum": [
+        "read_only",
+        "internal_write",
+        "external_send",
+        "irreversible",
+        "forbidden"
+      ],
+      "title": "ActionClass",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "action_class": {
+      "$ref": "#/$defs/ActionClass"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "executable_adapter": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Executable Adapter"
+    },
+    "human_gate_ref": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Gate Ref"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "idempotent": {
+      "title": "Idempotent",
+      "type": "boolean"
+    },
+    "input_schema_ref": {
+      "minLength": 1,
+      "title": "Input Schema Ref",
+      "type": "string"
+    },
+    "links": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Links",
+      "type": "array"
+    },
+    "name": {
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "output_schema_ref": {
+      "minLength": 1,
+      "title": "Output Schema Ref",
+      "type": "string"
+    },
+    "owners": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Owners",
+      "type": "array"
+    },
+    "provenance": {
+      "minLength": 1,
+      "title": "Provenance",
+      "type": "string"
+    },
+    "required_permissions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Required Permissions",
+      "type": "array"
+    },
+    "retry_semantics": {
+      "minLength": 1,
+      "title": "Retry Semantics",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "side_effects": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Side Effects",
+      "type": "array"
+    },
+    "status": {
+      "minLength": 1,
+      "title": "Status",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "workspace_id": {
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "workspace_id",
+    "revision",
+    "status",
+    "owners",
+    "created_at",
+    "updated_at",
+    "provenance",
+    "name",
+    "input_schema_ref",
+    "output_schema_ref",
+    "action_class",
+    "required_permissions",
+    "side_effects",
+    "idempotent",
+    "retry_semantics"
+  ],
+  "title": "ToolSpec",
+  "type": "object"
+}

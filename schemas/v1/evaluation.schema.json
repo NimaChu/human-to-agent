@@ -1,0 +1,134 @@
+{
+  "$defs": {
+    "EvaluationResult": {
+      "enum": [
+        "passed",
+        "failed",
+        "indeterminate"
+      ],
+      "title": "EvaluationResult",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "actual_output_ref": {
+      "minLength": 1,
+      "title": "Actual Output Ref",
+      "type": "string"
+    },
+    "case_ref": {
+      "minLength": 1,
+      "title": "Case Ref",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "criteria_results": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Criteria Results",
+      "type": "array"
+    },
+    "evaluator_id": {
+      "minLength": 1,
+      "title": "Evaluator Id",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "links": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Links",
+      "type": "array"
+    },
+    "owners": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Owners",
+      "type": "array"
+    },
+    "provenance": {
+      "minLength": 1,
+      "title": "Provenance",
+      "type": "string"
+    },
+    "result": {
+      "$ref": "#/$defs/EvaluationResult"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "minLength": 1,
+      "title": "Status",
+      "type": "string"
+    },
+    "subject_ref": {
+      "minLength": 1,
+      "title": "Subject Ref",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "workspace_id": {
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "workspace_id",
+    "revision",
+    "status",
+    "owners",
+    "created_at",
+    "updated_at",
+    "provenance",
+    "subject_ref",
+    "case_ref",
+    "evaluator_id",
+    "result",
+    "actual_output_ref",
+    "criteria_results"
+  ],
+  "title": "EvaluationRecord",
+  "type": "object"
+}

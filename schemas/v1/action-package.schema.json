@@ -1,0 +1,143 @@
+{
+  "$defs": {
+    "ActionClass": {
+      "enum": [
+        "read_only",
+        "internal_write",
+        "external_send",
+        "irreversible",
+        "forbidden"
+      ],
+      "title": "ActionClass",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "action_class": {
+      "$ref": "#/$defs/ActionClass"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "executed": {
+      "const": false,
+      "default": false,
+      "title": "Executed",
+      "type": "boolean"
+    },
+    "expected_side_effects": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Expected Side Effects",
+      "type": "array"
+    },
+    "human_gate_ref": {
+      "minLength": 1,
+      "title": "Human Gate Ref",
+      "type": "string"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "idempotency_key": {
+      "minLength": 1,
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "inputs": {
+      "additionalProperties": true,
+      "minProperties": 1,
+      "title": "Inputs",
+      "type": "object"
+    },
+    "links": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Links",
+      "type": "array"
+    },
+    "owners": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Owners",
+      "type": "array"
+    },
+    "provenance": {
+      "minLength": 1,
+      "title": "Provenance",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "minLength": 1,
+      "title": "Status",
+      "type": "string"
+    },
+    "tool_ref": {
+      "minLength": 1,
+      "title": "Tool Ref",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "workspace_id": {
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "workspace_id",
+    "revision",
+    "status",
+    "owners",
+    "created_at",
+    "updated_at",
+    "provenance",
+    "tool_ref",
+    "action_class",
+    "inputs",
+    "expected_side_effects",
+    "idempotency_key",
+    "human_gate_ref"
+  ],
+  "title": "ActionPackage",
+  "type": "object"
+}

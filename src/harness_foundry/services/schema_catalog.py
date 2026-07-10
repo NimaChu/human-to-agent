@@ -8,12 +8,14 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from harness_foundry.domain.assets import ASSET_MODELS
 from harness_foundry.domain.common import AssetMetadata
 from harness_foundry.domain.evidence import Evidence
 
 DEFAULT_MODELS: dict[str, type[BaseModel]] = {
     "asset-metadata": AssetMetadata,
     "evidence": Evidence,
+    **ASSET_MODELS,
 }
 
 

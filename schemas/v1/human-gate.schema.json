@@ -1,0 +1,139 @@
+{
+  "$defs": {
+    "ActionClass": {
+      "enum": [
+        "read_only",
+        "internal_write",
+        "external_send",
+        "irreversible",
+        "forbidden"
+      ],
+      "title": "ActionClass",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "action_classes": {
+      "items": {
+        "$ref": "#/$defs/ActionClass"
+      },
+      "minItems": 1,
+      "title": "Action Classes",
+      "type": "array"
+    },
+    "approver_roles": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Approver Roles",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "links": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Links",
+      "type": "array"
+    },
+    "owners": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Owners",
+      "type": "array"
+    },
+    "provenance": {
+      "minLength": 1,
+      "title": "Provenance",
+      "type": "string"
+    },
+    "recovery_entry": {
+      "minLength": 1,
+      "title": "Recovery Entry",
+      "type": "string"
+    },
+    "rejection_behavior": {
+      "minLength": 1,
+      "title": "Rejection Behavior",
+      "type": "string"
+    },
+    "required_evidence": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Required Evidence",
+      "type": "array"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "minLength": 1,
+      "title": "Status",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "workspace_id": {
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "workspace_id",
+    "revision",
+    "status",
+    "owners",
+    "created_at",
+    "updated_at",
+    "provenance",
+    "action_classes",
+    "approver_roles",
+    "required_evidence",
+    "rejection_behavior",
+    "recovery_entry"
+  ],
+  "title": "HumanGateSpec",
+  "type": "object"
+}
