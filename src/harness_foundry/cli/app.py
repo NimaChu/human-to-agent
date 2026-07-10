@@ -11,8 +11,10 @@ from harness_foundry.cli.app_types import OutputFormat
 from harness_foundry.cli.errors import FoundryError
 from harness_foundry.cli.output import emit
 from harness_foundry.cli.result import CommandResult
+from harness_foundry.domain.builds import BuildMode
 from harness_foundry.domain.events import EventScope
 from harness_foundry.repositories.events import EventStore
+from harness_foundry.services.build import Builder
 from harness_foundry.services.doctor import inspect_workspace
 from harness_foundry.services.validation import validate_root
 from harness_foundry.services.workspaces import (
@@ -291,6 +293,39 @@ def migrate_command(
 ) -> None:
     """Run sequential, recoverable Schema migrations."""
     _run("migrate", output_format, lambda: _pending("migrate", root.resolve(), workspace, dry_run))
+
+
+@app.command("build")
+def build_command(
+    output_format: FormatOption = OutputFormat.text,
+    root: RootOption = Path("."),
+    workspace: WorkspaceOption = "workspace",
+    draft: Annotated[bool, typer.Option("--draft")] = False,
+    release: Annotated[bool, typer.Option("--release")] = False,
+    output: Annotated[Path | None, typer.Option("--output")] = None,
+    dry_run: DryRunOption = False,
+) -> None:
+    """Build a deterministic draft or gate-checked release distribution."""
+
+    def operation() -> CommandResult:
+        if draft == release:
+            raise FoundryError("usage", "build.mode", "Choose exactly one of --draft or --release.")
+        mode = BuildMode.draft if draft else BuildMode.release
+        try:
+            builder = Builder(root.resolve())
+            result = builder.build(builder.plan(workspace, mode, output, dry_run=dry_run))
+        except ValueError as error:
+            raise FoundryError("gate", "build.release_gate", str(error)) from error
+        return CommandResult(
+            command="build",
+            status="dry-run" if dry_run else "ok",
+            changed_files=[]
+            if dry_run
+            else [str(result.path / item) for item in result.changed_files],
+            next_actions=[f"mode={mode.value}", f"source_digest={result.source_digest}"],
+        )
+
+    _run("build", output_format, operation)
 
 
 def _event_scope(root: Path, workspace: str) -> EventScope:

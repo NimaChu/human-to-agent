@@ -1,0 +1,34 @@
+schema_version: "1"
+template_version: "1"
+directories:
+  - TASK-CONTRACT
+  - SKILLS
+  - CASES
+  - EVALS
+  - WORKFLOW
+  - CONTEXT
+  - STATE
+  - EVALUATORS
+  - POLICIES
+  - HUMAN-GATES
+  - EXCEPTIONS
+  - UNKNOWNS
+  - LOOP-READINESS
+  - RUNS
+  - EVIDENCE
+  - .foundry/checkpoints
+templates:
+  - workspace.yaml
+  - README.md
+  - TASK-CONTRACT/contract.yaml
+  - TASK-CONTRACT/narrative.md
+  - WORKFLOW/workflow.yaml
+  - STATE/state-model.yaml
+  - POLICIES/policies.yaml
+  - HUMAN-GATES/human-gates.yaml
+  - EXCEPTIONS/exceptions.yaml
+  - LOOP-READINESS/assessment.yaml
+  - CHANGELOG.md
+state_files:
+  - .foundry/artifact-index.yaml
+  - .foundry/events.jsonl

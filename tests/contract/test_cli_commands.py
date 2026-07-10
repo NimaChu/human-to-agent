@@ -27,6 +27,7 @@ COMMANDS = (
     ("events", "verify"),
     ("events", "replay"),
     ("doctor",),
+    ("build",),
 )
 
 
@@ -57,6 +58,7 @@ def test_schema_failure_maps_to_exit_3(tmp_path) -> None:
         ("stage", "reopen"),
         ("record-change",),
         ("migrate",),
+        ("build",),
     ),
 )
 def test_state_changing_commands_accept_dry_run(command: tuple[str, ...]) -> None:
