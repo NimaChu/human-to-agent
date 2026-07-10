@@ -22,4 +22,3 @@ def test_runtime_dependencies_are_offline_safe() -> None:
     assert "requests" not in text
     assert "httpx" not in text
     assert 'requires-python = ">=3.11"' in text
-
