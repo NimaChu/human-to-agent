@@ -1,0 +1,93 @@
+{
+  "$defs": {
+    "AutonomyLevel": {
+      "enum": [
+        "h0",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5"
+      ],
+      "title": "AutonomyLevel",
+      "type": "string"
+    },
+    "ReadinessDimension": {
+      "enum": [
+        "goal",
+        "state",
+        "action",
+        "evaluator",
+        "stop",
+        "budget",
+        "retry",
+        "escalation",
+        "recovery",
+        "observability",
+        "trigger_cadence",
+        "discovery_triage",
+        "concurrency_isolation",
+        "tool_connector_availability",
+        "independent_verifier",
+        "version_drift_recertification"
+      ],
+      "title": "ReadinessDimension",
+      "type": "string"
+    },
+    "ReadinessResult": {
+      "enum": [
+        "not_ready",
+        "conditional_ready",
+        "controlled_ready",
+        "bounded_ready",
+        "production_candidate"
+      ],
+      "title": "ReadinessResult",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "autonomy_ceiling": {
+      "additionalProperties": {
+        "$ref": "#/$defs/AutonomyLevel"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/ReadinessResult"
+      },
+      "title": "Autonomy Ceiling",
+      "type": "object"
+    },
+    "production_evidence_minimum": {
+      "minimum": 1,
+      "title": "Production Evidence Minimum",
+      "type": "integer"
+    },
+    "requirements": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/ReadinessDimension"
+        },
+        "type": "array"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/ReadinessResult"
+      },
+      "title": "Requirements",
+      "type": "object"
+    },
+    "version": {
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "version",
+    "requirements",
+    "autonomy_ceiling",
+    "production_evidence_minimum"
+  ],
+  "title": "ReadinessPolicy",
+  "type": "object"
+}

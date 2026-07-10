@@ -1,0 +1,191 @@
+{
+  "$defs": {
+    "AutonomyLevel": {
+      "enum": [
+        "h0",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5"
+      ],
+      "title": "AutonomyLevel",
+      "type": "string"
+    },
+    "DimensionAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "$ref": "#/$defs/ReadinessDimension"
+        },
+        "evidence_refs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "gaps": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Gaps",
+          "type": "array"
+        },
+        "next_action": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Action"
+        },
+        "risks": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/DimensionStatus"
+        }
+      },
+      "required": [
+        "dimension",
+        "status",
+        "evidence_refs",
+        "gaps",
+        "risks"
+      ],
+      "title": "DimensionAssessment",
+      "type": "object"
+    },
+    "DimensionStatus": {
+      "enum": [
+        "satisfied",
+        "gap",
+        "indeterminate"
+      ],
+      "title": "DimensionStatus",
+      "type": "string"
+    },
+    "ReadinessDimension": {
+      "enum": [
+        "goal",
+        "state",
+        "action",
+        "evaluator",
+        "stop",
+        "budget",
+        "retry",
+        "escalation",
+        "recovery",
+        "observability",
+        "trigger_cadence",
+        "discovery_triage",
+        "concurrency_isolation",
+        "tool_connector_availability",
+        "independent_verifier",
+        "version_drift_recertification"
+      ],
+      "title": "ReadinessDimension",
+      "type": "string"
+    },
+    "ReadinessResult": {
+      "enum": [
+        "not_ready",
+        "conditional_ready",
+        "controlled_ready",
+        "bounded_ready",
+        "production_candidate"
+      ],
+      "title": "ReadinessResult",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "approved_autonomy": {
+      "default": null,
+      "title": "Approved Autonomy",
+      "type": "null"
+    },
+    "assessment_id": {
+      "minLength": 1,
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "dimensions": {
+      "additionalProperties": {
+        "$ref": "#/$defs/DimensionAssessment"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/ReadinessDimension"
+      },
+      "title": "Dimensions",
+      "type": "object"
+    },
+    "evidence_gaps": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Evidence Gaps",
+      "type": "array"
+    },
+    "next_actions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Next Actions",
+      "type": "array"
+    },
+    "policy_version": {
+      "minLength": 1,
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "recommended_ceiling": {
+      "$ref": "#/$defs/AutonomyLevel"
+    },
+    "result": {
+      "$ref": "#/$defs/ReadinessResult"
+    },
+    "risks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Risks",
+      "type": "array"
+    },
+    "workspace_id": {
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "workspace_id",
+    "policy_version",
+    "result",
+    "dimensions",
+    "evidence_gaps",
+    "risks",
+    "next_actions",
+    "recommended_ceiling"
+  ],
+  "title": "ReadinessAssessment",
+  "type": "object"
+}
