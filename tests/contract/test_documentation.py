@@ -28,9 +28,20 @@ def test_agent_guidance_has_boundaries_and_verification() -> None:
 def test_agent_guidance_defaults_new_sessions_to_guided_onboarding() -> None:
     text = (ROOT / "AGENTS.md").read_text().lower()
     assert "new project conversation" in text
-    assert "one necessary question" in text
+    assert "at most one necessary question" in text
     assert "do not require the user to run" in text
     assert "explicitly requests" in text
+
+
+def test_guided_onboarding_guidance_defines_fast_path_and_canonical_handoff() -> None:
+    for relative in ("AGENTS.md", "agents/practitioner-guide.md"):
+        text = (ROOT / relative).read_text().lower()
+        assert "skip already-known states" in text
+        assert "without manufacturing another question" in text
+        assert "`hta workspace new`" in text
+        assert "`hta capture record`" in text
+        assert "every provisional unknown" in text
+        assert "normative" in text
 
 
 def test_readme_explains_conversational_entrypoint() -> None:

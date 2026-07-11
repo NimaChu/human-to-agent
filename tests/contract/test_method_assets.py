@@ -83,10 +83,24 @@ def test_guided_session_skill_defines_safe_discovery_protocol() -> None:
         "workspace_active",
     ):
         assert state in text
-    assert "one necessary question" in text
+    assert "at most one necessary question" in text
     assert "unknown" in text
     assert "explicitly requests" in text
     assert "concrete goal" in text and "real input" in text
+
+
+def test_guided_session_contract_defines_fast_path_and_canonical_handoff() -> None:
+    for relative in (
+        "skills/_shared/method-contract.md",
+        "skills/guided-session-onboarding/SKILL.md",
+    ):
+        text = (ROOT / relative).read_text().lower()
+        assert "skip already-known states" in text
+        assert "without manufacturing another question" in text
+        assert "`hta workspace new`" in text
+        assert "`hta capture record`" in text
+        assert "every provisional unknown" in text
+        assert "normative" in text
 
 
 def test_agents_are_separated_and_verifier_is_read_only() -> None:

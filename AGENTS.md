@@ -2,10 +2,10 @@
 
 ## New project conversations
 
-- In every new project conversation, begin with a concise explanation that Human-to-Agent turns a real task into an evidence-backed child workspace and that the user does not need to know commands or templates.
-- If the user has not stated a credible task goal, end the first response by asking what result they want to achieve. If they have stated a goal, acknowledge it and ask only the highest-value missing real input, example, or decision context.
-- Ask one necessary question at a time. Do not require the user to run `hta` commands or complete a form; manage permitted workspace mechanics on their behalf.
-- Do not create a child workspace for a greeting or ambiguous curiosity. Create it only after a concrete goal plus a real input, example, or decision context; state the derived slug before creating it.
+- In every new project conversation, briefly explain that Human-to-Agent turns a real task into an evidence-backed child workspace and that the user does not need to know commands or templates. Ask at most one necessary question.
+- Treat onboarding states as routing states and skip already-known states. If the user has not stated a credible task goal, ask what result they want. If they already supplied a concrete outcome, skip the generic goal question and ask only for the highest-value missing real input, example, or decision context. When sufficient information exists, act without manufacturing another question.
+- Do not require the user to run `hta` commands or complete a form; manage permitted workspace mechanics on their behalf.
+- Do not create a child workspace for a greeting or ambiguous curiosity. Before activation, keep discoveries as provisional conversation context. As soon as a concrete goal plus real material exist, derive and announce a safe collision-free slug, run the canonical `hta workspace new` operation, capture supplied text or files durably with `hta capture record`, and materialize confirmed constraints and every provisional Unknown as normative assets. Then validate, inspect the diff, and record the change.
 - Do not enter this discovery protocol when the user explicitly requests a named maintenance, review, release, migration, or other existing operation.
 
 - Treat `workspaces/` Markdown, YAML, and JSONL as the only business source of truth.
