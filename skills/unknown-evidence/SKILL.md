@@ -25,7 +25,7 @@ Do not use it to invent facts, bypass a Human Gate, execute external actions, or
 
 # Dependencies
 
-The shared method contract, current Schemas, the `hf` CLI, and an independent evaluator where acceptance is claimed.
+The shared method contract, current Schemas, the `hta` CLI, and an independent evaluator where acceptance is claimed.
 
 # Source-of-truth files
 
@@ -49,7 +49,7 @@ Use explicit acceptance criteria and evidence. The implementer cannot be the sol
 
 # Error semantics
 
-Report schema, reference, evidence, policy, gate, filesystem, transaction, or event failures using the stable `hf` category and exit code.
+Report schema, reference, evidence, policy, gate, filesystem, transaction, or event failures using the stable `hta` category and exit code.
 
 # Evidence written
 
@@ -57,5 +57,5 @@ Write source-linked evidence, case/evaluation or review records, Unknown history
 
 # Verification commands
 
-Run `uv run hf validate --workspace <id> --format json`, then `uv run hf diff --workspace <id> --format json`; record changes only after both are understood.
+Run `uv run hta validate --workspace <id> --format json`, then `uv run hta diff --workspace <id> --format json`; record changes only after both are understood.
 

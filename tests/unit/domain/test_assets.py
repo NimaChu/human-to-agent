@@ -4,7 +4,7 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from harness_foundry.domain.assets import (
+from human_to_agent.domain.assets import (
     ActionClass,
     ActionPackage,
     CaseKind,

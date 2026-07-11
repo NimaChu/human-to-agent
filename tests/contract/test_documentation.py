@@ -7,13 +7,13 @@ def test_readme_has_exact_bootstrap_and_five_stage_happy_path() -> None:
     text = (ROOT / "README.md").read_text()
     for command in (
         "uv sync --frozen --all-groups",
-        "uv run hf init",
-        "uv run hf workspace new",
-        "uv run hf capture record",
-        "uv run hf stage assess",
-        "uv run hf stage advance",
-        "uv run hf readiness assess",
-        "uv run hf build --workspace harness-foundry-pilot --release",
+        "uv run hta init",
+        "uv run hta workspace new",
+        "uv run hta capture record",
+        "uv run hta stage assess",
+        "uv run hta stage advance",
+        "uv run hta readiness assess",
+        "uv run hta build --workspace human-to-agent-pilot --release",
     ):
         assert command in text
     assert "Draft versus release" in text and "Exit codes" in text
@@ -22,7 +22,7 @@ def test_readme_has_exact_bootstrap_and_five_stage_happy_path() -> None:
 def test_agent_guidance_has_boundaries_and_verification() -> None:
     text = (ROOT / "AGENTS.md").read_text()
     assert "workspaces/" in text and "dist/" in text and "Human Gate" in text
-    assert "uv run hf validate" in text and "uv run pytest" in text
+    assert "uv run hta validate" in text and "uv run pytest" in text
 
 
 def test_runbooks_cover_failure_states() -> None:

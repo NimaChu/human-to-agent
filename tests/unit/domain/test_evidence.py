@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 import pytest
 from pydantic import ValidationError
 
-from harness_foundry.domain.evidence import Evidence, EvidenceBasis, EvidenceType
+from human_to_agent.domain.evidence import Evidence, EvidenceBasis, EvidenceType
 
 BASE = {
     "schema_version": "1",
@@ -25,7 +25,7 @@ BASE = {
     "content_summary": "The PR requires evidence-backed Unknown closure.",
     "claim": "Unknown closure requires evidence",
     "basis": EvidenceBasis.observed,
-    "applicability_scope": ("Harness Foundry workspaces",),
+    "applicability_scope": ("Human to Agent workspaces",),
     "validity_conditions": ("PR remains normative",),
     "invalidation_conditions": ("The Owner supersedes PR §10.4",),
     "content_sha256": "0" * 64,

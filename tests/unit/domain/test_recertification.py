@@ -1,11 +1,11 @@
-from harness_foundry.domain.recertification import (
+from human_to_agent.domain.recertification import (
     ChangeKind,
     MaterialChange,
     VersionVector,
     default_recertification_catalog,
     plan_recertification,
 )
-from harness_foundry.domain.references import ReferenceGraph
+from human_to_agent.domain.references import ReferenceGraph
 
 
 def graph() -> ReferenceGraph:

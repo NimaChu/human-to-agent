@@ -1,11 +1,11 @@
 from datetime import UTC, datetime
 
-from harness_foundry.domain.assets import (
+from human_to_agent.domain.assets import (
     ActionClass,
     HumanGateDecisionKind,
     ToolSpec,
 )
-from harness_foundry.services.actions import HumanActionService
+from human_to_agent.services.actions import HumanActionService
 
 NOW = datetime(2026, 7, 10, tzinfo=UTC)
 

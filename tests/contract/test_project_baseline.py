@@ -7,7 +7,7 @@ def test_required_root_layout_exists() -> None:
     required = {
         "README.md",
         "AGENTS.md",
-        "foundry.yaml",
+        "human-to-agent.yaml",
         "pyproject.toml",
         "PR",
         "docs",

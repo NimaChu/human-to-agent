@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from harness_foundry.cli.app import app
+from human_to_agent.cli.app import app
 
 runner = CliRunner()
 COMMANDS = (
@@ -55,7 +55,7 @@ def test_workspace_status_is_a_noninteractive_maturity_dashboard() -> None:
             "--root",
             str(root),
             "--workspace",
-            "harness-foundry-pilot",
+            "human-to-agent-pilot",
             "--format",
             "json",
         ],

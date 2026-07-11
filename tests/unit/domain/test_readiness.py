@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from harness_foundry.domain.readiness import (
+from human_to_agent.domain.readiness import (
     AutonomyLevel,
     DimensionAssessment,
     ReadinessDimension,

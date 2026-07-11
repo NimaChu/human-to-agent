@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from harness_foundry.domain.builds import BuildMode
-from harness_foundry.services.build import Builder
-from harness_foundry.services.distribution_verify import verify_distribution
+from human_to_agent.domain.builds import BuildMode
+from human_to_agent.services.build import Builder
+from human_to_agent.services.distribution_verify import verify_distribution
 
 
 def digest_tree(path: Path) -> str:

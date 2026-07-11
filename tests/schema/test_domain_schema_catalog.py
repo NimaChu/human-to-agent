@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from harness_foundry.domain.common import AssetMetadata
-from harness_foundry.domain.evidence import Evidence
-from harness_foundry.services.schema_catalog import build_schema_documents
+from human_to_agent.domain.common import AssetMetadata
+from human_to_agent.domain.evidence import Evidence
+from human_to_agent.services.schema_catalog import build_schema_documents
 
 ROOT = Path(__file__).parents[2]
 

@@ -6,23 +6,23 @@ from typing import cast
 import yaml
 from typer.testing import CliRunner
 
-from harness_foundry.cli.app import app
-from harness_foundry.domain.assets import CaseRecord, RunRecord, TaskContract
-from harness_foundry.domain.builds import BuildMode
-from harness_foundry.domain.readiness import ReadinessAssessment, ReadinessResult
-from harness_foundry.domain.recertification import (
+from human_to_agent.cli.app import app
+from human_to_agent.domain.assets import CaseRecord, RunRecord, TaskContract
+from human_to_agent.domain.builds import BuildMode
+from human_to_agent.domain.readiness import ReadinessAssessment, ReadinessResult
+from human_to_agent.domain.recertification import (
     ChangeKind,
     MaterialChange,
     default_recertification_catalog,
     plan_recertification,
 )
-from harness_foundry.domain.references import ReferenceGraph
-from harness_foundry.repositories.filesystem import SourceRepository
-from harness_foundry.services.build import Builder
-from harness_foundry.services.validation import validate_root
+from human_to_agent.domain.references import ReferenceGraph
+from human_to_agent.repositories.filesystem import SourceRepository
+from human_to_agent.services.build import Builder
+from human_to_agent.services.validation import validate_root
 
 ROOT = Path(__file__).parents[2]
-PILOT = ROOT / "workspaces/harness-foundry-pilot"
+PILOT = ROOT / "workspaces/human-to-agent-pilot"
 RUNNER = CliRunner()
 
 
@@ -43,13 +43,13 @@ def tree_digest(path: Path) -> str:
 def test_pilot_contract_uses_exact_goal() -> None:
     contract = TaskContract.model_validate(load(PILOT / "TASK-CONTRACT/contract.yaml"))
     assert contract.business_goal == (
-        "Transform the supplied Harness Foundry product requirement and three theory supplements "
+        "Transform the supplied Human to Agent product requirement and three theory supplements "
         "into an executable, verifiable, transferable mother workspace."
     )
 
 
 def test_pilot_validates_from_normative_files() -> None:
-    assert validate_root(ROOT, "harness-foundry-pilot").exit_code == 0
+    assert validate_root(ROOT, "human-to-agent-pilot").exit_code == 0
 
 
 def test_pilot_has_normal_boundary_failure_cases() -> None:
@@ -62,7 +62,7 @@ def test_pilot_is_independently_reproduced() -> None:
     assert run.actor_role == "independent_verifier"
     assert run.actor_id not in {"creator", "maintainer"}
     digest = sha256()
-    for source in SourceRepository(ROOT).snapshot("harness-foundry-pilot").files:
+    for source in SourceRepository(ROOT).snapshot("human-to-agent-pilot").files:
         if source.path.startswith("RUNS/"):
             continue
         digest.update(source.path.encode())
@@ -81,16 +81,16 @@ def test_pilot_is_conditionally_ready_or_better() -> None:
 def test_pilot_release_is_byte_stable(tmp_path: Path) -> None:
     builder = Builder(ROOT)
     first = builder.build(
-        builder.plan("harness-foundry-pilot", BuildMode.release, tmp_path / "one")
+        builder.plan("human-to-agent-pilot", BuildMode.release, tmp_path / "one")
     )
     second = builder.build(
-        builder.plan("harness-foundry-pilot", BuildMode.release, tmp_path / "two")
+        builder.plan("human-to-agent-pilot", BuildMode.release, tmp_path / "two")
     )
     digest = tree_digest(first.path)
     assert digest == tree_digest(second.path)
     assert (
         digest
-        == (ROOT / "tests/golden/harness-foundry-pilot/tree.sha256")
+        == (ROOT / "tests/golden/human-to-agent-pilot/tree.sha256")
         .read_text(encoding="utf-8")
         .strip()
     )
@@ -207,10 +207,10 @@ def test_non_creator_can_run_validate_and_maintain_from_documented_entrypoint(
     tmp_path: Path,
 ) -> None:
     result = RUNNER.invoke(
-        app, ["validate", "--root", str(ROOT), "-w", "harness-foundry-pilot", "--format", "json"]
+        app, ["validate", "--root", str(ROOT), "-w", "human-to-agent-pilot", "--format", "json"]
     )
     assert result.exit_code == 0
     build = Builder(ROOT).build(
-        Builder(ROOT).plan("harness-foundry-pilot", BuildMode.draft, tmp_path / "review")
+        Builder(ROOT).plan("human-to-agent-pilot", BuildMode.draft, tmp_path / "review")
     )
     assert (build.path / "README.md").is_file()

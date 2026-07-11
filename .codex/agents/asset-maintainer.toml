@@ -1,4 +1,4 @@
 name = "asset-maintainer"
 source = "../../agents/asset-maintainer.md"
-description = "Thin adapter; follow the source role and hf verification."
+description = "Thin adapter; follow the source role and hta verification."
 

@@ -2,9 +2,9 @@ from datetime import UTC, datetime
 
 import pytest
 
-from harness_foundry.domain.assets import CaseKind
-from harness_foundry.domain.readiness import ReadinessResult
-from harness_foundry.domain.stages import (
+from human_to_agent.domain.assets import CaseKind
+from human_to_agent.domain.readiness import ReadinessResult
+from human_to_agent.domain.stages import (
     AssessmentFact,
     AssessmentSnapshot,
     GateStatus,

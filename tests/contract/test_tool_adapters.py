@@ -3,7 +3,7 @@ from pathlib import Path
 
 import yaml
 
-from harness_foundry.services.adapters import verify_adapter_sources
+from human_to_agent.services.adapters import verify_adapter_sources
 
 ROOT = Path(__file__).parents[2]
 
@@ -18,7 +18,7 @@ def test_each_source_skill_has_thin_codex_and_opencode_adapter() -> None:
         ):
             text = adapter.read_text()
             assert f"skills/{name}/SKILL.md" in text
-            assert "hf validate" in text
+            assert "hta validate" in text
             assert len(text.splitlines()) <= 20
             assert source.is_file()
 
@@ -38,9 +38,9 @@ def test_adapter_configs_and_commands_are_discoverable() -> None:
     assert (ROOT / ".codex/config.toml").is_file()
     assert (ROOT / "opencode.json").is_file()
     assert {path.name for path in (ROOT / ".opencode/commands").glob("*.md")} == {
-        "hf-workspace.md",
-        "hf-review.md",
-        "hf-build.md",
+        "hta-workspace.md",
+        "hta-review.md",
+        "hta-build.md",
     }
 
 

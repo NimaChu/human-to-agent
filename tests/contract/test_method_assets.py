@@ -50,7 +50,7 @@ def test_all_method_skills_follow_contract() -> None:
         assert re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name)
         assert 20 <= len(metadata["description"]) <= 240
         assert {line for line in text.splitlines() if line.startswith("# ")} >= SECTIONS
-        assert "hf validate" in text and "evidence" in text.lower()
+        assert "hta validate" in text and "evidence" in text.lower()
 
 
 def test_unknown_skill_contains_all_discovery_cards() -> None:

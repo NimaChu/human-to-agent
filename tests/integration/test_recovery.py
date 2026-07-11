@@ -3,16 +3,16 @@ from pathlib import Path
 
 import pytest
 
-from harness_foundry.domain.events import EventDraft, EventScope
-from harness_foundry.repositories.events import EventStore
-from harness_foundry.repositories.transactions import (
+from human_to_agent.domain.events import EventDraft, EventScope
+from human_to_agent.repositories.events import EventStore
+from human_to_agent.repositories.transactions import (
     FileMutation,
     InjectedCrash,
     MutationPlan,
     TransactionManager,
     TransactionPhase,
 )
-from harness_foundry.services.recovery import RecoveryService
+from human_to_agent.services.recovery import RecoveryService
 
 NOW = datetime(2026, 7, 10, tzinfo=UTC)
 

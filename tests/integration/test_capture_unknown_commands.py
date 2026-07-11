@@ -3,9 +3,9 @@ from pathlib import Path
 import yaml
 from typer.testing import CliRunner
 
-from harness_foundry.cli.app import app
-from harness_foundry.domain.events import EventScope
-from harness_foundry.repositories.events import EventStore
+from human_to_agent.cli.app import app
+from human_to_agent.domain.events import EventScope
+from human_to_agent.repositories.events import EventStore
 
 RUNNER = CliRunner()
 

@@ -2,8 +2,8 @@ from datetime import UTC, datetime
 
 import pytest
 
-from harness_foundry.domain.evidence import Evidence, EvidenceBasis, EvidenceType
-from harness_foundry.domain.unknowns import (
+from human_to_agent.domain.evidence import Evidence, EvidenceBasis, EvidenceType
+from human_to_agent.domain.unknowns import (
     Unknown,
     UnknownCategory,
     UnknownClosure,

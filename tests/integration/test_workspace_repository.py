@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from harness_foundry.repositories.filesystem import SourceRepository, tree_digest
+from human_to_agent.repositories.filesystem import SourceRepository, tree_digest
 
 
 def make_workspace(root: Path) -> Path:

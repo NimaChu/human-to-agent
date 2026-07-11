@@ -2,8 +2,8 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from harness_foundry.domain.events import EventDraft, EventScope
-from harness_foundry.repositories.events import EventStore
+from human_to_agent.domain.events import EventDraft, EventScope
+from human_to_agent.repositories.events import EventStore
 
 NOW = datetime(2026, 7, 10, tzinfo=UTC)
 

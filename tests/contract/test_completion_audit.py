@@ -20,7 +20,7 @@ def test_every_inventory_requirement_has_direct_proved_audit_row() -> None:
 
 def test_audit_uses_only_allowed_proof_statuses_and_current_paths() -> None:
     audit = (ROOT / "docs/traceability/completion-audit.md").read_text(encoding="utf-8")
-    rows = [line for line in audit.splitlines() if re.match(r"\| HF-\d+ \|", line)]
+    rows = [line for line in audit.splitlines() if re.match(r"\| H2A-\d+ \|", line)]
     assert rows
     allowed = {"proved", "contradicted", "incomplete", "indirect", "missing"}
     for row in rows:

@@ -1,4 +1,4 @@
-from harness_foundry.repositories.canonical import canonical_bytes, canonical_text
+from human_to_agent.repositories.canonical import canonical_bytes, canonical_text
 
 
 def test_mapping_digest_input_ignores_key_order() -> None:

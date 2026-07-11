@@ -7,5 +7,5 @@ permissions:
   external: deny
 ---
 
-Follow `agents/maturity-reviewer.md`. Verify with `uv run hf validate --format json`.
+Follow `agents/maturity-reviewer.md`. Verify with `uv run hta validate --format json`.
 

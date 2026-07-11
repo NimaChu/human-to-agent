@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from harness_foundry.services.build import PUBLIC_DIRECTORIES
+from human_to_agent.services.build import PUBLIC_DIRECTORIES
 
 
 def test_template_manifest_declares_complete_source_scaffold() -> None:

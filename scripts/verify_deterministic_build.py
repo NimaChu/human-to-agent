@@ -5,8 +5,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-from harness_foundry.domain.builds import BuildMode
-from harness_foundry.services.build import Builder
+from human_to_agent.domain.builds import BuildMode
+from human_to_agent.services.build import Builder
 
 
 def digest_tree(path: Path) -> str:
@@ -21,7 +21,7 @@ def main() -> int:
     if len(sys.argv) != 2:
         raise SystemExit("usage: verify_deterministic_build.py WORKSPACE")
     builder = Builder(Path.cwd())
-    with tempfile.TemporaryDirectory(prefix="hf-determinism-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="hta-determinism-") as temporary:
         root = Path(temporary)
         first = builder.build(builder.plan(sys.argv[1], BuildMode.release, root / "one"))
         second = builder.build(builder.plan(sys.argv[1], BuildMode.release, root / "two"))

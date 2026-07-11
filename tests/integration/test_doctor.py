@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from harness_foundry.services.doctor import inspect_workspace
+from human_to_agent.services.doctor import inspect_workspace
 
 
 def test_doctor_blocks_secret_without_echoing_value(tmp_path: Path) -> None:

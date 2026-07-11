@@ -1,4 +1,4 @@
-from harness_foundry.domain.references import ReferenceGraph, validate_references
+from human_to_agent.domain.references import ReferenceGraph, validate_references
 
 
 def test_missing_reference_is_reported_with_source_and_field() -> None:

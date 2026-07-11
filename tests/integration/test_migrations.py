@@ -3,8 +3,8 @@ from pathlib import Path
 
 import yaml
 
-from harness_foundry.repositories.events import EventStore
-from harness_foundry.services.migrations import Migration, MigrationService
+from human_to_agent.repositories.events import EventStore
+from human_to_agent.services.migrations import Migration, MigrationService
 
 NOW = datetime(2026, 7, 10, tzinfo=UTC)
 

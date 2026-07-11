@@ -4,9 +4,9 @@ from pathlib import Path
 import pytest
 from filelock import FileLock
 
-from harness_foundry.domain.events import EventDraft, EventScope
-from harness_foundry.repositories.events import EventStore
-from harness_foundry.repositories.transactions import (
+from human_to_agent.domain.events import EventDraft, EventScope
+from human_to_agent.repositories.events import EventStore
+from human_to_agent.repositories.transactions import (
     FileMutation,
     MutationPlan,
     TransactionBusyError,

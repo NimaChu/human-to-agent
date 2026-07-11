@@ -14,7 +14,7 @@ def main() -> int:
     wheels = sorted(Path(sys.argv[1]).glob("*.whl"))
     if len(wheels) != 1:
         raise SystemExit("expected exactly one wheel")
-    with tempfile.TemporaryDirectory(prefix="hf-wheel-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="hta-wheel-") as temporary:
         environment = Path(temporary) / "venv"
         venv.EnvBuilder(with_pip=True).create(environment)
         python = environment / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
@@ -22,7 +22,7 @@ def main() -> int:
         command = [
             str(python),
             "-c",
-            "from harness_foundry.cli.app import main; main()",
+            "from human_to_agent.cli.app import main; main()",
             "version",
             "--format",
             "json",

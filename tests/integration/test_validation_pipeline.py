@@ -3,10 +3,10 @@ from pathlib import Path
 
 import yaml
 
-from harness_foundry.repositories.filesystem import SourceRepository
-from harness_foundry.repositories.index import ArtifactIndex, ArtifactIndexEntry
-from harness_foundry.services.schema_catalog import DEFAULT_MODELS
-from harness_foundry.validators.workspace import validate_workspace
+from human_to_agent.repositories.filesystem import SourceRepository
+from human_to_agent.repositories.index import ArtifactIndex, ArtifactIndexEntry
+from human_to_agent.services.schema_catalog import DEFAULT_MODELS
+from human_to_agent.validators.workspace import validate_workspace
 
 NOW = datetime(2026, 7, 10, tzinfo=UTC)
 

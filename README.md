@@ -1,14 +1,14 @@
-# Harness Foundry
+# Human to Agent
 
-Harness Foundry is a file-first mother workspace for turning a real task into an evidence-backed Task Contract, validated Skills and cases, a controlled E/T/C/S/L/V Harness, and a Loop Readiness decision. Markdown, YAML, and JSONL under `workspaces/` are authoritative; `dist/` is generated and never becomes business input.
+Human to Agent is a file-first mother workspace for turning a real task into an evidence-backed Task Contract, validated Skills and cases, a controlled E/T/C/S/L/V Harness, and a Loop Readiness decision. Markdown, YAML, and JSONL under `workspaces/` are authoritative; `dist/` is generated and never becomes business input.
 
 ## Bootstrap
 
 ```powershell
 python -m pip install uv
 uv sync --frozen --all-groups
-uv run hf version --format json
-uv run hf init
+uv run hta version --format json
+uv run hta init
 ```
 
 ## Five-stage happy path
@@ -16,24 +16,24 @@ uv run hf init
 All commands are non-interactive. Replace `<workspace>` with the child-workspace slug.
 
 ```powershell
-uv run hf workspace new <workspace>
-uv run hf capture record --workspace <workspace>
-uv run hf unknown add --workspace <workspace>
-uv run hf stage assess --workspace <workspace>
-uv run hf stage advance --workspace <workspace>
+uv run hta workspace new <workspace>
+uv run hta capture record --workspace <workspace>
+uv run hta unknown add --workspace <workspace>
+uv run hta stage assess --workspace <workspace>
+uv run hta stage advance --workspace <workspace>
 # Repeat assess/advance through stages 2-5 after recording direct gate evidence.
-uv run hf readiness assess --workspace <workspace>
-uv run hf validate --workspace <workspace> --format json
-uv run hf record-change --workspace <workspace>
-uv run hf build --workspace <workspace> --draft
+uv run hta readiness assess --workspace <workspace>
+uv run hta validate --workspace <workspace> --format json
+uv run hta record-change --workspace <workspace>
+uv run hta build --workspace <workspace> --draft
 ```
 
 The supplied real pilot is already release-gated:
 
 ```powershell
-uv run hf validate --workspace harness-foundry-pilot --format json
-uv run hf events verify --workspace harness-foundry-pilot --format json
-uv run hf build --workspace harness-foundry-pilot --release
+uv run hta validate --workspace human-to-agent-pilot --format json
+uv run hta events verify --workspace human-to-agent-pilot --format json
+uv run hta build --workspace human-to-agent-pilot --release
 ```
 
 ## Draft versus release
@@ -51,7 +51,7 @@ The first release has no interactive UI and does not execute external or irrever
 - Change re-certification: `docs/operations/recertification.md`
 - Requirement proof: `docs/traceability/completion-audit.md`
 
-Run `uv run hf doctor --format json` for configuration, secret, transaction, event, and adapter checks. `hf events verify` detects truncation, sequence gaps, predecessor mismatch, and payload tampering.
+Run `uv run hta doctor --format json` for configuration, secret, transaction, event, and adapter checks. `hta events verify` detects truncation, sequence gaps, predecessor mismatch, and payload tampering.
 
 ## Exit codes
 
@@ -73,6 +73,6 @@ Run `uv run hf doctor --format json` for configuration, secret, transaction, eve
 uv run ruff format --check .
 uv run ruff check .
 uv run mypy src tests
-uv run python -m harness_foundry.services.schema_catalog --check schemas/v1
+uv run python -m human_to_agent.services.schema_catalog --check schemas/v1
 uv run pytest -q
 ```

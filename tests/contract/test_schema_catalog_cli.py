@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from harness_foundry.services.schema_catalog import main
+from human_to_agent.services.schema_catalog import main
 
 
 def test_schema_catalog_write_and_check_detects_drift(tmp_path: Path) -> None:

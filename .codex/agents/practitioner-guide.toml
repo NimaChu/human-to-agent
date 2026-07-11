@@ -1,4 +1,4 @@
 name = "practitioner-guide"
 source = "../../agents/practitioner-guide.md"
-description = "Thin adapter; follow the source role and hf verification."
+description = "Thin adapter; follow the source role and hta verification."
 

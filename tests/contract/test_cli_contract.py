@@ -2,7 +2,7 @@ import json
 
 from typer.testing import CliRunner
 
-from harness_foundry.cli.app import app
+from human_to_agent.cli.app import app
 
 runner = CliRunner()
 
