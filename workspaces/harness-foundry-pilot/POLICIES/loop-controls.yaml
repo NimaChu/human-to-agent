@@ -1,0 +1,41 @@
+{
+  "schema_version": "1",
+  "id": "policy.loop-controls",
+  "workspace_id": "harness-foundry-pilot",
+  "revision": 1,
+  "status": "validated",
+  "owners": [
+    "owner"
+  ],
+  "created_at": "2026-07-10T00:00:00Z",
+  "updated_at": "2026-07-10T00:00:00Z",
+  "provenance": "Harness Foundry pilot",
+  "links": [],
+  "evidence_refs": [],
+  "rules": [
+    "Goal: complete only when the release evaluator passes all explicit criteria.",
+    "State: persist checkpoints after each stage and restore only all-old or all-new transactions.",
+    "Action: execute only registered read-only or internal-write tools; external actions stop at a Human Gate package.",
+    "Evaluator: run local case evaluators and an independent final evaluator before release.",
+    "Stop: stop on missing evidence, failed evaluator, event corruption, forbidden action, or exhausted budget.",
+    "Budget: one release assessment may perform at most three retries per case and no external spend or send.",
+    "Retry: retry only idempotent operations; use the same idempotency key and never retry forbidden or external actions automatically.",
+    "Escalation: route unresolved policy, permission, acceptance, and source conflicts to the named Owner.",
+    "Recovery: restore from the last checkpoint or WAL to an all-old/all-new state and verify the event chain.",
+    "Observability: retain run steps, evaluations, event digests, changed-file lists, risks, and next actions.",
+    "Trigger cadence: runs are explicit CLI invocations; no unattended schedule exists in the first release.",
+    "Discovery triage: new contradictions create or reopen an owned Unknown and can reopen a prior stage.",
+    "Concurrency isolation: one file lock per child workspace; concurrent writers fail with category lock.",
+    "Tool availability: hf CLI and file access are required; missing adapters block the affected action.",
+    "Independent verifier: release evidence must include a non-maintainer run from recorded inputs.",
+    "Version drift: CLI, Schema, template, Skill, Harness, tool, model, source, or environment drift triggers scoped re-certification."
+  ],
+  "permitted_action_classes": [
+    "read_only",
+    "internal_write"
+  ],
+  "human_gate_refs": [
+    "human-gate.release"
+  ]
+}
+

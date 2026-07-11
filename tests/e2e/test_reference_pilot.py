@@ -17,6 +17,7 @@ from harness_foundry.domain.recertification import (
     plan_recertification,
 )
 from harness_foundry.domain.references import ReferenceGraph
+from harness_foundry.repositories.filesystem import SourceRepository
 from harness_foundry.services.build import Builder
 from harness_foundry.services.validation import validate_root
 
@@ -60,7 +61,15 @@ def test_pilot_is_independently_reproduced() -> None:
     run = RunRecord.model_validate(load(PILOT / "RUNS/independent-verification/run.yaml"))
     assert run.actor_role == "independent_verifier"
     assert run.actor_id not in {"creator", "maintainer"}
-    assert run.input_tree_digest == "a" * 64
+    digest = sha256()
+    for source in SourceRepository(ROOT).snapshot("harness-foundry-pilot").files:
+        if source.path.startswith("RUNS/"):
+            continue
+        digest.update(source.path.encode())
+        digest.update(b"\0")
+        digest.update(source.sha256.encode())
+        digest.update(b"\n")
+    assert run.input_tree_digest == digest.hexdigest()
     assert run.steps and run.evaluation_refs and run.passed
 
 
@@ -77,7 +86,14 @@ def test_pilot_release_is_byte_stable(tmp_path: Path) -> None:
     second = builder.build(
         builder.plan("harness-foundry-pilot", BuildMode.release, tmp_path / "two")
     )
-    assert tree_digest(first.path) == tree_digest(second.path)
+    digest = tree_digest(first.path)
+    assert digest == tree_digest(second.path)
+    assert (
+        digest
+        == (ROOT / "tests/golden/harness-foundry-pilot/tree.sha256")
+        .read_text(encoding="utf-8")
+        .strip()
+    )
 
 
 def test_same_skill_passes_three_evaluated_cases() -> None:

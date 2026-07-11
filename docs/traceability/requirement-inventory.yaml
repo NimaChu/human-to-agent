@@ -4,73 +4,73 @@
     {
       "id": "HF-001",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§1 Product goal",
+      "locator": "搂1 Product goal",
       "statement": "Build a transferable mother workspace from real work."
     },
     {
       "id": "HF-002",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§4 Principles",
+      "locator": "搂4 Principles",
       "statement": "Use files as business source of truth."
     },
     {
       "id": "HF-003",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§8 Stage 1",
+      "locator": "搂8 Stage 1",
       "statement": "Reproduce a real task and record initial Unknowns."
     },
     {
       "id": "HF-004",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§9 Stage 2",
+      "locator": "搂9 Stage 2",
       "statement": "Create a task contract and Skill prototype."
     },
     {
       "id": "HF-005",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§10 Stage 3",
+      "locator": "搂10 Stage 3",
       "statement": "Validate normal, boundary, and failure cases."
     },
     {
       "id": "HF-006",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§11 Stage 4",
+      "locator": "搂11 Stage 4",
       "statement": "Compose an E,T,C,S,L,V Harness."
     },
     {
       "id": "HF-007",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§12 Stage 5",
+      "locator": "搂12 Stage 5",
       "statement": "Assess Loop Readiness and autonomy separately."
     },
     {
       "id": "HF-008",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§13 Consistency",
+      "locator": "搂13 Consistency",
       "statement": "Use locked WAL transactions and append-only event chains."
     },
     {
       "id": "HF-009",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§14 Build",
+      "locator": "搂14 Build",
       "statement": "Create deterministic draft and gated release distributions."
     },
     {
       "id": "HF-010",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§15 Agents and Skills",
+      "locator": "搂15 Agents and Skills",
       "statement": "Provide shared methods and separated roles."
     },
     {
       "id": "HF-011",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§16 Permissions",
+      "locator": "搂16 Permissions",
       "statement": "Prepare but do not execute external action packages."
     },
     {
       "id": "HF-012",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§18 Verification",
+      "locator": "搂18 Verification",
       "statement": "Require non-creator reproduction."
     },
     {
@@ -94,20 +94,452 @@
     {
       "id": "HF-016",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§12 CLI",
+      "locator": "搂12 CLI",
       "statement": "Expose stable non-interactive commands and exit codes."
     },
     {
       "id": "HF-017",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§17 Change impact",
+      "locator": "搂17 Change impact",
       "statement": "Re-certify on material version-vector changes."
     },
     {
       "id": "HF-018",
       "source": "PR/Harness Foundry PR.md",
-      "locator": "§20 First release",
+      "locator": "搂20 First release",
       "statement": "Exclude interactive UI and external execution from the first release."
+    },
+    {
+      "id": "HF-019",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§8.5 stage-1 outputs",
+      "statement": "Stage 1 records task description, samples, trace, manual modifications, initial Unknowns, time baseline, success criteria, and usable result."
+    },
+    {
+      "id": "HF-020",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§8.6 stage-1 promotion",
+      "statement": "Stage 1 promotion requires a real task, understood goal, inputs/outputs, modifications, Unknowns, baseline, success, and owner usability."
+    },
+    {
+      "id": "HF-021",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§9.2 task-contract fields",
+      "statement": "Task Contracts make goal, inputs, outputs, preconditions, steps, rules, judgments, acceptance, exceptions, prohibitions, applicability, and owner explicit."
+    },
+    {
+      "id": "HF-022",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§9.4 Unknown handling",
+      "statement": "Unconfirmed contract content remains an explicit Unknown rather than a guessed rule."
+    },
+    {
+      "id": "HF-023",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§9.6 stage-2 promotion",
+      "statement": "Stage 2 requires a contract, Skill prototype, original rerun, linked modifications, classified Unknowns, and next-case plan."
+    },
+    {
+      "id": "HF-024",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§10.2 case expansion",
+      "statement": "Skill validation covers normal, boundary, and failure cases."
+    },
+    {
+      "id": "HF-025",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§10.3 validation questions",
+      "statement": "Each validation records expected/actual output, evaluator, failures, boundaries, and manual interventions."
+    },
+    {
+      "id": "HF-026",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§10.4 Unknown closure",
+      "statement": "Unknown closure requires allowed direct evidence, owner, conclusion, impact, and propagation."
+    },
+    {
+      "id": "HF-027",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§10.5 Skill maturity",
+      "statement": "Skill maturity is evidence and case based, with boundaries, stop conditions, evaluators, and explainable versions."
+    },
+    {
+      "id": "HF-028",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§10.7 stage-3 promotion",
+      "statement": "Stage 3 requires three case kinds, stable paths, detectable failures, evaluability, boundaries, independent run, managed Unknowns, and version explanation."
+    },
+    {
+      "id": "HF-029",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§11.3 Harness controls",
+      "statement": "Harness explicitly defines goal, workflow, context, permissions, evaluations, and exceptions."
+    },
+    {
+      "id": "HF-030",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§11.4 autonomy levels",
+      "statement": "Readiness recommends an autonomy ceiling but never auto-approves autonomy."
+    },
+    {
+      "id": "HF-031",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§11.5 stage-4 outputs",
+      "statement": "Stage 4 outputs workflow, context, state, policies, Human Gates, exceptions, evaluators, autonomy, and E2E run evidence."
+    },
+    {
+      "id": "HF-032",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§11.6 stage-4 promotion",
+      "statement": "Stage 4 promotion requires a traceable E2E case, full controls, approved autonomy, and non-creator run."
+    },
+    {
+      "id": "HF-033",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.2.1 Goal",
+      "statement": "Loop readiness has an explicit goal and completion condition."
+    },
+    {
+      "id": "HF-034",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.2.2 State",
+      "statement": "Loop readiness has persistent, restorable state."
+    },
+    {
+      "id": "HF-035",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.2.3 Action",
+      "statement": "Loop actions are registered, bounded, and permission controlled."
+    },
+    {
+      "id": "HF-036",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.2.4 Evaluator",
+      "statement": "Loop has local and final evaluators independent from execution."
+    },
+    {
+      "id": "HF-037",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.2.5 Stop",
+      "statement": "Loop defines stop and human takeover conditions."
+    },
+    {
+      "id": "HF-038",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.2.6 Budget",
+      "statement": "Loop defines retry, external-action, and spend budgets."
+    },
+    {
+      "id": "HF-039",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.2.7 Retry",
+      "statement": "Loop retries only idempotent operations with bounded semantics."
+    },
+    {
+      "id": "HF-040",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.2.8 Escalation",
+      "statement": "Loop routes conflicts and uncertain high-risk decisions to an owner."
+    },
+    {
+      "id": "HF-041",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.2.9 Recovery",
+      "statement": "Loop has checkpoint, rollback, and all-old/all-new recovery."
+    },
+    {
+      "id": "HF-042",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.2.10 Observability",
+      "statement": "Loop retains run, evaluation, event, change, risk, and next-action evidence."
+    },
+    {
+      "id": "HF-043",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.3 readiness results",
+      "statement": "Readiness uses named monotonic results rather than a fake percentage score."
+    },
+    {
+      "id": "HF-044",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.4 stage-5 outputs",
+      "statement": "Stage 5 outputs all loop controls, Unknowns, forbidden boundaries, and next product step."
+    },
+    {
+      "id": "HF-045",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§12.5 complete delivery",
+      "statement": "Complete delivery satisfies all business, contract, Skill, Harness, Unknown, boundary, evaluator, exception, gate, recovery, transfer, and readiness criteria."
+    },
+    {
+      "id": "HF-046",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§13.1 Unknown lifecycle",
+      "statement": "Unknowns support discovery, evidence, resolution, accepted risk, human-only, out-of-scope, and reopening with history."
+    },
+    {
+      "id": "HF-047",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§13.2 Unknown states",
+      "statement": "Unknown states are typed and cannot silently disappear."
+    },
+    {
+      "id": "HF-048",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§13.3 Unknown priority",
+      "statement": "Unknown records impact dimensions and occurrence conditions for evidence-backed prioritization."
+    },
+    {
+      "id": "HF-049",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§13.4 Unknown asset links",
+      "statement": "Unknown records affected assets and propagates closure outcomes."
+    },
+    {
+      "id": "HF-050",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§13.5 managed Unknowns",
+      "statement": "Accepted risk, human-only, and out-of-scope are managed dispositions, not known facts."
+    },
+    {
+      "id": "HF-051",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14.1 child workspace creation",
+      "statement": "Mother workspace creates a canonical child workspace with stage and owner metadata."
+    },
+    {
+      "id": "HF-052",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14.2 stage navigation",
+      "statement": "CLI shows stage, evidence-based gaps, advances sequentially, and can reopen earlier stages."
+    },
+    {
+      "id": "HF-053",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14.3 work reproduction guidance",
+      "statement": "Capture records real-task bytes as hashed evidence and an auditable event."
+    },
+    {
+      "id": "HF-054",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14.4 Task Contract generation",
+      "statement": "Shared Task Contract method and versioned template define complete contract generation."
+    },
+    {
+      "id": "HF-055",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14.5 Skill candidate identification",
+      "statement": "Shared method identifies repeatable capability candidates and boundaries."
+    },
+    {
+      "id": "HF-056",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14.6 case and evaluation management",
+      "statement": "Schemas, source layout, and methods manage cases and explicit evaluations."
+    },
+    {
+      "id": "HF-057",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14.7 Unknown pool",
+      "statement": "CLI and source assets add, update, close, and reopen Unknowns with evidence."
+    },
+    {
+      "id": "HF-058",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14.8 Harness composition guidance",
+      "statement": "Shared method composes complete E/T/C/S/L/V controls rather than stacking Skills."
+    },
+    {
+      "id": "HF-059",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14.9 maturity dashboard",
+      "statement": "Noninteractive workspace status reports stage, Skill maturity, case coverage, Unknown risk, Harness, autonomy, readiness, blockers, and next actions."
+    },
+    {
+      "id": "HF-060",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14.10 child workspace output",
+      "statement": "Template manifest and release contain the required logical source directories and nonempty entry documents."
+    },
+    {
+      "id": "HF-061",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§15.1 incomplete start",
+      "statement": "Workspace and Unknown commands permit explicit incomplete state without invented facts."
+    },
+    {
+      "id": "HF-062",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§15.2 case-first interaction",
+      "statement": "Methods begin from a real case and direct evidence rather than an abstract full-process interview."
+    },
+    {
+      "id": "HF-063",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§15.3 progress visibility",
+      "statement": "Maturity output separates satisfied, gap, and indeterminate evidence and recommends next actions."
+    },
+    {
+      "id": "HF-064",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§15.4 no fake completeness",
+      "statement": "Stage and release gates reject missing or indeterminate evidence."
+    },
+    {
+      "id": "HF-065",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§15.5 autonomy is not sole goal",
+      "statement": "Readiness remains separate from owner autonomy approval and supports bounded outcomes."
+    },
+    {
+      "id": "HF-066",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§16 roles and collaboration",
+      "statement": "Practitioner, Owner, maintainer, reviewer, and administrator responsibilities are separated by methods, agents, ownership, and permissions."
+    },
+    {
+      "id": "HF-067",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§17 user stories",
+      "statement": "The CLI and methods cover real-task start, Unknowns, judgments, Skills, cases, Harness, maturity, readiness, and transfer."
+    },
+    {
+      "id": "HF-068",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§18.1 mother-workspace acceptance",
+      "statement": "The mother workspace supports creation, stages, capture, modifications, contracts, Skills, cases, Unknowns, Harness, gates, exceptions, readiness, generation, and maturity."
+    },
+    {
+      "id": "HF-069",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§18.2 methodology acceptance",
+      "statement": "Evidence-first methods turn incomplete work, Unknowns, edits, Skills, Harness, transfer, and readiness into explicit governed assets."
+    },
+    {
+      "id": "HF-070",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§18.3 child-workspace acceptance",
+      "statement": "The real pilot includes a case, contract, multi-case Skill, E2E Harness, Unknown pool, Human Gate, exception, independent reproduction, and readiness result."
+    },
+    {
+      "id": "HF-071",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§20.1 false promotion risk",
+      "statement": "Evidence-backed gates block promotion based only on filled documents."
+    },
+    {
+      "id": "HF-072",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§20.2 Skill sprawl risk",
+      "statement": "Skill candidate method requires reuse evidence, boundaries, cases, and evaluators."
+    },
+    {
+      "id": "HF-073",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§20.3 early Harness risk",
+      "statement": "Harness gate requires complete controls and an end-to-end case."
+    },
+    {
+      "id": "HF-074",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§20.4 early Loop risk",
+      "statement": "Missing any core readiness dimension blocks conditional readiness and autonomy expansion."
+    },
+    {
+      "id": "HF-075",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§20.5 hidden Unknown risk",
+      "statement": "Unknowns remain visible with owner, impact, restrictions, and explicit disposition."
+    },
+    {
+      "id": "HF-076",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§20.6 creator-dependency risk",
+      "statement": "Independent verifier runs only from recorded sources and is distinct from the maintainer."
+    },
+    {
+      "id": "HF-077",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§22 core principles",
+      "statement": "Repository guidance and gates encode the twelve evidence, case, Harness, Loop, Unknown, and transfer principles."
+    },
+    {
+      "id": "HF-078",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§5 non-goals",
+      "statement": "First release avoids full-role automation, forced autonomy, model training, and external execution."
+    },
+    {
+      "id": "HF-079",
+      "source": "PR/supplements/Agent-Harness.md",
+      "locator": "Harness concept mapping",
+      "statement": "External Harness concepts are retained as contextual semantics while product execution remains E/T/C/S/L/V."
+    },
+    {
+      "id": "HF-080",
+      "source": "PR/supplements/Know your unknowns - complete.html",
+      "locator": "Eleven method cards",
+      "statement": "Unknown discovery exposes all eleven pre/during/post method cards."
+    },
+    {
+      "id": "HF-081",
+      "source": "PR/supplements/Loop Engineering.md",
+      "locator": "Extended loop controls",
+      "statement": "Readiness adds trigger, triage, isolation, tool availability, independent verifier, and version-drift controls."
+    },
+    {
+      "id": "HF-082",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§5 first-release interface boundary",
+      "statement": "The delivered interface is noninteractive CLI and file artifacts; interactive UI is intentionally absent."
+    },
+    {
+      "id": "HF-083",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14 command operations",
+      "statement": "Every designed hf command is registered, noninteractive, JSON-capable, and dry-runnable when state-changing."
+    },
+    {
+      "id": "HF-084",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14 asset contracts",
+      "statement": "Versioned JSON Schemas cover every normative domain asset and generated files match code."
+    },
+    {
+      "id": "HF-085",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§20 consistency and audit",
+      "statement": "Index-last WAL transactions, hash-chained events, locks, and recovery preserve all-old/all-new state."
+    },
+    {
+      "id": "HF-086",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§14 deterministic release",
+      "statement": "Draft and release builds are deterministic, standalone-verifiable, and publication-safe."
+    },
+    {
+      "id": "HF-087",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§16 tool portability",
+      "statement": "Shared methods and roles have thin Codex and OpenCode discovery adapters with bounded permissions."
+    },
+    {
+      "id": "HF-088",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§19 pilot input provenance",
+      "statement": "The real pilot records hashes for the PR and all three authoritative supplements."
+    },
+    {
+      "id": "HF-089",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§18.3 independent input integrity",
+      "statement": "Independent reproduction records the canonical pre-run input-tree digest rather than a placeholder."
+    },
+    {
+      "id": "HF-090",
+      "source": "PR/Harness Foundry PR.md",
+      "locator": "§18 evidence traceability",
+      "statement": "Every inventoried requirement maps bijectively to a source locator, implementation, and named direct test."
     }
   ]
 }

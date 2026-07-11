@@ -94,7 +94,12 @@ entries:
   path: LOOP-READINESS/assessment.yaml
   revision: 1
   asset_schema_version: '1'
-  sha256: dee315a25dfbd6d88475e9578ca551f699d30912565e99968542075a285eee4c
+  sha256: c8908538b8f5cee049725f48c056e23001729a50f884ae7cd18f8b7946394997
+- asset_id: policy.loop-controls
+  path: POLICIES/loop-controls.yaml
+  revision: 1
+  asset_schema_version: '1'
+  sha256: 10c4796b718c8681683f2fe6396631d5b58e0cd230b901547dc08a0fa8f9affc
 - asset_id: policy.pilot
   path: POLICIES/policies.yaml
   revision: 1
@@ -119,7 +124,7 @@ entries:
   path: RUNS/independent-verification/run.yaml
   revision: 1
   asset_schema_version: '1'
-  sha256: 44cf90817f816afb6f2e5e1bef5f7c8bea0db67e20cdb263da1be46e0f37094c
+  sha256: 2df49e3b55b941b2b5e0d7d051f1700082cd33fe6e334796838402be8e465ba8
 - asset_id: run.pr-mainline
   path: RUNS/pr-mainline/run.yaml
   revision: 1
@@ -159,7 +164,7 @@ entries:
   path: WORKFLOW/workflow.yaml
   revision: 1
   asset_schema_version: '1'
-  sha256: f3130076f4eb854e2bed95839e35ed06d809841061e96c717c084aefe3fd4b6a
+  sha256: 370f2f3289a7abdfbe91b1e22e8b05928beaaf161588fba964da7c6b968ada82
 - asset_id: workspace.harness-foundry-pilot
   path: workspace.yaml
   revision: 1

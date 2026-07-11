@@ -3,7 +3,7 @@
   "requirements": [
     {
       "id": "HF-001",
-      "source_locator": "PR/Harness Foundry PR.md#§1 Product goal",
+      "source_locator": "PR/Harness Foundry PR.md#搂1 Product goal",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_contract_uses_exact_goal",
@@ -13,7 +13,7 @@
     },
     {
       "id": "HF-002",
-      "source_locator": "PR/Harness Foundry PR.md#§4 Principles",
+      "source_locator": "PR/Harness Foundry PR.md#搂4 Principles",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_validates_from_normative_files",
@@ -23,7 +23,7 @@
     },
     {
       "id": "HF-003",
-      "source_locator": "PR/Harness Foundry PR.md#§8 Stage 1",
+      "source_locator": "PR/Harness Foundry PR.md#搂8 Stage 1",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_init_capture_five_stage_advance_and_release",
@@ -33,7 +33,7 @@
     },
     {
       "id": "HF-004",
-      "source_locator": "PR/Harness Foundry PR.md#§9 Stage 2",
+      "source_locator": "PR/Harness Foundry PR.md#搂9 Stage 2",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_same_skill_passes_three_evaluated_cases",
@@ -43,7 +43,7 @@
     },
     {
       "id": "HF-005",
-      "source_locator": "PR/Harness Foundry PR.md#§10 Stage 3",
+      "source_locator": "PR/Harness Foundry PR.md#搂10 Stage 3",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_has_normal_boundary_failure_cases",
@@ -53,7 +53,7 @@
     },
     {
       "id": "HF-006",
-      "source_locator": "PR/Harness Foundry PR.md#§11 Stage 4",
+      "source_locator": "PR/Harness Foundry PR.md#搂11 Stage 4",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_e2e_harness_run_is_traceable",
@@ -63,7 +63,7 @@
     },
     {
       "id": "HF-007",
-      "source_locator": "PR/Harness Foundry PR.md#§12 Stage 5",
+      "source_locator": "PR/Harness Foundry PR.md#搂12 Stage 5",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_is_conditionally_ready_or_better",
@@ -73,7 +73,7 @@
     },
     {
       "id": "HF-008",
-      "source_locator": "PR/Harness Foundry PR.md#§13 Consistency",
+      "source_locator": "PR/Harness Foundry PR.md#搂13 Consistency",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_init_capture_five_stage_advance_and_release",
@@ -83,7 +83,7 @@
     },
     {
       "id": "HF-009",
-      "source_locator": "PR/Harness Foundry PR.md#§14 Build",
+      "source_locator": "PR/Harness Foundry PR.md#搂14 Build",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_release_is_byte_stable",
@@ -93,7 +93,7 @@
     },
     {
       "id": "HF-010",
-      "source_locator": "PR/Harness Foundry PR.md#§15 Agents and Skills",
+      "source_locator": "PR/Harness Foundry PR.md#搂15 Agents and Skills",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "skills/catalog.yaml",
       "evidence": "tests/e2e/test_reference_pilot.py::test_all_method_skills_follow_contract",
@@ -103,7 +103,7 @@
     },
     {
       "id": "HF-011",
-      "source_locator": "PR/Harness Foundry PR.md#§16 Permissions",
+      "source_locator": "PR/Harness Foundry PR.md#搂16 Permissions",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_release_prepares_package_but_never_executes_external_action",
@@ -113,7 +113,7 @@
     },
     {
       "id": "HF-012",
-      "source_locator": "PR/Harness Foundry PR.md#§18 Verification",
+      "source_locator": "PR/Harness Foundry PR.md#搂18 Verification",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_is_independently_reproduced",
@@ -153,7 +153,7 @@
     },
     {
       "id": "HF-016",
-      "source_locator": "PR/Harness Foundry PR.md#§12 CLI",
+      "source_locator": "PR/Harness Foundry PR.md#搂12 CLI",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_every_command_is_registered_and_supports_json_help",
@@ -163,7 +163,7 @@
     },
     {
       "id": "HF-017",
-      "source_locator": "PR/Harness Foundry PR.md#§17 Change impact",
+      "source_locator": "PR/Harness Foundry PR.md#搂17 Change impact",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_source_change_requires_adapter_recertification",
@@ -173,14 +173,733 @@
     },
     {
       "id": "HF-018",
-      "source_locator": "PR/Harness Foundry PR.md#§20 First release",
+      "source_locator": "PR/Harness Foundry PR.md#搂20 First release",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/harness_foundry",
       "evidence": "tests/e2e/test_reference_pilot.py::test_forbidden_actions_cannot_be_prepared",
       "status": "achieved",
       "owner": "maintainer",
       "gap": null
+    },
+    {
+      "id": "HF-019",
+      "source_locator": "PR/Harness Foundry PR.md#§8.5 stage-1 outputs",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/stages.py",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_stage1_requires_real_trace_baseline_unknown_and_owner",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-020",
+      "source_locator": "PR/Harness Foundry PR.md#§8.6 stage-1 promotion",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/stages.py",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_stage1_requires_real_trace_baseline_unknown_and_owner",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-021",
+      "source_locator": "PR/Harness Foundry PR.md#§9.2 task-contract fields",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/assets.py",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_contract_uses_exact_goal",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-022",
+      "source_locator": "PR/Harness Foundry PR.md#§9.4 Unknown handling",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/unknowns.py",
+      "evidence": "tests/integration/test_capture_unknown_commands.py::test_unknown_add_creates_valid_explicit_unknown",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-023",
+      "source_locator": "PR/Harness Foundry PR.md#§9.6 stage-2 promotion",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/stages.py",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_stage2_requires_contract_skill_rerun_and_case_plan",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-024",
+      "source_locator": "PR/Harness Foundry PR.md#§10.2 case expansion",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/assets.py",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_has_normal_boundary_failure_cases",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-025",
+      "source_locator": "PR/Harness Foundry PR.md#§10.3 validation questions",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/assets.py",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_same_skill_passes_three_evaluated_cases",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-026",
+      "source_locator": "PR/Harness Foundry PR.md#§10.4 Unknown closure",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/unknowns.py",
+      "evidence": "tests/unit/domain/test_unknowns.py::test_close_requires_allowed_evidence_owner_and_propagation",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-027",
+      "source_locator": "PR/Harness Foundry PR.md#§10.5 Skill maturity",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/assets.py",
+      "evidence": "tests/unit/domain/test_assets.py::test_skill_requires_boundary_evaluation_and_stop_semantics",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-028",
+      "source_locator": "PR/Harness Foundry PR.md#§10.7 stage-3 promotion",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/stages.py",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_stage3_requires_normal_boundary_failure_cases_and_independent_review",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-029",
+      "source_locator": "PR/Harness Foundry PR.md#§11.3 Harness controls",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/assets.py",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_stage4_single_skill_still_requires_complete_harness_controls",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-030",
+      "source_locator": "PR/Harness Foundry PR.md#§11.4 autonomy levels",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/readiness.py",
+      "evidence": "tests/unit/domain/test_readiness.py::test_recommendation_never_auto_approves_autonomy",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-031",
+      "source_locator": "PR/Harness Foundry PR.md#§11.5 stage-4 outputs",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/HARNESS/harness.yaml",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_e2e_harness_run_is_traceable",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-032",
+      "source_locator": "PR/Harness Foundry PR.md#§11.6 stage-4 promotion",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/stages.py",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_stage4_single_skill_still_requires_complete_harness_controls",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-033",
+      "source_locator": "PR/Harness Foundry PR.md#§12.2.1 Goal",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/POLICIES/loop-controls.yaml",
+      "evidence": "tests/unit/domain/test_readiness.py::test_all_ten_core_and_six_supplemental_dimensions_are_assessed",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-034",
+      "source_locator": "PR/Harness Foundry PR.md#§12.2.2 State",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/STATE/state-model.yaml",
+      "evidence": "tests/unit/domain/test_readiness.py::test_all_ten_core_and_six_supplemental_dimensions_are_assessed",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-035",
+      "source_locator": "PR/Harness Foundry PR.md#§12.2.3 Action",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/POLICIES/loop-controls.yaml",
+      "evidence": "tests/integration/test_human_gates.py::test_forbidden_actions_cannot_be_prepared",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-036",
+      "source_locator": "PR/Harness Foundry PR.md#§12.2.4 Evaluator",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/EVALUATORS/source-mapping/evaluator.yaml",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_e2e_harness_run_is_traceable",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-037",
+      "source_locator": "PR/Harness Foundry PR.md#§12.2.5 Stop",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/POLICIES/loop-controls.yaml",
+      "evidence": "tests/unit/domain/test_readiness.py::test_missing_dimension_is_indeterminate_and_blocks_conditional_ready",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-038",
+      "source_locator": "PR/Harness Foundry PR.md#§12.2.6 Budget",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/POLICIES/loop-controls.yaml",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_is_conditionally_ready_or_better",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-039",
+      "source_locator": "PR/Harness Foundry PR.md#§12.2.7 Retry",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/POLICIES/loop-controls.yaml",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_is_conditionally_ready_or_better",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-040",
+      "source_locator": "PR/Harness Foundry PR.md#§12.2.8 Escalation",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/POLICIES/loop-controls.yaml",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_unknowns_gates_and_exceptions_are_managed",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-041",
+      "source_locator": "PR/Harness Foundry PR.md#§12.2.9 Recovery",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/services/recovery.py",
+      "evidence": "tests/integration/test_recovery.py::test_crash_each_phase_recovers_all_old_or_all_new",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-042",
+      "source_locator": "PR/Harness Foundry PR.md#§12.2.10 Observability",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/POLICIES/loop-controls.yaml",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_e2e_harness_run_is_traceable",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-043",
+      "source_locator": "PR/Harness Foundry PR.md#§12.3 readiness results",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/readiness.py",
+      "evidence": "tests/unit/domain/test_readiness.py::test_readiness_rank_is_monotonic_but_not_a_score",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-044",
+      "source_locator": "PR/Harness Foundry PR.md#§12.4 stage-5 outputs",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/LOOP-READINESS/assessment.yaml",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_is_conditionally_ready_or_better",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-045",
+      "source_locator": "PR/Harness Foundry PR.md#§12.5 complete delivery",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/stages.py",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_release_requires_pr_12_5_18_3_and_conditional_ready",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-046",
+      "source_locator": "PR/Harness Foundry PR.md#§13.1 Unknown lifecycle",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/unknowns.py",
+      "evidence": "tests/unit/domain/test_unknowns.py::test_reopen_preserves_closure_and_appends_history",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-047",
+      "source_locator": "PR/Harness Foundry PR.md#§13.2 Unknown states",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/unknowns.py",
+      "evidence": "tests/integration/test_capture_unknown_commands.py::test_unknown_close_and_reopen_preserve_evidence_history",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-048",
+      "source_locator": "PR/Harness Foundry PR.md#§13.3 Unknown priority",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/unknowns.py",
+      "evidence": "tests/unit/domain/test_unknowns.py::test_unknown_model_carries_discovery_and_automation_controls",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-049",
+      "source_locator": "PR/Harness Foundry PR.md#§13.4 Unknown asset links",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/unknowns.py",
+      "evidence": "tests/unit/domain/test_unknowns.py::test_close_requires_allowed_evidence_owner_and_propagation",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-050",
+      "source_locator": "PR/Harness Foundry PR.md#§13.5 managed Unknowns",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/unknowns.py",
+      "evidence": "tests/unit/domain/test_unknowns.py::test_accepted_risk_is_managed_not_known",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-051",
+      "source_locator": "PR/Harness Foundry PR.md#§14.1 child workspace creation",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/services/workspaces.py",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_init_capture_five_stage_advance_and_release",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-052",
+      "source_locator": "PR/Harness Foundry PR.md#§14.2 stage navigation",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/services/stage_transitions.py",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_init_capture_five_stage_advance_and_release",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-053",
+      "source_locator": "PR/Harness Foundry PR.md#§14.3 work reproduction guidance",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/services/capture.py",
+      "evidence": "tests/integration/test_capture_unknown_commands.py::test_capture_records_hashed_evidence_and_event",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-054",
+      "source_locator": "PR/Harness Foundry PR.md#§14.4 Task Contract generation",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "skills/task-contract/SKILL.md",
+      "evidence": "tests/contract/test_method_assets.py::test_all_method_skills_follow_contract",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-055",
+      "source_locator": "PR/Harness Foundry PR.md#§14.5 Skill candidate identification",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "skills/skill-candidates/SKILL.md",
+      "evidence": "tests/contract/test_method_assets.py::test_all_method_skills_follow_contract",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-056",
+      "source_locator": "PR/Harness Foundry PR.md#§14.6 case and evaluation management",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "skills/case-evaluation/SKILL.md",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_same_skill_passes_three_evaluated_cases",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-057",
+      "source_locator": "PR/Harness Foundry PR.md#§14.7 Unknown pool",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/services/unknown_operations.py",
+      "evidence": "tests/integration/test_capture_unknown_commands.py::test_unknown_close_and_reopen_preserve_evidence_history",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-058",
+      "source_locator": "PR/Harness Foundry PR.md#§14.8 Harness composition guidance",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "skills/harness-composition/SKILL.md",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_stage4_single_skill_still_requires_complete_harness_controls",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-059",
+      "source_locator": "PR/Harness Foundry PR.md#§14.9 maturity dashboard",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/services/workspaces.py",
+      "evidence": "tests/contract/test_cli_commands.py::test_workspace_status_is_a_noninteractive_maturity_dashboard",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-060",
+      "source_locator": "PR/Harness Foundry PR.md#§14.10 child workspace output",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "templates/child-workspace/manifest.yaml",
+      "evidence": "tests/contract/test_child_template.py::test_template_manifest_declares_complete_source_scaffold",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-061",
+      "source_locator": "PR/Harness Foundry PR.md#§15.1 incomplete start",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/services/unknown_operations.py",
+      "evidence": "tests/integration/test_capture_unknown_commands.py::test_unknown_add_creates_valid_explicit_unknown",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-062",
+      "source_locator": "PR/Harness Foundry PR.md#§15.2 case-first interaction",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "skills/_shared/method-contract.md",
+      "evidence": "tests/contract/test_method_assets.py::test_all_method_skills_follow_contract",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-063",
+      "source_locator": "PR/Harness Foundry PR.md#§15.3 progress visibility",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/services/maturity.py",
+      "evidence": "tests/unit/services/test_maturity_report.py::test_report_separates_satisfied_gap_and_indeterminate",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-064",
+      "source_locator": "PR/Harness Foundry PR.md#§15.4 no fake completeness",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/stages.py",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_indeterminate_gate_cannot_advance",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-065",
+      "source_locator": "PR/Harness Foundry PR.md#§15.5 autonomy is not sole goal",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/readiness.py",
+      "evidence": "tests/unit/domain/test_readiness.py::test_recommendation_never_auto_approves_autonomy",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-066",
+      "source_locator": "PR/Harness Foundry PR.md#§16 roles and collaboration",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "agents/catalog.yaml",
+      "evidence": "tests/contract/test_method_assets.py::test_agents_are_separated_and_verifier_is_read_only",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-067",
+      "source_locator": "PR/Harness Foundry PR.md#§17 user stories",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "README.md",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_non_creator_can_run_validate_and_maintain_from_documented_entrypoint",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-068",
+      "source_locator": "PR/Harness Foundry PR.md#§18.1 mother-workspace acceptance",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/cli/app.py",
+      "evidence": "tests/contract/test_cli_commands.py::test_every_command_is_registered_and_supports_json_help",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-069",
+      "source_locator": "PR/Harness Foundry PR.md#§18.2 methodology acceptance",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "skills/catalog.yaml",
+      "evidence": "tests/contract/test_method_assets.py::test_all_method_skills_follow_contract",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-070",
+      "source_locator": "PR/Harness Foundry PR.md#§18.3 child-workspace acceptance",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/workspace.yaml",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_unknowns_gates_and_exceptions_are_managed",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-071",
+      "source_locator": "PR/Harness Foundry PR.md#§20.1 false promotion risk",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/stages.py",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_indeterminate_gate_cannot_advance",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-072",
+      "source_locator": "PR/Harness Foundry PR.md#§20.2 Skill sprawl risk",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "skills/skill-candidates/SKILL.md",
+      "evidence": "tests/contract/test_method_assets.py::test_all_method_skills_follow_contract",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-073",
+      "source_locator": "PR/Harness Foundry PR.md#§20.3 early Harness risk",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/stages.py",
+      "evidence": "tests/unit/domain/test_stage_gates.py::test_stage4_single_skill_still_requires_complete_harness_controls",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-074",
+      "source_locator": "PR/Harness Foundry PR.md#§20.4 early Loop risk",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/readiness.py",
+      "evidence": "tests/unit/domain/test_readiness.py::test_missing_dimension_is_indeterminate_and_blocks_conditional_ready",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-075",
+      "source_locator": "PR/Harness Foundry PR.md#§20.5 hidden Unknown risk",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/unknowns.py",
+      "evidence": "tests/unit/domain/test_unknowns.py::test_unknown_model_carries_discovery_and_automation_controls",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-076",
+      "source_locator": "PR/Harness Foundry PR.md#§20.6 creator-dependency risk",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "agents/independent-verifier.md",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_is_independently_reproduced",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-077",
+      "source_locator": "PR/Harness Foundry PR.md#§22 core principles",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "AGENTS.md",
+      "evidence": "tests/contract/test_documentation.py::test_agent_guidance_has_boundaries_and_verification",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-078",
+      "source_locator": "PR/Harness Foundry PR.md#§5 non-goals",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "README.md",
+      "evidence": "tests/integration/test_human_gates.py::test_release_prepares_package_but_never_executes_external_action",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-079",
+      "source_locator": "PR/supplements/Agent-Harness.md#Harness concept mapping",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "examples/harness-foundry-pilot/decision-log.md",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_e2e_harness_run_is_traceable",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-080",
+      "source_locator": "PR/supplements/Know your unknowns - complete.html#Eleven method cards",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "skills/unknown-evidence/SKILL.md",
+      "evidence": "tests/contract/test_method_assets.py::test_unknown_skill_contains_all_discovery_cards",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-081",
+      "source_locator": "PR/supplements/Loop Engineering.md#Extended loop controls",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/domain/readiness.py",
+      "evidence": "tests/unit/domain/test_readiness.py::test_all_ten_core_and_six_supplemental_dimensions_are_assessed",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-082",
+      "source_locator": "PR/Harness Foundry PR.md#§5 first-release interface boundary",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "README.md",
+      "evidence": "tests/contract/test_cli_contract.py::test_version_uses_stable_json_envelope",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-083",
+      "source_locator": "PR/Harness Foundry PR.md#§14 command operations",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/cli/app.py",
+      "evidence": "tests/contract/test_cli_commands.py::test_every_command_is_registered_and_supports_json_help",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-084",
+      "source_locator": "PR/Harness Foundry PR.md#§14 asset contracts",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "schemas/v1",
+      "evidence": "tests/schema/test_domain_schema_catalog.py::test_generated_schemas_equal_committed_v1",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-085",
+      "source_locator": "PR/Harness Foundry PR.md#§20 consistency and audit",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/repositories/transactions.py",
+      "evidence": "tests/integration/test_recovery.py::test_crash_each_phase_recovers_all_old_or_all_new",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-086",
+      "source_locator": "PR/Harness Foundry PR.md#§14 deterministic release",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "src/harness_foundry/services/build.py",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_release_is_byte_stable",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-087",
+      "source_locator": "PR/Harness Foundry PR.md#§16 tool portability",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "skills/catalog.yaml",
+      "evidence": "tests/contract/test_tool_adapters.py::test_each_source_skill_has_thin_codex_and_opencode_adapter",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-088",
+      "source_locator": "PR/Harness Foundry PR.md#§19 pilot input provenance",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "examples/harness-foundry-pilot/input-manifest.yaml",
+      "evidence": "tests/contract/test_traceability.py::test_all_authoritative_sources_have_inventory_rows",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-089",
+      "source_locator": "PR/Harness Foundry PR.md#§18.3 independent input integrity",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "workspaces/harness-foundry-pilot/RUNS/independent-verification/run.yaml",
+      "evidence": "tests/e2e/test_reference_pilot.py::test_pilot_is_independently_reproduced",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
+    },
+    {
+      "id": "HF-090",
+      "source_locator": "PR/Harness Foundry PR.md#§18 evidence traceability",
+      "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
+      "implementation": "docs/traceability/pr-requirements.yaml",
+      "evidence": "tests/contract/test_traceability.py::test_inventory_and_traceability_are_bijective_and_evidenced",
+      "status": "achieved",
+      "owner": "maintainer",
+      "gap": null
     }
   ]
 }
-

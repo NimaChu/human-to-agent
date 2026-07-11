@@ -14,7 +14,7 @@
   "evidence_refs": [],
   "actor_id": "verifier-2",
   "actor_role": "independent_verifier",
-  "input_tree_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "input_tree_digest": "84c68090358718fff3183464e724a00fb1bd35d05555bc7b2b847008d22f6fb6",
   "steps": [
     "clone clean source tree",
     "validate without private context",
@@ -32,4 +32,3 @@
   ],
   "passed": true
 }
-

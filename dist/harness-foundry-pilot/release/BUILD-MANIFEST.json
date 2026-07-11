@@ -18,22 +18,23 @@
     "EVIDENCE/unknowns.yaml": "42d4985286bc6856ef8adc80ceac86dbd792d8f667c50460ca378460dec32e61",
     "EXCEPTIONS/exceptions.yaml": "56f0ec7ca5a623057f364c93c27cd396ccd524a66a731cd7f2a2dda4a79c60a0",
     "HUMAN-GATES/human-gates.yaml": "5c6385faf963761d5b852482b779376542fa1a9d8b23597dd7c3beff44a55eae",
-    "LOOP-READINESS/assessment.yaml": "dee315a25dfbd6d88475e9578ca551f699d30912565e99968542075a285eee4c",
+    "LOOP-READINESS/assessment.yaml": "c8908538b8f5cee049725f48c056e23001729a50f884ae7cd18f8b7946394997",
+    "POLICIES/loop-controls.yaml": "10c4796b718c8681683f2fe6396631d5b58e0cd230b901547dc08a0fa8f9affc",
     "POLICIES/policies.yaml": "738042727e823d411d2049367f4b9dec22de316fb975831b94339caf940da8f6",
     "README.md": "b4655455215f29250d35988f2de4e028fc610f8e260311bc25765a3504644676",
     "RUNS/acme-default-rejection/run.yaml": "101b24f2d60e2353edc43365196192a0b6c26460588904f33ef3ae96e9d2eb0a",
     "RUNS/harness-semantics-conflict/run.yaml": "c0dcbcdc923f5ad9d9f8fcf2a0784219d2425b0f68b180ad0f736da95e1d6884",
-    "RUNS/independent-verification/run.yaml": "44cf90817f816afb6f2e5e1bef5f7c8bea0db67e20cdb263da1be46e0f37094c",
+    "RUNS/independent-verification/run.yaml": "2df49e3b55b941b2b5e0d7d051f1700082cd33fe6e334796838402be8e465ba8",
     "RUNS/pr-mainline/run.yaml": "f9b92ed70eaaed899109c3ec81e65187a09161cf09e8d8cc9dd4716f41873d5b",
     "SKILLS/source-to-requirement-mapping/SKILL.md": "92266572c71e41371f1edea2b3e1ee660642bb035954218b0462dfc44f55241f",
     "SKILLS/source-to-requirement-mapping/skill.yaml": "88b3eb66e94c88deeaefc8c5e3b3882b204c48025fac9197910ffac2d399834b",
     "STATE/state-model.yaml": "aeeeaf78daf82c45e466009b37810f659777ac0554d5234eca53f776d9d95052",
     "TASK-CONTRACT/contract.yaml": "72bc2e9386f59a0d691d0fdbf8e617e81efafd52494c8c1d2055fe605f447fb7",
     "UNKNOWNS/release-environment.yaml": "1d87a22505596aa0adccc0691a0cb2030981e7195729952d8c709f2a3c518e5f",
-    "WORKFLOW/workflow.yaml": "f3130076f4eb854e2bed95839e35ed06d809841061e96c717c084aefe3fd4b6a"
+    "WORKFLOW/workflow.yaml": "370f2f3289a7abdfbe91b1e22e8b05928beaaf161588fba964da7c6b968ada82"
   },
   "mode": "release",
   "schema_version": "1",
-  "source_tree_digest": "b63a0d28060bb42c3ab1b45b26c94f1e2fa245ac6c507794cb1a1ae6035d9251",
+  "source_tree_digest": "84d29cafd0eb9a04842e9f333c1ac3386c1f03b35830df71eedb8443a425a2f5",
   "template_version": "1"
 }

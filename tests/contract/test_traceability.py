@@ -6,12 +6,12 @@ ROOT = Path(__file__).parents[2]
 
 
 def test_inventory_and_traceability_are_bijective_and_evidenced() -> None:
-    inventory = yaml.safe_load((ROOT / "docs/traceability/requirement-inventory.yaml").read_text())[
-        "requirements"
-    ]
-    rows = yaml.safe_load((ROOT / "docs/traceability/pr-requirements.yaml").read_text())[
-        "requirements"
-    ]
+    inventory = yaml.safe_load(
+        (ROOT / "docs/traceability/requirement-inventory.yaml").read_text(encoding="utf-8")
+    )["requirements"]
+    rows = yaml.safe_load(
+        (ROOT / "docs/traceability/pr-requirements.yaml").read_text(encoding="utf-8")
+    )["requirements"]
     inventory_ids = [item["id"] for item in inventory]
     row_ids = [item["id"] for item in rows]
     locators = [f"{item['source']}#{item['locator']}" for item in inventory]
@@ -28,9 +28,9 @@ def test_inventory_and_traceability_are_bijective_and_evidenced() -> None:
 
 
 def test_all_authoritative_sources_have_inventory_rows() -> None:
-    inventory = yaml.safe_load((ROOT / "docs/traceability/requirement-inventory.yaml").read_text())[
-        "requirements"
-    ]
+    inventory = yaml.safe_load(
+        (ROOT / "docs/traceability/requirement-inventory.yaml").read_text(encoding="utf-8")
+    )["requirements"]
     sources = {item["source"] for item in inventory}
     assert sources == {
         "PR/Harness Foundry PR.md",

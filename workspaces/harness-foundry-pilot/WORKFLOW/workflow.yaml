@@ -48,7 +48,8 @@
   ],
   "state_model_ref": "state.pilot",
   "policy_refs": [
-    "policy.pilot"
+    "policy.pilot",
+    "policy.loop-controls"
   ],
   "human_gate_refs": [
     "human-gate.release"
@@ -58,4 +59,3 @@
   ],
   "final_evaluator_ref": "evaluator.source-mapping"
 }
-

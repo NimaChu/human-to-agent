@@ -8,6 +8,7 @@
       "dimension": "goal",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -18,6 +19,7 @@
       "dimension": "state",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -28,6 +30,7 @@
       "dimension": "action",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -38,6 +41,7 @@
       "dimension": "evaluator",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -48,6 +52,7 @@
       "dimension": "stop",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -58,6 +63,7 @@
       "dimension": "budget",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -68,6 +74,7 @@
       "dimension": "retry",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -78,6 +85,7 @@
       "dimension": "escalation",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -88,6 +96,7 @@
       "dimension": "recovery",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -98,6 +107,7 @@
       "dimension": "observability",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -108,6 +118,7 @@
       "dimension": "trigger_cadence",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -118,6 +129,7 @@
       "dimension": "discovery_triage",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -128,6 +140,7 @@
       "dimension": "concurrency_isolation",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -138,6 +151,7 @@
       "dimension": "tool_connector_availability",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -148,6 +162,7 @@
       "dimension": "independent_verifier",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
@@ -158,6 +173,7 @@
       "dimension": "version_drift_recertification",
       "status": "satisfied",
       "evidence_refs": [
+        "policy.loop-controls",
         "evidence.output"
       ],
       "gaps": [],
