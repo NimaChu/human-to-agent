@@ -25,6 +25,21 @@ def test_agent_guidance_has_boundaries_and_verification() -> None:
     assert "uv run hta validate" in text and "uv run pytest" in text
 
 
+def test_agent_guidance_defaults_new_sessions_to_guided_onboarding() -> None:
+    text = (ROOT / "AGENTS.md").read_text().lower()
+    assert "new project conversation" in text
+    assert "one necessary question" in text
+    assert "do not require the user to run" in text
+    assert "explicitly requests" in text
+
+
+def test_readme_explains_conversational_entrypoint() -> None:
+    text = (ROOT / "README.md").read_text().lower()
+    assert "start a conversation" in text
+    assert "one question at a time" in text
+    assert "do not need to know commands" in text
+
+
 def test_runbooks_cover_failure_states() -> None:
     expected = {
         "docs/operations/recovery.md": ("prepared", "event_committed", "all-old", "all-new"),

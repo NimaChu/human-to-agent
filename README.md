@@ -2,6 +2,10 @@
 
 Human to Agent is a file-first mother workspace for turning a real task into an evidence-backed Task Contract, validated Skills and cases, a controlled E/T/C/S/L/V Harness, and a Loop Readiness decision. Markdown, YAML, and JSONL under `workspaces/` are authoritative; `dist/` is generated and never becomes business input.
 
+## Start a conversation
+
+Open a new project conversation and speak naturally: describe the result you want or share the material you already have. The Agent introduces Human-to-Agent once, asks one question at a time, and manages permitted workspace commands. You do not need to know commands, templates, or the directory layout.
+
 ## Bootstrap
 
 ```powershell
