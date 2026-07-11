@@ -34,6 +34,19 @@ def test_agent_adapters_enforce_permissions_and_resolve_sources() -> None:
             assert "edit: deny" in text and "network: deny" in text
 
 
+def test_guided_session_adapters_are_thin_and_linked() -> None:
+    source = ROOT / "skills/guided-session-onboarding/SKILL.md"
+    assert source.is_file()
+    for adapter in (
+        ROOT / ".codex/skills/guided-session-onboarding/SKILL.md",
+        ROOT / ".opencode/skills/guided-session-onboarding/SKILL.md",
+    ):
+        text = adapter.read_text()
+        assert "skills/guided-session-onboarding/SKILL.md" in text
+        assert "hta validate" in text
+        assert len(text.splitlines()) <= 20
+
+
 def test_adapter_configs_and_commands_are_discoverable() -> None:
     assert (ROOT / ".codex/config.toml").is_file()
     assert (ROOT / "opencode.json").is_file()

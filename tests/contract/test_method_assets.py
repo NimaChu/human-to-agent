@@ -17,6 +17,7 @@ REQUIRED = {
     "deviation-log",
     "independent-reproduction",
     "workspace-maintenance",
+    "guided-session-onboarding",
 }
 SECTIONS = {
     "# Outcome",
@@ -69,6 +70,23 @@ def test_unknown_skill_contains_all_discovery_cards() -> None:
         "understanding quiz",
     )
     assert all(card in text for card in cards)
+
+
+def test_guided_session_skill_defines_safe_discovery_protocol() -> None:
+    text = (ROOT / "skills/guided-session-onboarding/SKILL.md").read_text().lower()
+    for state in (
+        "orientation",
+        "goal",
+        "real_case",
+        "constraints",
+        "review",
+        "workspace_active",
+    ):
+        assert state in text
+    assert "one necessary question" in text
+    assert "unknown" in text
+    assert "explicitly requests" in text
+    assert "concrete goal" in text and "real input" in text
 
 
 def test_agents_are_separated_and_verifier_is_read_only() -> None:
