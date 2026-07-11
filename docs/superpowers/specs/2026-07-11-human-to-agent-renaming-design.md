@@ -34,6 +34,6 @@ The supplied `PR/` source files and the historical `docs/superpowers/*harness-fo
 
 ## Compatibility and safety
 
-The migration changes only repository-local files. It does not rename `E:\Harness Foundry` itself because that would move the workspace the user opened and was not requested. The workspace's internal identity changes to `human-to-agent`.
+The repository and its local workspace folder are now named `human-to-agent`. The workspace's internal identity, package, CLI, pilot slug, and active documentation use the same name.
 
 Historical source material is exempt from the no-old-name scan; all active files must use the new identity. A dedicated test enforces that exemption boundary.
