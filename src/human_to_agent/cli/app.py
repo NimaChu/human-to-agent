@@ -106,13 +106,16 @@ def workspace_new(
     output_format: FormatOption = OutputFormat.text,
     root: RootOption = Path("."),
     owner: Annotated[str, typer.Option("--owner")] = "maintainer",
+    purpose: Annotated[str, typer.Option("--purpose")] = "Purpose pending evidence-backed capture",
     dry_run: DryRunOption = False,
 ) -> None:
     """Create a canonical child workspace."""
     _run(
         "workspace new",
         output_format,
-        lambda: create_workspace(root.resolve(), slug, owner=owner, dry_run=dry_run),
+        lambda: create_workspace(
+            root.resolve(), slug, owner=owner, purpose=purpose, dry_run=dry_run
+        ),
     )
 
 

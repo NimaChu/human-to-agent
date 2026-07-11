@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+import re
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -7,27 +10,75 @@ import yaml
 
 from human_to_agent.cli.errors import FoundryError
 from human_to_agent.cli.result import CommandResult
+from human_to_agent.renderers.workspace import render_template
 from human_to_agent.repositories.filesystem import SourceRepository
 from human_to_agent.services.changes import build_artifact_index, render_artifact_index
 
-SOURCE_DIRECTORIES = (
-    "TASK-CONTRACT",
-    "SKILLS",
-    "CASES",
-    "EVALS",
-    "WORKFLOW",
-    "TOOLS",
-    "CONTEXT",
-    "STATE",
-    "EVALUATORS",
-    "POLICIES",
-    "HUMAN-GATES",
-    "EXCEPTIONS",
-    "UNKNOWNS",
-    "LOOP-READINESS",
-    "RUNS",
-    "EVIDENCE",
-)
+WORKSPACE_SLUG_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+WORKSPACE_SLUG_MAX_LENGTH = 64
+CHILD_TEMPLATE_ROOT = Path(__file__).resolve().parents[3] / "templates" / "child-workspace"
+ARTIFACT_INDEX_PATH = ".foundry/artifact-index.yaml"
+
+
+@dataclass(frozen=True, slots=True)
+class ChildTemplateManifest:
+    template_version: str
+    directories: tuple[str, ...]
+    templates: tuple[str, ...]
+    state_files: tuple[str, ...]
+
+
+def _load_child_template_manifest() -> ChildTemplateManifest:
+    path = CHILD_TEMPLATE_ROOT / "manifest.yaml"
+    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, dict):
+        raise FoundryError("config", "template.invalid", "Child template manifest is invalid.")
+
+    values: dict[str, tuple[str, ...]] = {}
+    for key in ("directories", "templates", "state_files"):
+        items = raw.get(key)
+        if not isinstance(items, list) or not all(isinstance(item, str) for item in items):
+            raise FoundryError(
+                "config", "template.invalid", f"Child template manifest {key} must be a list."
+            )
+        values[key] = tuple(items)
+    template_version = raw.get("template_version")
+    if not isinstance(template_version, str):
+        raise FoundryError(
+            "config", "template.invalid", "Child template version must be a string."
+        )
+    return ChildTemplateManifest(
+        template_version=template_version,
+        directories=values["directories"],
+        templates=values["templates"],
+        state_files=values["state_files"],
+    )
+
+
+def _render_child_templates(
+    manifest: ChildTemplateManifest,
+    *,
+    slug: str,
+    owner: str,
+    purpose: str,
+    created_at: str,
+) -> dict[str, str]:
+    context: dict[str, object] = {
+        "slug": slug,
+        "name": slug,
+        "name_yaml": json.dumps(slug, ensure_ascii=False),
+        "owner_yaml": json.dumps(owner, ensure_ascii=False),
+        "purpose": purpose,
+        "purpose_yaml": json.dumps(purpose, ensure_ascii=False),
+        "created_at": created_at,
+        "template_version": manifest.template_version,
+    }
+    return {
+        relative: render_template(
+            (CHILD_TEMPLATE_ROOT / f"{relative}.j2").read_text(encoding="utf-8"), context
+        )
+        for relative in manifest.templates
+    }
 
 
 def initialize(root: Path, *, dry_run: bool) -> CommandResult:
@@ -50,44 +101,48 @@ def initialize(root: Path, *, dry_run: bool) -> CommandResult:
     )
 
 
-def create_workspace(root: Path, slug: str, *, owner: str, dry_run: bool) -> CommandResult:
+def create_workspace(
+    root: Path,
+    slug: str,
+    *,
+    owner: str,
+    purpose: str = "Purpose pending evidence-backed capture",
+    dry_run: bool,
+) -> CommandResult:
+    if len(slug) > WORKSPACE_SLUG_MAX_LENGTH or WORKSPACE_SLUG_PATTERN.fullmatch(slug) is None:
+        raise FoundryError(
+            "usage",
+            "workspace.slug_invalid",
+            "Workspace slug must match ^[a-z0-9]+(?:-[a-z0-9]+)*$ and be at most 64 characters.",
+        )
     if not (root / "human-to-agent.yaml").is_file():
         raise FoundryError("config", "config.missing", "Run `hta init` before creating workspaces.")
     workspace = root / "workspaces" / slug
     if workspace.exists() and not dry_run:
         raise FoundryError("filesystem", "workspace.exists", f"Workspace already exists: {slug}")
-    changed = [str(workspace / "workspace.yaml")]
+    manifest = _load_child_template_manifest()
+    now = datetime.now(UTC).isoformat().replace("+00:00", "Z")
+    rendered = _render_child_templates(
+        manifest, slug=slug, owner=owner, purpose=purpose, created_at=now
+    )
+    changed = [
+        str(workspace / relative) for relative in (*manifest.templates, *manifest.state_files)
+    ]
     if not dry_run:
-        for directory in SOURCE_DIRECTORIES:
+        for directory in manifest.directories:
             (workspace / directory).mkdir(parents=True, exist_ok=True)
-        (workspace / ".foundry").mkdir(parents=True, exist_ok=True)
-        now = datetime.now(UTC).isoformat().replace("+00:00", "Z")
-        manifest = {
-            "schema_version": "1",
-            "id": f"workspace.{slug}",
-            "workspace_id": slug,
-            "revision": 1,
-            "status": "draft",
-            "owners": [owner],
-            "created_at": now,
-            "updated_at": now,
-            "provenance": "hta workspace new",
-            "links": [],
-            "evidence_refs": [],
-            "name": slug,
-            "purpose": "Purpose pending evidence-backed capture",
-            "current_stage": 1,
-            "risk_level": "unassessed",
-            "owner_id": owner,
-            "autonomy_level": "H0",
-        }
-        (workspace / "workspace.yaml").write_text(
-            yaml.safe_dump(manifest, sort_keys=False, allow_unicode=True),
-            encoding="utf-8",
-            newline="\n",
-        )
+        for relative, content in rendered.items():
+            target = workspace / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(content, encoding="utf-8", newline="\n")
+        for relative in manifest.state_files:
+            if relative == ARTIFACT_INDEX_PATH:
+                continue
+            target = workspace / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(b"")
         snapshot = SourceRepository(root).snapshot(slug)
-        (workspace / ".foundry" / "artifact-index.yaml").write_bytes(
+        (workspace / ARTIFACT_INDEX_PATH).write_bytes(
             render_artifact_index(build_artifact_index(snapshot))
         )
     return CommandResult(command="workspace new", changed_files=[] if dry_run else changed)

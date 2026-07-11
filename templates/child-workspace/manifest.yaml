@@ -6,9 +6,12 @@ directories:
   - CASES
   - EVALS
   - WORKFLOW
+  - HARNESS
+  - TOOLS
   - CONTEXT
   - STATE
   - EVALUATORS
+  - ASSESSMENTS
   - POLICIES
   - HUMAN-GATES
   - EXCEPTIONS
@@ -22,12 +25,7 @@ templates:
   - README.md
   - TASK-CONTRACT/contract.yaml
   - TASK-CONTRACT/narrative.md
-  - WORKFLOW/workflow.yaml
-  - STATE/state-model.yaml
-  - POLICIES/policies.yaml
-  - HUMAN-GATES/human-gates.yaml
-  - EXCEPTIONS/exceptions.yaml
-  - LOOP-READINESS/assessment.yaml
+  - ASSESSMENTS/stage-state.yaml
   - CHANGELOG.md
 state_files:
   - .foundry/artifact-index.yaml

@@ -10,5 +10,18 @@ def test_template_manifest_declares_complete_source_scaffold() -> None:
     manifest = yaml.safe_load((root / "templates/child-workspace/manifest.yaml").read_text())
     declared = set(manifest["directories"])
     assert set(PUBLIC_DIRECTORIES) <= declared
-    assert {".foundry/checkpoints", "EVALUATORS"} <= declared
-    assert {"README.md", "CHANGELOG.md", "workspace.yaml"} <= set(manifest["templates"])
+    assert {
+        ".foundry/checkpoints",
+        "ASSESSMENTS",
+        "EVALUATORS",
+        "HARNESS",
+        "TOOLS",
+    } <= declared
+    assert set(manifest["templates"]) == {
+        "README.md",
+        "CHANGELOG.md",
+        "workspace.yaml",
+        "TASK-CONTRACT/contract.yaml",
+        "TASK-CONTRACT/narrative.md",
+        "ASSESSMENTS/stage-state.yaml",
+    }
