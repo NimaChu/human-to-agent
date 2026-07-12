@@ -1,4 +1,5 @@
 import json
+import shutil
 from hashlib import sha256
 from pathlib import Path
 from typing import cast
@@ -38,6 +39,21 @@ def tree_digest(path: Path) -> str:
         digest.update(item.relative_to(path).as_posix().encode())
         digest.update(item.read_bytes())
     return digest.hexdigest()
+
+
+def refresh_run_input_digests(root: Path, workspace: Path) -> None:
+    digest = sha256()
+    for source in SourceRepository(root).snapshot(workspace.name).files:
+        if source.path.startswith("RUNS/"):
+            continue
+        digest.update(source.path.encode())
+        digest.update(b"\0")
+        digest.update(source.sha256.encode())
+        digest.update(b"\n")
+    for path in workspace.glob("RUNS/*/run.yaml"):
+        run = yaml.safe_load(path.read_text(encoding="utf-8"))
+        run["input_tree_digest"] = digest.hexdigest()
+        path.write_text(yaml.safe_dump(run, sort_keys=False), encoding="utf-8")
 
 
 def test_pilot_contract_uses_exact_goal() -> None:
@@ -80,14 +96,21 @@ def test_pilot_is_conditionally_ready_or_better() -> None:
 
 def test_pilot_release_is_byte_stable(tmp_path: Path) -> None:
     builder = Builder(ROOT)
-    first = builder.build(
-        builder.plan("human-to-agent-pilot", BuildMode.release, tmp_path / "one")
-    )
+    first = builder.build(builder.plan("human-to-agent-pilot", BuildMode.release, tmp_path / "one"))
     second = builder.build(
         builder.plan("human-to-agent-pilot", BuildMode.release, tmp_path / "two")
     )
     digest = tree_digest(first.path)
     assert digest == tree_digest(second.path)
+    assert {
+        "workspace.yaml",
+        "ASSESSMENTS/stage-state.yaml",
+        "HARNESS/harness.yaml",
+        "TOOLS/hta-cli/tool.yaml",
+        "EVALUATORS/source-mapping/evaluator.yaml",
+    } <= {
+        path.relative_to(first.path).as_posix() for path in first.path.rglob("*") if path.is_file()
+    }
     assert (
         digest
         == (ROOT / "tests/golden/human-to-agent-pilot/tree.sha256")
@@ -148,12 +171,8 @@ def test_init_capture_five_stage_advance_and_release(tmp_path: Path) -> None:
         == 0
     )
     foundry = tmp_path / "workspaces/pilot/.foundry"
-    (foundry / "stage-2-gate.yaml").write_text(
-        "passed: true\nevidence_refs: [evidence.owner]\n"
-    )
-    rejected = RUNNER.invoke(
-        app, ["stage", "advance", "--root", str(tmp_path), "-w", "pilot"]
-    )
+    (foundry / "stage-2-gate.yaml").write_text("passed: true\nevidence_refs: [evidence.owner]\n")
+    rejected = RUNNER.invoke(app, ["stage", "advance", "--root", str(tmp_path), "-w", "pilot"])
     assert rejected.exit_code == 5, rejected.stdout
     assert (
         yaml.safe_load((tmp_path / "workspaces/pilot/workspace.yaml").read_text())["current_stage"]
@@ -163,6 +182,88 @@ def test_init_capture_five_stage_advance_and_release(tmp_path: Path) -> None:
         app, ["events", "verify", "--root", str(tmp_path), "-w", "pilot", "--format", "json"]
     )
     assert json.loads(verify.stdout)["next_actions"] == ["events=1"]
+
+    copied = tmp_path / "workspaces/human-to-agent-pilot"
+    shutil.copytree(PILOT, copied)
+    manifest_path = copied / "workspace.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["current_stage"] = 1
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    assessment_path = copied / "ASSESSMENTS/stage-state.yaml"
+    assessment = yaml.safe_load(assessment_path.read_text(encoding="utf-8"))
+    assessment["current_stage"] = 1
+    assessment_path.write_text(yaml.safe_dump(assessment, sort_keys=False), encoding="utf-8")
+    refresh_run_input_digests(tmp_path, copied)
+    recorded = RUNNER.invoke(
+        app,
+        [
+            "record-change",
+            "--root",
+            str(tmp_path),
+            "-w",
+            "human-to-agent-pilot",
+        ],
+    )
+    assert recorded.exit_code == 0, recorded.stdout
+    for target in range(2, 6):
+        advanced = RUNNER.invoke(
+            app,
+            [
+                "stage",
+                "advance",
+                "--root",
+                str(tmp_path),
+                "-w",
+                "human-to-agent-pilot",
+            ],
+        )
+        assert advanced.exit_code == 0, f"target={target}: {advanced.stdout}"
+        refresh_run_input_digests(tmp_path, copied)
+        rerecorded = RUNNER.invoke(
+            app,
+            [
+                "record-change",
+                "--root",
+                str(tmp_path),
+                "-w",
+                "human-to-agent-pilot",
+            ],
+        )
+        assert rerecorded.exit_code == 0, rerecorded.stdout
+    release = RUNNER.invoke(
+        app,
+        [
+            "build",
+            "--root",
+            str(tmp_path),
+            "-w",
+            "human-to-agent-pilot",
+            "--release",
+            "--format",
+            "json",
+        ],
+    )
+    assert release.exit_code == 0, release.stdout
+    reopened = RUNNER.invoke(
+        app,
+        [
+            "stage",
+            "reopen",
+            "--root",
+            str(tmp_path),
+            "-w",
+            "human-to-agent-pilot",
+            "--target",
+            "3",
+            "--evidence",
+            "evidence.output",
+            "--reason",
+            "Contradictory verification evidence",
+        ],
+    )
+    assert reopened.exit_code == 0, reopened.stdout
+    assert yaml.safe_load(manifest_path.read_text(encoding="utf-8"))["current_stage"] == 3
+    assert yaml.safe_load(assessment_path.read_text(encoding="utf-8"))["current_stage"] == 3
 
 
 def test_new_contradictory_case_reopens_prior_stage() -> None:

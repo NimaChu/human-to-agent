@@ -40,9 +40,7 @@ def advance_stage(root: Path, workspace_id: str, *, actor: str, dry_run: bool) -
     report = assess_stage(target, state.assessment)
     if not report.passed:
         gaps = "; ".join(check.message for check in report.checks if check.next_action)
-        raise FoundryError(
-            "gate", "stage.gate_failed", gaps or f"{target.name} gate did not pass."
-        )
+        raise FoundryError("gate", "stage.gate_failed", gaps or f"{target.name} gate did not pass.")
     now = datetime.now(UTC)
     decide_stage_transition(
         current,
@@ -59,17 +57,9 @@ def advance_stage(root: Path, workspace_id: str, *, actor: str, dry_run: bool) -
             "updated_at": now,
         }
     )
-    updated_assessment = state.assessment.model_copy(
-        update={"current_stage": int(target)}
-    )
+    updated_assessment = state.assessment.model_copy(update={"current_stage": int(target)})
     evidence_refs = tuple(
-        sorted(
-            {
-                reference
-                for check in report.checks
-                for reference in check.evidence_refs
-            }
-        )
+        sorted({reference for check in report.checks for reference in check.evidence_refs})
     )
     result = write_assets(
         root,

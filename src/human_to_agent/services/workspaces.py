@@ -12,6 +12,7 @@ import yaml
 
 from human_to_agent.cli.errors import FoundryError
 from human_to_agent.cli.result import CommandResult
+from human_to_agent.domain.stages import GateStatus, Stage, assess_complete_release, assess_stage
 from human_to_agent.renderers.workspace import render_template
 from human_to_agent.repositories.filesystem import SourceRepository
 from human_to_agent.services.changes import build_artifact_index, render_artifact_index
@@ -61,9 +62,7 @@ def _load_child_template_manifest() -> ChildTemplateManifest:
         values[key] = tuple(items)
     template_version = raw.get("template_version")
     if not isinstance(template_version, str):
-        raise FoundryError(
-            "config", "template.invalid", "Child template version must be a string."
-        )
+        raise FoundryError("config", "template.invalid", "Child template version must be a string.")
     return ChildTemplateManifest(
         template_version=template_version,
         directories=values["directories"],
@@ -213,7 +212,19 @@ def status(root: Path, slug: str) -> CommandResult:
         else 1
     )
     harness_complete = bool(harnesses)
-    blocking = unmanaged + readiness_gaps + (0 if harness_complete else 1)
+    from human_to_agent.services.assessment_state import load_assessment_state
+
+    assessment_state = load_assessment_state(root, slug)
+    gate_report = (
+        assess_complete_release(assessment_state.assessment)
+        if assessment_state.manifest.current_stage == Stage.stage5
+        else assess_stage(
+            Stage(assessment_state.manifest.current_stage + 1),
+            assessment_state.assessment,
+        )
+    )
+    gate_gaps = sum(check.status is not GateStatus.satisfied for check in gate_report.checks)
+    blocking = unmanaged + readiness_gaps + (0 if harness_complete else 1) + gate_gaps
     raw_next_actions = readiness.get("next_actions", [])
     readiness_next_actions = raw_next_actions if isinstance(raw_next_actions, list) else []
     return CommandResult(
@@ -226,6 +237,8 @@ def status(root: Path, slug: str) -> CommandResult:
             f"unknowns={len(unknowns)}; unmanaged={unmanaged}",
             f"harness={'complete' if harness_complete else 'missing'}",
             f"readiness={readiness.get('result', 'missing')}",
+            f"gate_target={gate_report.target}",
+            f"gate_gaps={gate_gaps}",
             f"blocking={blocking}",
             *[str(item) for item in readiness_next_actions],
         ],

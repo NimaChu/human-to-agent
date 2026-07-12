@@ -1,6 +1,0 @@
-passed: true
-readiness: conditional_ready
-complete_release_evidence:
-  - evidence.output
-  - run.independent-verification
-

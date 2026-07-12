@@ -14,7 +14,7 @@
   "evidence_refs": [],
   "actor_id": "verifier-2",
   "actor_role": "independent_verifier",
-  "input_tree_digest": "f2e210093b06bee2e8a81074097d6a58147c3b5b710bd131222ffa1f8b166ac8",
+  "input_tree_digest": "c79fefeb2374d3d784ac5eaf7b3d846ac36df737a3476c4847279886589c63da",
   "steps": [
     "clone clean source tree",
     "validate without private context",

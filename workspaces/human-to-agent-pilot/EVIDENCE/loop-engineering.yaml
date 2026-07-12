@@ -13,7 +13,7 @@
   "links": [],
   "evidence_refs": [],
   "type": "system_definition",
-  "source": "PR/supplements/Loop Engineering.md",
+  "source": "EVIDENCE/sources/9a31d84bf008077bc285435a7e307b7affd035538ffe8cd066e7cde39c55e390.md",
   "locator": "Entire file",
   "captured_by": "maintainer",
   "captured_at": "2026-07-10T00:00:00Z",
@@ -29,7 +29,6 @@
   "invalidation_conditions": [
     "Source or verification behavior changes."
   ],
-  "content_sha256": "a924e5bc98ae9de19acf11979f0dfa35b51eba4e2d85a9eeff73492100c63ce5",
+  "content_sha256": "9a31d84bf008077bc285435a7e307b7affd035538ffe8cd066e7cde39c55e390",
   "cheapest_probe": null
 }
-

@@ -7,11 +7,12 @@ import shutil
 import tempfile
 from pathlib import Path
 
-import yaml
-
 from human_to_agent import __version__
+from human_to_agent.cli.errors import FoundryError
 from human_to_agent.domain.builds import BuildMode, BuildPlan, BuildResult
+from human_to_agent.domain.stages import Stage, assess_complete_release
 from human_to_agent.repositories.filesystem import SourceRepository, tree_digest
+from human_to_agent.services.assessment_state import load_assessment_state
 from human_to_agent.services.distribution_verify import verify_distribution
 
 PUBLIC_DIRECTORIES = (
@@ -20,8 +21,12 @@ PUBLIC_DIRECTORIES = (
     "CASES",
     "EVALS",
     "WORKFLOW",
+    "HARNESS",
+    "TOOLS",
     "CONTEXT",
     "STATE",
+    "EVALUATORS",
+    "ASSESSMENTS",
     "POLICIES",
     "HUMAN-GATES",
     "EXCEPTIONS",
@@ -30,7 +35,7 @@ PUBLIC_DIRECTORIES = (
     "RUNS",
     "EVIDENCE",
 )
-PUBLIC_ROOT_FILES = ("README.md", "CHANGELOG.md")
+PUBLIC_ROOT_FILES = ("workspace.yaml", "README.md", "CHANGELOG.md")
 TEMPLATE_VERSION = "1"
 SCHEMA_VERSION = "1"
 
@@ -50,29 +55,18 @@ class Builder:
     ) -> BuildPlan:
         snapshot = self.repository.snapshot(slug)
         if mode is BuildMode.release:
-            gate_path = snapshot.workspace_path / ".foundry" / "release-gate.yaml"
-            if not gate_path.is_file():
-                raise ValueError("release gate is missing")
-            gate = yaml.safe_load(gate_path.read_text(encoding="utf-8"))
-            allowed = {
-                "conditional_ready",
-                "controlled_ready",
-                "bounded_ready",
-                "production_candidate",
-            }
-            if (
-                not isinstance(gate, dict)
-                or gate.get("passed") is not True
-                or gate.get("readiness") not in allowed
-            ):
-                raise ValueError("release gate has not passed")
-            index_path = snapshot.workspace_path / ".foundry" / "artifact-index.yaml"
-            if not index_path.is_file():
-                raise ValueError("release gate requires recorded source digests")
-            index = yaml.safe_load(index_path.read_text(encoding="utf-8"))
-            recorded = {item["path"]: item["sha256"] for item in index.get("entries", [])}
-            if any(recorded.get(item.path) != item.sha256 for item in snapshot.files):
-                raise ValueError("release gate rejects unrecorded source changes")
+            try:
+                state = load_assessment_state(self.root, slug, require_recorded=True)
+            except FoundryError as error:
+                raise ValueError(f"release gate rejected {error.code}: {error.message}") from error
+            if state.manifest.current_stage != Stage.stage5:
+                raise ValueError("release requires current stage 5")
+            report = assess_complete_release(state.assessment)
+            if not report.passed:
+                gaps = "; ".join(
+                    check.message for check in report.checks if check.next_action is not None
+                )
+                raise ValueError(f"complete release gate failed: {gaps}")
         target = destination or self.root / "dist" / slug / mode.value
         return BuildPlan(slug, mode, target.resolve(), tree_digest(snapshot), dry_run)
 

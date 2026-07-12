@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from hashlib import sha256
 from pathlib import Path
 
 import yaml
@@ -9,14 +10,27 @@ from pydantic import BaseModel
 from human_to_agent.cli.errors import FoundryError
 from human_to_agent.domain.assessment import AssessmentFact, AssessmentSnapshot
 from human_to_agent.domain.assets import (
+    ActionClass,
+    CaseKind,
     CaseRecord,
+    ContextSpec,
     EvaluationRecord,
     EvaluationResult,
+    EvaluatorSpec,
+    ExceptionSpec,
+    HarnessSpec,
+    HumanGateSpec,
+    PolicySpec,
+    RunRecord,
     SkillSpec,
+    StateModelSpec,
     TaskContract,
+    ToolSpec,
+    WorkflowSpec,
     WorkspaceManifest,
 )
 from human_to_agent.domain.readiness import (
+    AutonomyLevel,
     DimensionStatus,
     ReadinessAssessment,
     ReadinessFacts,
@@ -97,7 +111,20 @@ def _controlled_fact(
         evidence.pop(fact, None)
 
 
+def _current_input_digest(source: SourceSnapshot) -> str:
+    digest = sha256()
+    for item in source.files:
+        if item.path.startswith("RUNS/"):
+            continue
+        digest.update(item.path.encode())
+        digest.update(b"\0")
+        digest.update(item.sha256.encode())
+        digest.update(b"\n")
+    return digest.hexdigest()
+
+
 def _computed_assessment(
+    source: SourceSnapshot,
     manifest: WorkspaceManifest,
     declared: AssessmentSnapshot,
     models: tuple[BaseModel, ...],
@@ -121,6 +148,12 @@ def _computed_assessment(
     evaluated_case_ids = {item.case_ref for item in evaluations}
     evaluated_case_kinds = frozenset(cases[item].kind for item in evaluated_case_ids)
     case_evaluation_refs = tuple(sorted(item.id for item in evaluations))
+    normal_evaluation_refs = tuple(
+        sorted(item.id for item in evaluations if cases[item.case_ref].kind is CaseKind.normal)
+    )
+    failure_evaluation_refs = tuple(
+        sorted(item.id for item in evaluations if cases[item.case_ref].kind is CaseKind.failure)
+    )
 
     prototype_skills = tuple(
         sorted(
@@ -131,9 +164,7 @@ def _computed_assessment(
     )
     validated_skills = tuple(
         sorted(
-            item.id
-            for item in models
-            if isinstance(item, SkillSpec) and item.status == "validated"
+            item.id for item in models if isinstance(item, SkillSpec) and item.status == "validated"
         )
     )
     contracts = tuple(
@@ -143,14 +174,193 @@ def _computed_assessment(
             if isinstance(item, TaskContract) and item.status.lower() != "draft"
         )
     )
+    validated_contracts = tuple(
+        sorted(
+            item.id
+            for item in models
+            if isinstance(item, TaskContract) and item.status == "validated"
+        )
+    )
+    _controlled_fact(facts, evidence, AssessmentFact.task_contract_exists, contracts)
+    _controlled_fact(facts, evidence, AssessmentFact.business_goal_clear, validated_contracts)
+    _controlled_fact(facts, evidence, AssessmentFact.task_contract_complete, validated_contracts)
+    _controlled_fact(facts, evidence, AssessmentFact.skill_prototype_exists, prototype_skills)
+    _controlled_fact(facts, evidence, AssessmentFact.core_skill_validated, validated_skills)
+    _controlled_fact(facts, evidence, AssessmentFact.normal_paths_stable, normal_evaluation_refs)
     _controlled_fact(
-        facts, evidence, AssessmentFact.task_contract_exists, contracts
+        facts, evidence, AssessmentFact.common_failures_detected, failure_evaluation_refs
+    )
+    _controlled_fact(facts, evidence, AssessmentFact.result_evaluable, case_evaluation_refs)
+
+    expected_input_digest = _current_input_digest(source)
+    runs = tuple(
+        item
+        for item in models
+        if isinstance(item, RunRecord)
+        and item.status == "validated"
+        and item.passed
+        and item.input_tree_digest == expected_input_digest
+    )
+    original_case_runs = tuple(sorted(item.id for item in runs if item.case_ref in cases))
+    independent_skill_runs = tuple(
+        sorted(
+            item.id
+            for item in runs
+            if item.actor_role == "independent_verifier" and item.skill_ref in validated_skills
+        )
+    )
+    _controlled_fact(facts, evidence, AssessmentFact.original_case_rerun, original_case_runs)
+    _controlled_fact(facts, evidence, AssessmentFact.independent_skill_run, independent_skill_runs)
+
+    workflows = {
+        item.id: item
+        for item in models
+        if isinstance(item, WorkflowSpec) and item.status == "validated"
+    }
+    harnesses = tuple(
+        item
+        for item in models
+        if isinstance(item, HarnessSpec)
+        and item.status == "validated"
+        and item.workflow_ref in workflows
+    )
+    harness_workflows = {item.workflow_ref for item in harnesses}
+    harness_runs = tuple(item for item in runs if item.workflow_ref in harness_workflows)
+    independent_harness_runs = tuple(
+        item for item in harness_runs if item.actor_role == "independent_verifier"
+    )
+    contexts = tuple(
+        sorted(
+            item.id
+            for item in models
+            if isinstance(item, ContextSpec) and item.status == "validated"
+        )
+    )
+    states = tuple(
+        sorted(
+            item.id
+            for item in models
+            if isinstance(item, StateModelSpec) and item.status == "validated"
+        )
+    )
+    policies = tuple(
+        sorted(
+            item.id
+            for item in models
+            if isinstance(item, PolicySpec) and item.status == "validated"
+        )
+    )
+    gates = tuple(
+        sorted(
+            item.id
+            for item in models
+            if isinstance(item, HumanGateSpec) and item.status == "validated"
+        )
+    )
+    exceptions = tuple(
+        sorted(
+            item.id
+            for item in models
+            if isinstance(item, ExceptionSpec) and item.status == "validated"
+        )
+    )
+    evaluators = tuple(
+        sorted(
+            item.id
+            for item in models
+            if isinstance(item, EvaluatorSpec) and item.status == "validated"
+        )
+    )
+    final_evaluators = tuple(
+        sorted(
+            {
+                reference
+                for workflow in workflows.values()
+                if workflow.final_evaluator_ref in evaluators
+                for reference in (workflow.id, workflow.final_evaluator_ref)
+            }
+        )
+    )
+    high_risk_tools = tuple(
+        item
+        for item in models
+        if isinstance(item, ToolSpec)
+        and item.status == "validated"
+        and item.action_class in {ActionClass.external_send, ActionClass.irreversible}
+    )
+    high_risk_gate_refs = (
+        tuple(sorted({*gates, *(item.id for item in high_risk_tools)}))
+        if gates and all(item.human_gate_ref in gates for item in high_risk_tools)
+        else ()
+    )
+    boundary_refs = (
+        tuple(sorted({*validated_contracts, *validated_skills, *states}))
+        if validated_contracts and validated_skills and states
+        else ()
+    )
+    exception_detection_refs = (
+        tuple(sorted({*exceptions, *failure_evaluation_refs}))
+        if exceptions and failure_evaluation_refs
+        else ()
+    )
+    harness_run_refs = tuple(sorted(item.id for item in harness_runs))
+    independent_harness_refs = tuple(sorted(item.id for item in independent_harness_runs))
+    trace_refs = tuple(sorted({*harness_run_refs, *harness_workflows})) if harness_run_refs else ()
+    _controlled_fact(
+        facts,
+        evidence,
+        AssessmentFact.end_to_end_harness_run,
+        harness_run_refs,
+    )
+    _controlled_fact(facts, evidence, AssessmentFact.steps_traceable, trace_refs)
+    _controlled_fact(
+        facts,
+        evidence,
+        AssessmentFact.harness_goal_and_completion,
+        tuple(sorted(item.id for item in harnesses)),
+    )
+    _controlled_fact(facts, evidence, AssessmentFact.context_defined, contexts)
+    _controlled_fact(facts, evidence, AssessmentFact.state_defined, states)
+    _controlled_fact(facts, evidence, AssessmentFact.policies_defined, policies)
+    _controlled_fact(facts, evidence, AssessmentFact.human_gates_defined, gates)
+    _controlled_fact(facts, evidence, AssessmentFact.exceptions_defined, exceptions)
+    _controlled_fact(facts, evidence, AssessmentFact.local_evaluators_defined, evaluators)
+    _controlled_fact(facts, evidence, AssessmentFact.final_evaluator_defined, final_evaluators)
+    _controlled_fact(
+        facts,
+        evidence,
+        AssessmentFact.noncreator_harness_run,
+        independent_harness_refs,
     )
     _controlled_fact(
-        facts, evidence, AssessmentFact.skill_prototype_exists, prototype_skills
+        facts,
+        evidence,
+        AssessmentFact.input_output_state_boundaries_clear,
+        boundary_refs,
     )
     _controlled_fact(
-        facts, evidence, AssessmentFact.core_skill_validated, validated_skills
+        facts,
+        evidence,
+        AssessmentFact.key_exceptions_detectable,
+        exception_detection_refs,
+    )
+    _controlled_fact(
+        facts,
+        evidence,
+        AssessmentFact.high_risk_actions_have_human_gates,
+        high_risk_gate_refs,
+    )
+    _controlled_fact(
+        facts,
+        evidence,
+        AssessmentFact.stop_recovery_escalation_defined,
+        tuple(sorted({*policies, *exceptions})) if policies and exceptions else (),
+    )
+    _controlled_fact(
+        facts,
+        evidence,
+        AssessmentFact.noncreator_can_maintain,
+        independent_harness_refs,
     )
 
     unknowns = tuple(
@@ -174,15 +384,9 @@ def _computed_assessment(
         if unknowns and all(item.unknown_status in MANAGED_UNKNOWN_STATUSES for item in unknowns)
         else ()
     )
-    _controlled_fact(
-        facts, evidence, AssessmentFact.initial_unknowns_recorded, unknown_refs
-    )
-    _controlled_fact(
-        facts, evidence, AssessmentFact.key_unknowns_classified, classified_refs
-    )
-    _controlled_fact(
-        facts, evidence, AssessmentFact.key_unknowns_managed, managed_refs
-    )
+    _controlled_fact(facts, evidence, AssessmentFact.initial_unknowns_recorded, unknown_refs)
+    _controlled_fact(facts, evidence, AssessmentFact.key_unknowns_classified, classified_refs)
+    _controlled_fact(facts, evidence, AssessmentFact.key_unknowns_managed, managed_refs)
     _controlled_fact(facts, evidence, AssessmentFact.unknowns_managed, managed_refs)
 
     readiness_items = tuple(item for item in models if isinstance(item, ReadinessAssessment))
@@ -241,9 +445,20 @@ def _computed_assessment(
             )
         readiness_result = readiness.result
         readiness_refs = (readiness.assessment_id,)
-    _controlled_fact(
-        facts, evidence, AssessmentFact.loop_readiness_conclusion, readiness_refs
-    )
+    _controlled_fact(facts, evidence, AssessmentFact.loop_readiness_conclusion, readiness_refs)
+    autonomy_refs: tuple[str, ...] = ()
+    if readiness_items and manifest.status == "validated":
+        try:
+            autonomy = AutonomyLevel(manifest.autonomy_level)
+        except ValueError as error:
+            raise FoundryError(
+                "schema",
+                "workspace.autonomy_invalid",
+                f"Unknown autonomy level: {manifest.autonomy_level}",
+            ) from error
+        if autonomy.rank <= readiness_items[0].recommended_ceiling.rank:
+            autonomy_refs = (manifest.id, readiness_items[0].assessment_id)
+    _controlled_fact(facts, evidence, AssessmentFact.autonomy_approved, autonomy_refs)
 
     return declared.model_copy(
         update={
@@ -303,11 +518,9 @@ def load_assessment_state(
     manifest = manifests[0]
     declared = assessments[0]
     identifiers = {
-        identifier: item
-        for item in models
-        if (identifier := _identifier(item)) is not None
+        identifier: item for item in models if (identifier := _identifier(item)) is not None
     }
-    assessment = _computed_assessment(manifest, declared, models)
+    assessment = _computed_assessment(source, manifest, declared, models)
     return LoadedAssessmentState(
         source=source,
         manifest=manifest,

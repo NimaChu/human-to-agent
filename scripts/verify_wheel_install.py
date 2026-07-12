@@ -34,19 +34,23 @@ def main() -> int:
             raise SystemExit("installed wheel version smoke test failed")
 
         workspace_root = Path(temporary) / "workspace-root"
-        if run_cli("init", "--root", str(workspace_root), "--format", "json").get(
-            "command"
-        ) != "init":
+        if (
+            run_cli("init", "--root", str(workspace_root), "--format", "json").get("command")
+            != "init"
+        ):
             raise SystemExit("installed wheel init smoke test failed")
-        if run_cli(
-            "workspace",
-            "new",
-            "wheel-smoke",
-            "--root",
-            str(workspace_root),
-            "--format",
-            "json",
-        ).get("command") != "workspace new":
+        if (
+            run_cli(
+                "workspace",
+                "new",
+                "wheel-smoke",
+                "--root",
+                str(workspace_root),
+                "--format",
+                "json",
+            ).get("command")
+            != "workspace new"
+        ):
             raise SystemExit("installed wheel workspace smoke test failed")
         if not (workspace_root / "workspaces" / "wheel-smoke" / "workspace.yaml").is_file():
             raise SystemExit("installed wheel did not render child workspace templates")

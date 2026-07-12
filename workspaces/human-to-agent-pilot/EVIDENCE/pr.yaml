@@ -13,7 +13,7 @@
   "links": [],
   "evidence_refs": [],
   "type": "formal_rule",
-  "source": "PR/Harness Foundry PR.md",
+  "source": "EVIDENCE/sources/47492f597858b029f324aa5fcf9474a11b9fcf1145cb5124f9b2b143f219d78e.md",
   "locator": "Sections 1-20",
   "captured_by": "maintainer",
   "captured_at": "2026-07-10T00:00:00Z",
@@ -29,7 +29,6 @@
   "invalidation_conditions": [
     "Source or verification behavior changes."
   ],
-  "content_sha256": "749a8438afb46d0bd9ca0ccdd0921b11f7bd34dc63819c3aa41db5f5f731fde7",
+  "content_sha256": "47492f597858b029f324aa5fcf9474a11b9fcf1145cb5124f9b2b143f219d78e",
   "cheapest_probe": null
 }
-

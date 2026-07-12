@@ -13,7 +13,7 @@
   "links": [],
   "evidence_refs": [],
   "type": "system_definition",
-  "source": "PR/supplements/Know your unknowns - complete.html",
+  "source": "EVIDENCE/sources/1993c46fb8e10d97fafc63b428ed9c6a299df82a9cdd8570b7f7d43c3c16b74e.html",
   "locator": "Method cards",
   "captured_by": "maintainer",
   "captured_at": "2026-07-10T00:00:00Z",
@@ -29,7 +29,6 @@
   "invalidation_conditions": [
     "Source or verification behavior changes."
   ],
-  "content_sha256": "9ecdbfa730f54ff6bb312334e0bc6a0e98940697d65663f7d9f18a7b00f17dbe",
+  "content_sha256": "1993c46fb8e10d97fafc63b428ed9c6a299df82a9cdd8570b7f7d43c3c16b74e",
   "cheapest_probe": null
 }
-

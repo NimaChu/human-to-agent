@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from pathlib import PurePosixPath
 
 import yaml
 from pydantic import BaseModel, ValidationError
 
 from human_to_agent.domain.assessment import AssessmentSnapshot
 from human_to_agent.domain.assets import WorkspaceManifest
+from human_to_agent.domain.evidence import Evidence
 from human_to_agent.domain.readiness import ReadinessAssessment
 from human_to_agent.domain.references import ReferenceGraph, validate_references
 from human_to_agent.repositories.filesystem import SourceSnapshot
@@ -53,6 +55,7 @@ def validate_workspace(
     assessment: AssessmentSnapshot | None = None
     manifest: WorkspaceManifest | None = None
     readiness_assessments: list[ReadinessAssessment] = []
+    evidence_assets: list[Evidence] = []
     for source in snapshot.files:
         if source.path.startswith("EVIDENCE/sources/"):
             continue
@@ -107,6 +110,8 @@ def validate_workspace(
                 manifest = asset
             elif isinstance(asset, ReadinessAssessment):
                 readiness_assessments.append(asset)
+            if isinstance(asset, Evidence):
+                evidence_assets.append(asset)
         except (ValidationError, ValueError, yaml.YAMLError) as error:
             diagnostics.append(
                 Diagnostic(
@@ -173,21 +178,74 @@ def validate_workspace(
                     path="ASSESSMENTS/stage-state.yaml",
                 )
             )
-        assessment_refs = {
-            ref for refs in assessment.evidence.values() for ref in refs
-        } | set(assessment.case_evaluation_refs) | set(assessment.readiness_evidence_refs)
+        assessment_refs = (
+            {ref for refs in assessment.evidence.values() for ref in refs}
+            | set(assessment.case_evaluation_refs)
+            | set(assessment.readiness_evidence_refs)
+        )
         validate_direct_refs("assessment.stage-state", assessment_refs)
 
     for readiness in readiness_assessments:
         readiness_refs = {
-            ref
-            for dimension in readiness.dimensions.values()
-            for ref in dimension.evidence_refs
+            ref for dimension in readiness.dimensions.values() for ref in dimension.evidence_refs
         }
         validate_direct_refs(readiness.assessment_id, readiness_refs)
 
+    source_by_path = snapshot.by_path()
+    for evidence in evidence_assets:
+        source_path = PurePosixPath(evidence.source)
+        if (
+            source_path.is_absolute()
+            or "\\" in evidence.source
+            or any(":" in part for part in source_path.parts)
+            or ".." in source_path.parts
+            or len(source_path.parts) != 3
+            or source_path.parts[:2] != ("EVIDENCE", "sources")
+            or not source_path.name.startswith(f"{evidence.content_sha256}.")
+        ):
+            diagnostics.append(
+                Diagnostic(
+                    category="evidence",
+                    code="evidence.source_invalid",
+                    message="Evidence source must be a content-addressed normative copy.",
+                    asset_id=evidence.id,
+                    path=evidence.source,
+                )
+            )
+            continue
+        evidence_source = source_by_path.get(source_path.as_posix())
+        if evidence_source is None:
+            diagnostics.append(
+                Diagnostic(
+                    category="evidence",
+                    code="evidence.source_missing",
+                    message="Evidence source copy is missing.",
+                    asset_id=evidence.id,
+                    path=source_path.as_posix(),
+                )
+            )
+        elif evidence_source.sha256 != evidence.content_sha256:
+            diagnostics.append(
+                Diagnostic(
+                    category="evidence",
+                    code="evidence.source_hash",
+                    message="Evidence source bytes do not match content_sha256.",
+                    asset_id=evidence.id,
+                    path=source_path.as_posix(),
+                )
+            )
+
     if recorded_index is not None:
         recorded = recorded_index.by_path()
+        if len(recorded) != len(recorded_index.entries):
+            diagnostics.append(
+                Diagnostic(
+                    category="filesystem",
+                    code="index.path_duplicate",
+                    message="Artifact index contains duplicate paths.",
+                    path=".foundry/artifact-index.yaml",
+                )
+            )
         for source in snapshot.files:
             entry = recorded.get(source.path)
             if entry is None or entry.sha256 != source.sha256:
@@ -199,5 +257,14 @@ def validate_workspace(
                         path=source.path,
                     )
                 )
+        for missing_path in sorted(set(recorded) - set(source_by_path)):
+            diagnostics.append(
+                Diagnostic(
+                    category="filesystem",
+                    code="source.missing",
+                    message="Recorded source is missing from the workspace.",
+                    path=missing_path,
+                )
+            )
 
     return ValidationReport(diagnostics=tuple(diagnostics))

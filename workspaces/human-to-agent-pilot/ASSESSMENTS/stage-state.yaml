@@ -1,0 +1,102 @@
+workspace_id: human-to-agent-pilot
+current_stage: 5
+facts:
+  - real_task
+  - basic_goal_understood
+  - inputs_identified
+  - outputs_identified
+  - manual_modifications_recorded
+  - initial_unknowns_recorded
+  - time_baseline_recorded
+  - initial_success_criteria
+  - owner_confirmed_usable
+  - third_party_understands_goal_output
+  - task_contract_exists
+  - skill_prototype_exists
+  - original_case_rerun
+  - manual_modifications_linked
+  - key_unknowns_classified
+  - next_case_plan_exists
+  - normal_paths_stable
+  - common_failures_detected
+  - result_evaluable
+  - skill_boundaries_clear
+  - independent_skill_run
+  - key_unknowns_managed
+  - skill_version_explainable
+  - end_to_end_harness_run
+  - steps_traceable
+  - harness_goal_and_completion
+  - context_defined
+  - state_defined
+  - policies_defined
+  - human_gates_defined
+  - exceptions_defined
+  - local_evaluators_defined
+  - final_evaluator_defined
+  - autonomy_approved
+  - noncreator_harness_run
+  - business_goal_clear
+  - task_contract_complete
+  - core_skill_validated
+  - unknowns_managed
+  - input_output_state_boundaries_clear
+  - key_exceptions_detectable
+  - high_risk_actions_have_human_gates
+  - stop_recovery_escalation_defined
+  - noncreator_can_maintain
+  - loop_readiness_conclusion
+evidence:
+  real_task: [evidence.pr, case.pr-mainline]
+  basic_goal_understood: [task-contract.human-to-agent]
+  inputs_identified: [task-contract.human-to-agent]
+  outputs_identified: [task-contract.human-to-agent]
+  manual_modifications_recorded: [evidence.output]
+  initial_unknowns_recorded: [unknown.release-environment]
+  time_baseline_recorded: [evidence.output]
+  initial_success_criteria: [task-contract.human-to-agent]
+  owner_confirmed_usable: [workspace.human-to-agent-pilot]
+  third_party_understands_goal_output: [run.independent-verification]
+  task_contract_exists: [task-contract.human-to-agent]
+  skill_prototype_exists: [skill.source-to-requirement-mapping]
+  original_case_rerun: [run.pr-mainline]
+  manual_modifications_linked: [evidence.output]
+  key_unknowns_classified: [unknown.release-environment]
+  next_case_plan_exists: [skill.source-to-requirement-mapping]
+  normal_paths_stable: [eval.pr-mainline]
+  common_failures_detected: [eval.acme-default-rejection]
+  result_evaluable: [evaluator.source-mapping]
+  skill_boundaries_clear: [skill.source-to-requirement-mapping]
+  independent_skill_run: [run.independent-verification]
+  key_unknowns_managed: [unknown.release-environment]
+  skill_version_explainable: [skill.source-to-requirement-mapping]
+  end_to_end_harness_run: [run.independent-verification]
+  steps_traceable: [workflow.source-to-release, run.independent-verification]
+  harness_goal_and_completion: [harness.pilot]
+  context_defined: [context.pilot]
+  state_defined: [state.pilot]
+  policies_defined: [policy.pilot, policy.loop-controls]
+  human_gates_defined: [human-gate.release]
+  exceptions_defined: [exception.source-conflict]
+  local_evaluators_defined: [evaluator.source-mapping]
+  final_evaluator_defined: [evaluator.source-mapping]
+  autonomy_approved: [workspace.human-to-agent-pilot, readiness.pilot]
+  noncreator_harness_run: [run.independent-verification]
+  business_goal_clear: [task-contract.human-to-agent]
+  task_contract_complete: [task-contract.human-to-agent]
+  core_skill_validated: [skill.source-to-requirement-mapping]
+  unknowns_managed: [unknown.release-environment]
+  input_output_state_boundaries_clear: [task-contract.human-to-agent, state.pilot]
+  key_exceptions_detectable: [exception.source-conflict, eval.acme-default-rejection]
+  high_risk_actions_have_human_gates: [human-gate.release, tool.hta-cli]
+  stop_recovery_escalation_defined: [policy.loop-controls, exception.source-conflict]
+  noncreator_can_maintain: [run.independent-verification]
+  loop_readiness_conclusion: [readiness.pilot]
+evaluated_case_kinds: [normal, boundary, failure]
+case_evaluation_refs:
+  - eval.pr-mainline
+  - eval.harness-semantics-conflict
+  - eval.acme-default-rejection
+skill_count: 1
+readiness_result: conditional_ready
+readiness_evidence_refs: [readiness.pilot]

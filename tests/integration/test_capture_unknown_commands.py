@@ -144,6 +144,26 @@ def test_capture_rejects_conflicting_non_content_addressed_metadata(tmp_path: Pa
     assert workspace_files(workspace) == before
 
 
+def test_stage_assessment_rejects_tampered_captured_source(tmp_path: Path) -> None:
+    workspace = initialized(tmp_path)
+    assert (
+        RUNNER.invoke(
+            app,
+            ["capture", "record", "--root", str(tmp_path), "-w", "pilot", "--text", "original"],
+        ).exit_code
+        == 0
+    )
+    evidence = yaml.safe_load(next((workspace / "EVIDENCE").glob("capture-*.yaml")).read_text())
+    (workspace / evidence["source"]).write_bytes(b"tampered")
+
+    result = RUNNER.invoke(
+        app, ["stage", "assess", "--root", str(tmp_path), "-w", "pilot", "--format", "json"]
+    )
+
+    assert result.exit_code == 5, result.stdout
+    assert "evidence.source_hash" in result.stdout
+
+
 def test_capture_requires_exactly_one_input_without_writes(tmp_path: Path) -> None:
     workspace = initialized(tmp_path)
     source = tmp_path / "source.txt"

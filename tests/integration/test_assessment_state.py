@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+from hashlib import sha256
 from pathlib import Path
 
 import yaml
@@ -6,6 +7,7 @@ from typer.testing import CliRunner
 
 from human_to_agent.cli.app import app
 from human_to_agent.domain.assessment import AssessmentFact
+from human_to_agent.repositories.filesystem import SourceRepository
 from human_to_agent.services.assessment_state import load_assessment_state
 
 RUNNER = CliRunner()
@@ -98,6 +100,14 @@ def install_stage2_structures(workspace: Path, evidence_id: str) -> None:
         "expected_output": "Owner-confirmed result",
         "evaluator_refs": ["evaluator.pilot"],
     }
+    evaluation = metadata("eval.pilot") | {
+        "subject_ref": "skill.pilot",
+        "case_ref": "case.pilot",
+        "evaluator_id": "evaluator.pilot",
+        "result": "passed",
+        "actual_output_ref": evidence_id,
+        "criteria_results": ["owner-confirmed output reproduced"],
+    }
     skill = metadata("skill.pilot") | {
         "goal": "Reproduce the owner-confirmed task",
         "inputs": ["captured task material"],
@@ -114,12 +124,38 @@ def install_stage2_structures(workspace: Path, evidence_id: str) -> None:
     assets = {
         "EVALUATORS/pilot/evaluator.yaml": evaluator,
         "CASES/pilot/case.yaml": case,
+        "EVALS/pilot/eval.yaml": evaluation,
         "SKILLS/pilot/skill.yaml": skill,
     }
     for relative, content in assets.items():
         path = workspace / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(yaml.safe_dump(content, sort_keys=False), encoding="utf-8")
+
+
+def install_current_run(workspace: Path) -> None:
+    digest = sha256()
+    for source in SourceRepository(workspace.parents[1]).snapshot("pilot").files:
+        if source.path.startswith("RUNS/"):
+            continue
+        digest.update(source.path.encode())
+        digest.update(b"\0")
+        digest.update(source.sha256.encode())
+        digest.update(b"\n")
+    run = metadata("run.pilot") | {
+        "actor_id": "verifier",
+        "actor_role": "independent_verifier",
+        "input_tree_digest": digest.hexdigest(),
+        "steps": ["load recorded inputs", "run Skill", "evaluate result"],
+        "skill_ref": "skill.pilot",
+        "case_ref": "case.pilot",
+        "workflow_ref": None,
+        "evaluation_refs": ["eval.pilot"],
+        "passed": True,
+    }
+    path = workspace / "RUNS/pilot/run.yaml"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.safe_dump(run, sort_keys=False), encoding="utf-8")
 
 
 def prepare_stage2(root: Path) -> tuple[Path, str]:
@@ -156,6 +192,7 @@ def prepare_stage2(root: Path) -> tuple[Path, str]:
     assert closed.exit_code == 0, closed.stdout
     install_stage2_structures(workspace, evidence_id)
     write_assessment(workspace, STAGE2_FACTS, evidence_id)
+    install_current_run(workspace)
     recorded = RUNNER.invoke(app, ["record-change", "--root", str(root), "-w", "pilot"])
     assert recorded.exit_code == 0, recorded.stdout
     return workspace, evidence_id
@@ -167,12 +204,16 @@ def test_handwritten_foundry_gate_cannot_advance_empty_workspace(tmp_path: Path)
         "passed: true\nevidence_refs: [evidence.fake]\n", encoding="utf-8"
     )
 
-    result = RUNNER.invoke(
-        app, ["stage", "advance", "--root", str(tmp_path), "-w", "pilot"]
-    )
+    result = RUNNER.invoke(app, ["stage", "advance", "--root", str(tmp_path), "-w", "pilot"])
 
     assert result.exit_code == 5, result.stdout
     assert yaml.safe_load((workspace / "workspace.yaml").read_text())["current_stage"] == 1
+    status = RUNNER.invoke(
+        app, ["workspace", "status", "--root", str(tmp_path), "-w", "pilot", "--format", "json"]
+    )
+    assert status.exit_code == 0, status.stdout
+    assert "gate_target=stage2" in status.stdout
+    assert "gate_gaps=7" in status.stdout
 
 
 def test_assessment_rejects_missing_and_draft_evidence(tmp_path: Path) -> None:
@@ -193,9 +234,7 @@ def test_assessment_rejects_missing_and_draft_evidence(tmp_path: Path) -> None:
     evidence = yaml.safe_load(evidence_path.read_text(encoding="utf-8"))
     evidence["status"] = "draft"
     evidence_path.write_text(yaml.safe_dump(evidence, sort_keys=False), encoding="utf-8")
-    write_assessment(
-        workspace, (AssessmentFact.third_party_understands_goal_output,), evidence_id
-    )
+    write_assessment(workspace, (AssessmentFact.third_party_understands_goal_output,), evidence_id)
     draft = RUNNER.invoke(
         app, ["stage", "assess", "--root", str(tmp_path), "-w", "pilot", "--format", "json"]
     )
@@ -221,6 +260,22 @@ def test_unmanaged_unknown_removes_claimed_managed_facts(tmp_path: Path) -> None
     assert AssessmentFact.initial_unknowns_recorded in computed.facts
     assert AssessmentFact.key_unknowns_managed not in computed.facts
     assert AssessmentFact.unknowns_managed not in computed.facts
+
+
+def test_missing_structural_assets_remove_claimed_structural_facts(tmp_path: Path) -> None:
+    workspace = initialized(tmp_path)
+    evidence_id = capture(tmp_path)
+    structural = (
+        AssessmentFact.task_contract_complete,
+        AssessmentFact.end_to_end_harness_run,
+        AssessmentFact.context_defined,
+        AssessmentFact.result_evaluable,
+    )
+    write_assessment(workspace, structural, evidence_id)
+
+    computed = load_assessment_state(tmp_path, "pilot").assessment
+
+    assert not set(structural) & set(computed.facts)
 
 
 def test_readiness_claim_cannot_exceed_dimension_evidence(tmp_path: Path) -> None:
@@ -252,9 +307,7 @@ def test_readiness_claim_cannot_exceed_dimension_evidence(tmp_path: Path) -> Non
 def test_valid_recorded_assessment_advances_both_stage_records(tmp_path: Path) -> None:
     workspace, _ = prepare_stage2(tmp_path)
 
-    result = RUNNER.invoke(
-        app, ["stage", "advance", "--root", str(tmp_path), "-w", "pilot"]
-    )
+    result = RUNNER.invoke(app, ["stage", "advance", "--root", str(tmp_path), "-w", "pilot"])
 
     assert result.exit_code == 0, result.stdout
     manifest = yaml.safe_load((workspace / "workspace.yaml").read_text(encoding="utf-8"))
@@ -281,9 +334,7 @@ def test_unrecorded_change_blocks_advance(tmp_path: Path) -> None:
 def test_reopen_requires_existing_evidence_and_updates_both_records(tmp_path: Path) -> None:
     workspace, evidence_id = prepare_stage2(tmp_path)
     assert (
-        RUNNER.invoke(
-            app, ["stage", "advance", "--root", str(tmp_path), "-w", "pilot"]
-        ).exit_code
+        RUNNER.invoke(app, ["stage", "advance", "--root", str(tmp_path), "-w", "pilot"]).exit_code
         == 0
     )
 

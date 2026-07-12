@@ -219,8 +219,6 @@ def test_new_scaffold_is_a_recorded_valid_draft_that_passes_no_stage_gate(
 
     snapshot = SourceRepository(tmp_path).snapshot("draft-check")
     index = ArtifactIndex.model_validate(
-        yaml.safe_load(
-            (workspace / ".foundry/artifact-index.yaml").read_text(encoding="utf-8")
-        )
+        yaml.safe_load((workspace / ".foundry/artifact-index.yaml").read_text(encoding="utf-8"))
     )
     assert set(index.by_path()) == {item.path for item in snapshot.files}

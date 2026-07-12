@@ -42,7 +42,7 @@ uv run hta build --workspace human-to-agent-pilot --release
 
 ## Draft versus release
 
-Draft builds are allowed at any stage and contain a visible `DRAFT` warning. Release builds require a passing complete-release gate, at least conditional Readiness, and an artifact index matching every normative source byte. `BUILD-MANIFEST.json` contains deterministic versions, source digest, and per-file digests—never a clock or random ID.
+Draft builds are allowed at any stage and contain a visible `DRAFT` warning. Release builds require a passing computed complete-release assessment, at least conditional Readiness, no unmanaged Unknown, and an artifact index matching every normative source byte. `BUILD-MANIFEST.json` contains deterministic versions, source digest, and per-file digests—never a clock or random ID. Handwritten `.foundry` gate flags have no release authority.
 
 The first release has no interactive UI and does not execute external or irreversible actions. It can prepare an action package; a Human Gate records approve, reject, or modify, while a separate executor remains out of scope.
 

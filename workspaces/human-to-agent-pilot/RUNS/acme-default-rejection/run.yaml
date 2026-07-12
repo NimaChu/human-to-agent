@@ -14,7 +14,7 @@
   "evidence_refs": [],
   "actor_id": "verifier-1",
   "actor_role": "independent_verifier",
-  "input_tree_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "input_tree_digest": "c79fefeb2374d3d784ac5eaf7b3d846ac36df737a3476c4847279886589c63da",
   "steps": [
     "load recorded sources",
     "execute mapping",
@@ -28,4 +28,3 @@
   ],
   "passed": true
 }
-

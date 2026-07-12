@@ -36,13 +36,7 @@ def assess_stage_view(root: Path, workspace_id: str) -> CommandResult:
         for check in report.checks
         if check.status is not GateStatus.satisfied
     ]
-    evidence = sorted(
-        {
-            reference
-            for check in report.checks
-            for reference in check.evidence_refs
-        }
-    )
+    evidence = sorted({reference for check in report.checks for reference in check.evidence_refs})
     next_actions = [
         action
         for check in report.checks
@@ -63,13 +57,11 @@ def assess_stage_view(root: Path, workspace_id: str) -> CommandResult:
 
 
 def readiness_view(root: Path, workspace_id: str) -> CommandResult:
-    path = root / "workspaces" / workspace_id / "LOOP-READINESS" / "assessment.yaml"
-    if not path.is_file():
+    state = load_assessment_state(root, workspace_id)
+    readiness_items = tuple(item for item in state.models if isinstance(item, ReadinessAssessment))
+    if not readiness_items:
         raise FoundryError("evidence", "readiness.missing", "Readiness assessment is missing.")
-    try:
-        assessment = ReadinessAssessment.model_validate(yaml.safe_load(path.read_text()))
-    except ValueError as error:
-        raise FoundryError("schema", "readiness.invalid", str(error)) from error
+    assessment = readiness_items[0]
     return CommandResult(
         command="readiness assess",
         next_actions=[
