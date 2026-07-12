@@ -148,41 +148,21 @@ def test_init_capture_five_stage_advance_and_release(tmp_path: Path) -> None:
         == 0
     )
     foundry = tmp_path / "workspaces/pilot/.foundry"
-    for target in range(2, 6):
-        (foundry / f"stage-{target}-gate.yaml").write_text(
-            "passed: true\nevidence_refs: [evidence.owner]\n"
-        )
-        result = RUNNER.invoke(app, ["stage", "advance", "--root", str(tmp_path), "-w", "pilot"])
-        assert result.exit_code == 0, result.stdout
-    (foundry / "release-gate.yaml").write_text("passed: true\nreadiness: conditional_ready\n")
-    release = RUNNER.invoke(
-        app, ["build", "--root", str(tmp_path), "-w", "pilot", "--release", "--format", "json"]
+    (foundry / "stage-2-gate.yaml").write_text(
+        "passed: true\nevidence_refs: [evidence.owner]\n"
     )
-    assert release.exit_code == 0, release.stdout
-    reopened = RUNNER.invoke(
-        app,
-        [
-            "stage",
-            "reopen",
-            "--root",
-            str(tmp_path),
-            "-w",
-            "pilot",
-            "--target",
-            "3",
-            "--evidence",
-            "evidence.contradiction",
-        ],
+    rejected = RUNNER.invoke(
+        app, ["stage", "advance", "--root", str(tmp_path), "-w", "pilot"]
     )
-    assert reopened.exit_code == 0, reopened.stdout
+    assert rejected.exit_code == 5, rejected.stdout
     assert (
         yaml.safe_load((tmp_path / "workspaces/pilot/workspace.yaml").read_text())["current_stage"]
-        == 3
+        == 1
     )
     verify = RUNNER.invoke(
         app, ["events", "verify", "--root", str(tmp_path), "-w", "pilot", "--format", "json"]
     )
-    assert json.loads(verify.stdout)["next_actions"] == ["events=6"]
+    assert json.loads(verify.stdout)["next_actions"] == ["events=1"]
 
 
 def test_new_contradictory_case_reopens_prior_stage() -> None:

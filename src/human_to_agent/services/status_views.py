@@ -7,44 +7,58 @@ import yaml
 
 from human_to_agent.cli.errors import FoundryError
 from human_to_agent.cli.result import CommandResult
-from human_to_agent.domain.assets import WorkspaceManifest
 from human_to_agent.domain.readiness import ReadinessAssessment
+from human_to_agent.domain.stages import (
+    GateStatus,
+    Stage,
+    assess_complete_release,
+    assess_stage,
+)
 from human_to_agent.repositories.filesystem import SourceRepository, tree_digest
 from human_to_agent.repositories.index import ArtifactIndex
+from human_to_agent.services.assessment_state import load_assessment_state
 
 
 def assess_stage_view(root: Path, workspace_id: str) -> CommandResult:
-    workspace = root / "workspaces" / workspace_id
-    manifest_path = workspace / "workspace.yaml"
-    if not manifest_path.is_file():
-        raise FoundryError("schema", "workspace.missing", f"Workspace is missing: {workspace_id}")
-    manifest = WorkspaceManifest.model_validate(yaml.safe_load(manifest_path.read_text()))
-    if manifest.current_stage == 5:
-        gate_path = workspace / ".foundry" / "release-gate.yaml"
-        target = "complete_release"
+    state = load_assessment_state(root, workspace_id)
+    if state.manifest.current_stage == 5:
+        report = assess_complete_release(state.assessment)
     else:
-        target_stage = manifest.current_stage + 1
-        gate_path = workspace / ".foundry" / f"stage-{target_stage}-gate.yaml"
-        target = f"stage{target_stage}"
-    gate = yaml.safe_load(gate_path.read_text()) if gate_path.is_file() else None
-    passed = isinstance(gate, dict) and gate.get("passed") is True
-    evidence = gate.get("evidence_refs", []) if isinstance(gate, dict) else []
-    diagnostics: list[dict[str, object]] = []
-    if not passed:
-        diagnostics.append(
-            {
-                "category": "gate",
-                "code": "stage.gap",
-                "message": f"{target} is not yet proven by a passing gate artifact.",
-                "path": str(gate_path),
-            }
-        )
+        report = assess_stage(Stage(state.manifest.current_stage + 1), state.assessment)
+    diagnostics: list[dict[str, object]] = [
+        {
+            "category": "gate",
+            "code": "stage.gap",
+            "message": check.message,
+            "path": "ASSESSMENTS/stage-state.yaml",
+            **({"asset_id": check.fact.value} if check.fact is not None else {}),
+        }
+        for check in report.checks
+        if check.status is not GateStatus.satisfied
+    ]
+    evidence = sorted(
+        {
+            reference
+            for check in report.checks
+            for reference in check.evidence_refs
+        }
+    )
+    next_actions = [
+        action
+        for check in report.checks
+        if check.status is not GateStatus.satisfied
+        if (action := check.next_action) is not None
+    ]
     return CommandResult(
         command="stage assess",
-        status="ok" if passed else "error",
-        exit_code=0 if passed else 5,
+        status="ok" if report.passed else "error",
+        exit_code=0 if report.passed else 5,
         diagnostics=diagnostics,
-        next_actions=[f"target={target}", *[f"evidence={item}" for item in evidence]],
+        next_actions=[
+            f"target={report.target}",
+            *[f"evidence={item}" for item in evidence],
+            *next_actions,
+        ],
     )
 
 

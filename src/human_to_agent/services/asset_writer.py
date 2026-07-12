@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import shutil
 import tempfile
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 
@@ -59,6 +59,7 @@ def write_assets(
     asset_ids: tuple[str, ...],
     actor: str,
     dry_run: bool,
+    event_payload: Mapping[str, object] | None = None,
 ) -> CommandResult:
     validated_files = _validated_files(files)
     repository = SourceRepository(root)
@@ -101,7 +102,8 @@ def write_assets(
         log_path=current.workspace_path / ".foundry" / "events.jsonl",
     )
     relative_paths = [relative.as_posix() for relative, _ in validated_files]
-    payload: dict[str, object] = {"relative_paths": relative_paths}
+    payload: dict[str, object] = dict(event_payload or {})
+    payload["relative_paths"] = relative_paths
     if len(relative_paths) == 1:
         payload["relative_path"] = relative_paths[0]
     event = EventDraft(

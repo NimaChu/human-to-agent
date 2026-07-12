@@ -18,7 +18,9 @@ def test_inventory_and_traceability_are_bijective_and_evidenced() -> None:
     assert len(locators) == len(set(locators))
     assert len(inventory_ids) == len(set(inventory_ids))
     assert set(inventory_ids) == set(row_ids)
-    test_text = "\n".join(path.read_text() for path in (ROOT / "tests").rglob("test_*.py"))
+    test_text = "\n".join(
+        path.read_text(encoding="utf-8") for path in (ROOT / "tests").rglob("test_*.py")
+    )
     for row in rows:
         assert row["status"] == "achieved" and row["gap"] is None and row["owner"]
         assert (ROOT / row["specification"]).exists()

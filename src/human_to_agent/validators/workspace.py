@@ -5,13 +5,16 @@ from collections.abc import Mapping
 import yaml
 from pydantic import BaseModel, ValidationError
 
+from human_to_agent.domain.assessment import AssessmentSnapshot
+from human_to_agent.domain.assets import WorkspaceManifest
+from human_to_agent.domain.readiness import ReadinessAssessment
 from human_to_agent.domain.references import ReferenceGraph, validate_references
 from human_to_agent.repositories.filesystem import SourceSnapshot
 from human_to_agent.repositories.index import ArtifactIndex
 from human_to_agent.validators.report import Diagnostic, ValidationReport
 
 
-def _infer_schema_name(path: str) -> str | None:
+def infer_schema_name(path: str) -> str | None:
     if path == "workspace.yaml":
         return "workspace"
     parts = path.split("/")
@@ -46,12 +49,16 @@ def validate_workspace(
 ) -> ValidationReport:
     diagnostics: list[Diagnostic] = []
     assets: dict[str, BaseModel] = {}
+    identifiers: dict[str, BaseModel] = {}
+    assessment: AssessmentSnapshot | None = None
+    manifest: WorkspaceManifest | None = None
+    readiness_assessments: list[ReadinessAssessment] = []
     for source in snapshot.files:
         if source.path.startswith("EVIDENCE/sources/"):
             continue
         if not source.path.endswith((".yaml", ".yml")):
             continue
-        schema_name = _infer_schema_name(source.path)
+        schema_name = infer_schema_name(source.path)
         if schema_name is None or schema_name not in model_catalog:
             diagnostics.append(
                 Diagnostic(
@@ -69,7 +76,37 @@ def validate_workspace(
             asset = model_catalog[schema_name].model_validate(raw)
             asset_id = getattr(asset, "id", None)
             if isinstance(asset_id, str):
+                if asset_id in identifiers:
+                    diagnostics.append(
+                        Diagnostic(
+                            category="schema",
+                            code="asset.id_duplicate",
+                            message=f"Duplicate asset ID: {asset_id}",
+                            path=source.path,
+                            asset_id=asset_id,
+                        )
+                    )
                 assets[asset_id] = asset
+                identifiers[asset_id] = asset
+            assessment_id = getattr(asset, "assessment_id", None)
+            if isinstance(assessment_id, str):
+                if assessment_id in identifiers:
+                    diagnostics.append(
+                        Diagnostic(
+                            category="schema",
+                            code="asset.id_duplicate",
+                            message=f"Duplicate assessment ID: {assessment_id}",
+                            path=source.path,
+                            asset_id=assessment_id,
+                        )
+                    )
+                identifiers[assessment_id] = asset
+            if isinstance(asset, AssessmentSnapshot):
+                assessment = asset
+            elif isinstance(asset, WorkspaceManifest):
+                manifest = asset
+            elif isinstance(asset, ReadinessAssessment):
+                readiness_assessments.append(asset)
         except (ValidationError, ValueError, yaml.YAMLError) as error:
             diagnostics.append(
                 Diagnostic(
@@ -81,7 +118,7 @@ def validate_workspace(
             )
 
     graph = ReferenceGraph.from_assets(assets)
-    reference_report = validate_references(graph, known_ids=set(assets))
+    reference_report = validate_references(graph, known_ids=set(identifiers))
     diagnostics.extend(
         Diagnostic(
             category="reference",
@@ -92,6 +129,62 @@ def validate_workspace(
         )
         for item in reference_report.errors
     )
+
+    def validate_direct_refs(source_id: str, refs: set[str]) -> None:
+        for target_id in sorted(refs):
+            target = identifiers.get(target_id)
+            if target is None:
+                diagnostics.append(
+                    Diagnostic(
+                        category="reference",
+                        code="reference.missing",
+                        message=f"{source_id} references missing {target_id}",
+                        asset_id=source_id,
+                        target_id=target_id,
+                    )
+                )
+            elif str(getattr(target, "status", "")).lower() == "draft":
+                diagnostics.append(
+                    Diagnostic(
+                        category="evidence",
+                        code="evidence.draft",
+                        message=f"{source_id} references draft evidence {target_id}",
+                        asset_id=source_id,
+                        target_id=target_id,
+                    )
+                )
+
+    if assessment is not None:
+        if manifest is not None and assessment.workspace_id != manifest.workspace_id:
+            diagnostics.append(
+                Diagnostic(
+                    category="schema",
+                    code="assessment.workspace_mismatch",
+                    message="Assessment workspace_id does not match workspace.yaml.",
+                    path="ASSESSMENTS/stage-state.yaml",
+                )
+            )
+        if manifest is not None and assessment.current_stage != manifest.current_stage:
+            diagnostics.append(
+                Diagnostic(
+                    category="schema",
+                    code="assessment.stage_mismatch",
+                    message="Assessment current_stage does not match workspace.yaml.",
+                    path="ASSESSMENTS/stage-state.yaml",
+                )
+            )
+        assessment_refs = {
+            ref for refs in assessment.evidence.values() for ref in refs
+        } | set(assessment.case_evaluation_refs) | set(assessment.readiness_evidence_refs)
+        validate_direct_refs("assessment.stage-state", assessment_refs)
+
+    for readiness in readiness_assessments:
+        readiness_refs = {
+            ref
+            for dimension in readiness.dimensions.values()
+            for ref in dimension.evidence_refs
+        }
+        validate_direct_refs(readiness.assessment_id, readiness_refs)
 
     if recorded_index is not None:
         recorded = recorded_index.by_path()

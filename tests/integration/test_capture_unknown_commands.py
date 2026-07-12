@@ -26,7 +26,7 @@ def workspace_files(workspace: Path) -> dict[str, bytes]:
     }
 
 
-def test_file_capture_persists_exact_bytes_relative_evidence_index_and_one_event(
+def test_capture_records_hashed_evidence_and_event(
     tmp_path: Path,
 ) -> None:
     workspace = initialized(tmp_path)
