@@ -33,6 +33,9 @@ hta = "human_to_agent.cli.app:main"
 [tool.hatch.build.targets.wheel]
 packages = ["src/human_to_agent"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"templates/child-workspace" = "human_to_agent/templates/child-workspace"
+
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers"
 testpaths = ["tests"]
@@ -48,4 +51,3 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 python_version = "3.11"
 strict = true
 packages = ["human_to_agent"]
-

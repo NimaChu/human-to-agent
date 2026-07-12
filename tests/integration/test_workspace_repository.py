@@ -131,6 +131,26 @@ def test_workspace_new_records_the_supplied_purpose(tmp_path: Path) -> None:
     assert manifest["purpose"] == purpose
 
 
+@pytest.mark.parametrize(
+    ("option", "value"),
+    (("--owner", ""), ("--owner", "   "), ("--purpose", ""), ("--purpose", "   ")),
+)
+def test_workspace_new_rejects_empty_metadata_before_writes(
+    tmp_path: Path, option: str, value: str
+) -> None:
+    initialize(tmp_path, dry_run=False)
+    before = filesystem_state(tmp_path)
+
+    result = RUNNER.invoke(
+        app,
+        ["workspace", "new", "invalid-metadata", "--root", str(tmp_path), option, value],
+    )
+
+    assert result.exit_code == 2
+    assert filesystem_state(tmp_path) == before
+    assert not (tmp_path / "workspaces/invalid-metadata").exists()
+
+
 def test_workspace_new_renders_every_manifest_entry(tmp_path: Path) -> None:
     initialize(tmp_path, dry_run=False)
     result = RUNNER.invoke(

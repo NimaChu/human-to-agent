@@ -4,6 +4,8 @@ import json
 import re
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from importlib import resources
+from importlib.resources.abc import Traversable
 from pathlib import Path
 
 import yaml
@@ -16,7 +18,9 @@ from human_to_agent.services.changes import build_artifact_index, render_artifac
 
 WORKSPACE_SLUG_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 WORKSPACE_SLUG_MAX_LENGTH = 64
-CHILD_TEMPLATE_ROOT = Path(__file__).resolve().parents[3] / "templates" / "child-workspace"
+REPOSITORY_CHILD_TEMPLATE_ROOT = (
+    Path(__file__).resolve().parents[3] / "templates" / "child-workspace"
+)
 ARTIFACT_INDEX_PATH = ".foundry/artifact-index.yaml"
 
 
@@ -28,8 +32,21 @@ class ChildTemplateManifest:
     state_files: tuple[str, ...]
 
 
+def _child_template_root() -> Traversable:
+    if REPOSITORY_CHILD_TEMPLATE_ROOT.joinpath("manifest.yaml").is_file():
+        return REPOSITORY_CHILD_TEMPLATE_ROOT
+    packaged = resources.files("human_to_agent").joinpath("templates", "child-workspace")
+    if not packaged.joinpath("manifest.yaml").is_file():
+        raise FoundryError(
+            "config",
+            "template.missing",
+            "Child workspace templates are missing from this installation.",
+        )
+    return packaged
+
+
 def _load_child_template_manifest() -> ChildTemplateManifest:
-    path = CHILD_TEMPLATE_ROOT / "manifest.yaml"
+    path = _child_template_root().joinpath("manifest.yaml")
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise FoundryError("config", "template.invalid", "Child template manifest is invalid.")
@@ -63,6 +80,7 @@ def _render_child_templates(
     purpose: str,
     created_at: str,
 ) -> dict[str, str]:
+    template_root = _child_template_root()
     context: dict[str, object] = {
         "slug": slug,
         "name": slug,
@@ -75,7 +93,7 @@ def _render_child_templates(
     }
     return {
         relative: render_template(
-            (CHILD_TEMPLATE_ROOT / f"{relative}.j2").read_text(encoding="utf-8"), context
+            template_root.joinpath(f"{relative}.j2").read_text(encoding="utf-8"), context
         )
         for relative in manifest.templates
     }
@@ -114,6 +132,12 @@ def create_workspace(
             "usage",
             "workspace.slug_invalid",
             "Workspace slug must match ^[a-z0-9]+(?:-[a-z0-9]+)*$ and be at most 64 characters.",
+        )
+    if not owner.strip() or not purpose.strip():
+        raise FoundryError(
+            "usage",
+            "workspace.metadata_invalid",
+            "Workspace owner and purpose must be non-empty.",
         )
     if not (root / "human-to-agent.yaml").is_file():
         raise FoundryError("config", "config.missing", "Run `hta init` before creating workspaces.")
