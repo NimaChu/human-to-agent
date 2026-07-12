@@ -47,6 +47,8 @@ def validate_workspace(
     diagnostics: list[Diagnostic] = []
     assets: dict[str, BaseModel] = {}
     for source in snapshot.files:
+        if source.path.startswith("EVIDENCE/sources/"):
+            continue
         if not source.path.endswith((".yaml", ".yml")):
             continue
         schema_name = _infer_schema_name(source.path)

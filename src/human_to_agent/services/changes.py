@@ -23,7 +23,9 @@ def build_artifact_index(snapshot: SourceSnapshot) -> ArtifactIndex:
         asset_id = f"file.{source.path.replace('/', '.').lower()}"
         revision = 1
         schema_version = "1"
-        if source.path.endswith((".yaml", ".yml")):
+        if source.path.endswith((".yaml", ".yml")) and not source.path.startswith(
+            "EVIDENCE/sources/"
+        ):
             raw = yaml.safe_load(source.source_path.read_text(encoding="utf-8"))
             if isinstance(raw, dict):
                 asset_id = str(raw.get("id") or raw.get("assessment_id") or asset_id)

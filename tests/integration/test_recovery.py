@@ -23,6 +23,7 @@ def setup(
     workspace = root / "workspaces" / "pilot"
     workspace.mkdir(parents=True)
     (workspace / "data.txt").write_text("old")
+    (workspace / "source.bin").write_bytes(b"old-source")
     (workspace / ".foundry").mkdir()
     (workspace / ".foundry" / "artifact-index.yaml").write_text("old-index")
     scope = EventScope(scope_id="pilot", log_path=workspace / ".foundry" / "events.jsonl")
@@ -32,6 +33,7 @@ def setup(
         event_scope=scope,
         mutations=(
             FileMutation(relative_path="data.txt", after=b"new"),
+            FileMutation(relative_path="source.bin", after=b"new-source"),
             FileMutation(relative_path=".foundry/artifact-index.yaml", after=b"new-index"),
         ),
         index_relative_path=".foundry/artifact-index.yaml",
@@ -83,10 +85,12 @@ def test_crash_each_phase_recovers_all_old_or_all_new(
     event_count = len(EventStore().replay(scope).events)
     if crash_phase is TransactionPhase.event_committed:
         assert (workspace / "data.txt").read_text() == "new"
+        assert (workspace / "source.bin").read_bytes() == b"new-source"
         assert (workspace / ".foundry" / "artifact-index.yaml").read_text() == "new-index"
         assert event_count == 1
     else:
         assert (workspace / "data.txt").read_text() == "old"
+        assert (workspace / "source.bin").read_bytes() == b"old-source"
         assert (workspace / ".foundry" / "artifact-index.yaml").read_text() == "old-index"
         assert event_count == 0
     assert not (tmp_path / "state" / "transactions" / "tx-crash").exists()

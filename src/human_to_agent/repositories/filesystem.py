@@ -57,7 +57,11 @@ class SourceRepository:
             relative = path.relative_to(workspace)
             if any(part in _EXCLUDED_PARTS for part in relative.parts):
                 continue
-            canonical = canonical_file(path)
+            canonical = (
+                path.read_bytes()
+                if relative.parts[:2] == ("EVIDENCE", "sources")
+                else canonical_file(path)
+            )
             files.append(
                 SourceFile(
                     path=relative.as_posix(),

@@ -143,6 +143,7 @@ def capture_record(
     root: RootOption = Path("."),
     workspace: WorkspaceOption = "workspace",
     input_path: Annotated[Path | None, typer.Option("--input")] = None,
+    text: Annotated[str | None, typer.Option("--text")] = None,
     dry_run: DryRunOption = False,
 ) -> None:
     """Record a work-reproduction capture."""
@@ -150,7 +151,12 @@ def capture_record(
         "capture record",
         output_format,
         lambda: record_capture(
-            root.resolve(), workspace, input_path, actor="maintainer", dry_run=dry_run
+            root.resolve(),
+            workspace,
+            input_path,
+            text=text,
+            actor="maintainer",
+            dry_run=dry_run,
         ),
     )
 
