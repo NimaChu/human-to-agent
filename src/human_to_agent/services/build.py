@@ -12,6 +12,7 @@ from human_to_agent.cli.errors import FoundryError
 from human_to_agent.domain.builds import BuildMode, BuildPlan, BuildResult
 from human_to_agent.domain.stages import Stage, assess_complete_release
 from human_to_agent.repositories.filesystem import (
+    NON_NORMATIVE_ASSET_DIRECTORIES,
     SourceRepository,
     SourceSnapshot,
     _is_link_or_junction,
@@ -39,6 +40,7 @@ PUBLIC_DIRECTORIES = (
     "LOOP-READINESS",
     "RUNS",
     "EVIDENCE",
+    *sorted(NON_NORMATIVE_ASSET_DIRECTORIES),
 )
 PUBLIC_ROOT_FILES = ("workspace.yaml", "AGENTS.md", "README.md", "CHANGELOG.md")
 TEMPLATE_VERSION = "1"

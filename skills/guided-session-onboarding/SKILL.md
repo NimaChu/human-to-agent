@@ -29,7 +29,7 @@ The shared method contract, practitioner-guide role, `hta` CLI, workspace schema
 
 # Source-of-truth files
 
-Read repository guidance and shared methods first. After activation, read and write only normative source files under `workspaces/<id>/`; generated `dist/` content is comparison-only. Put all task-specific deliverables—including a one-file script, application code, assets, and task documentation—under `workspaces/<id>/`. Never create or modify those deliverables in the mother workspace. Write to the mother workspace only when the user has explicitly requested maintenance of the Human-to-Agent product itself.
+Read repository guidance and shared methods first. After activation, read and write normative source files and task assets only under `workspaces/<id>/`; generated `dist/` content is comparison-only. Put all task-specific deliverables—including a one-file script, application code, assets, and task documentation—under `workspaces/<id>/`. Never create or modify those deliverables in the mother workspace. Write to the mother workspace only when the user has explicitly requested maintenance of the Human-to-Agent product itself. Use `ASSETS/` and `DATA/` for untyped task resources and runtime data: they are indexed and path-safety checked, but their contents are not business-schema assets and cannot be the sole record of a business fact, decision, or evidence claim.
 
 # Procedure
 

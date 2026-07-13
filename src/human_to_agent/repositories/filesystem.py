@@ -16,6 +16,11 @@ _EXCLUDED_PARTS = {
     "__pycache__",
     "dist",
 }
+NON_NORMATIVE_ASSET_DIRECTORIES = frozenset({"ASSETS", "DATA"})
+
+
+def is_non_normative_asset_path(path: str) -> bool:
+    return path.split("/", 1)[0] in NON_NORMATIVE_ASSET_DIRECTORIES
 
 
 def _is_link_or_junction(path: Path) -> bool:
@@ -97,14 +102,16 @@ class SourceRepository:
                 continue
             if any(part in _EXCLUDED_PARTS for part in relative.parts):
                 continue
+            relative_path = relative.as_posix()
             canonical = (
                 resolved.read_bytes()
                 if relative.parts[:2] == ("EVIDENCE", "sources")
+                or is_non_normative_asset_path(relative_path)
                 else canonical_file(resolved)
             )
             files.append(
                 SourceFile(
-                    path=relative.as_posix(),
+                    path=relative_path,
                     source_path=resolved,
                     canonical_content=canonical,
                     sha256=sha256(canonical).hexdigest(),

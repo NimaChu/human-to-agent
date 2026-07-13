@@ -8,12 +8,14 @@ from human_to_agent.services.build import PUBLIC_DIRECTORIES
 def test_template_manifest_declares_complete_source_scaffold() -> None:
     root = Path(__file__).parents[2]
     manifest = yaml.safe_load((root / "templates/child-workspace/manifest.yaml").read_text())
-    assert manifest["template_version"] == "2"
+    assert manifest["template_version"] == "3"
     declared = set(manifest["directories"])
     assert set(PUBLIC_DIRECTORIES) <= declared
     assert {
         ".foundry/checkpoints",
         "ASSESSMENTS",
+        "ASSETS",
+        "DATA",
         "EVALUATORS",
         "HARNESS",
         "TOOLS",

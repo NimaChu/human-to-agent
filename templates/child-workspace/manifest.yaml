@@ -1,5 +1,5 @@
 schema_version: "1"
-template_version: "2"
+template_version: "3"
 directories:
   - TASK-CONTRACT
   - SKILLS
@@ -19,6 +19,8 @@ directories:
   - LOOP-READINESS
   - RUNS
   - EVIDENCE
+  - ASSETS
+  - DATA
   - .foundry/checkpoints
 templates:
   - workspace.yaml

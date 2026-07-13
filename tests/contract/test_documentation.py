@@ -65,6 +65,19 @@ def test_guided_onboarding_keeps_task_deliverables_out_of_the_mother_workspace()
         assert "explicitly requested" in text
 
 
+def test_guidance_defines_indexed_non_normative_data_and_asset_directories() -> None:
+    for relative in (
+        "AGENTS.md",
+        "agents/practitioner-guide.md",
+        "skills/_shared/method-contract.md",
+        "skills/guided-session-onboarding/SKILL.md",
+    ):
+        text = (ROOT / relative).read_text().lower()
+        assert "assets/" in text and "data/" in text
+        assert "indexed" in text and "path-safety" in text
+        assert "business-schema" in text
+
+
 def test_readme_explains_conversational_entrypoint() -> None:
     text = (ROOT / "README.md").read_text().lower()
     assert "start a conversation" in text

@@ -13,13 +13,16 @@
   explicitly requested maintenance of the Human-to-Agent product itself.
 
 - Treat `workspaces/` Markdown, YAML, and JSONL as the only business source of truth.
+- Use each child workspace's `ASSETS/` and `DATA/` directories for untyped task resources and
+  runtime data. They are indexed and path-safety checked but not business-schema assets; do not
+  make them the only record of a business fact, decision, or evidence claim.
 - Never use `dist/` as business input or edit generated files as authoritative data.
 - Run changes through `uv`; use `uv run pytest`, `uv run ruff check`, and `uv run mypy`.
 - Follow red-green-refactor TDD for every behavior change.
 - Preserve evidence basis, Unknown history, Human Gates, and append-only events.
 - Never invent a business rule to make a stage gate pass.
 - Never infer autonomy approval from Readiness, a requested autonomy level, or conversational confidence. Only record `LOOP-READINESS/autonomy-approval.yaml` after capturing direct owner evidence for the exact level and workspace; otherwise keep approval missing or Unknown.
-- Never store credentials or secrets in normative sources or event logs.
+- Never store credentials or secrets in the workspace or its event logs.
 - Keep Codex and OpenCode adapters thin; shared methods live in `skills/` and `agents/`.
 - External and irreversible actions may only produce an unexecuted action package; obey every Human Gate and recovery entry.
 - Before recording source changes, run `uv run hta validate --workspace <id> --format json` and `uv run hta diff --workspace <id> --format json`.
