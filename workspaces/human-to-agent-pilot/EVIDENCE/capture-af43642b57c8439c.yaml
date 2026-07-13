@@ -1,20 +1,20 @@
 schema_version: '1'
-id: evidence.capture.1993c46fb8e10d97
+id: evidence.capture.af43642b57c8439c
 workspace_id: human-to-agent-pilot
 revision: 1
 status: captured
 owners:
 - maintainer
-created_at: '2026-07-12T02:42:24.483147Z'
-updated_at: '2026-07-12T02:42:24.483147Z'
+created_at: '2026-07-13T05:10:51.365716Z'
+updated_at: '2026-07-13T05:10:51.365716Z'
 provenance: hta capture record
 links: []
 evidence_refs: []
 type: real_case
-source: EVIDENCE/sources/1993c46fb8e10d97fafc63b428ed9c6a299df82a9cdd8570b7f7d43c3c16b74e.html
+source: EVIDENCE/sources/af43642b57c8439cc9bd37840b0d43cd815dcf859cfec4efde77437d3e3a5acd.md
 locator: entire normative source copy
 captured_by: maintainer
-captured_at: '2026-07-12T02:42:24.483147Z'
+captured_at: '2026-07-13T05:10:51.365716Z'
 content_summary: Exact bytes supplied to Human to Agent and copied into this workspace.
 claim: The recorded bytes were supplied to the capture operation.
 basis: observed
@@ -24,5 +24,5 @@ validity_conditions:
 - The normative source copy matches the recorded content hash.
 invalidation_conditions:
 - The normative source copy changes or the owner withdraws the capture.
-content_sha256: 1993c46fb8e10d97fafc63b428ed9c6a299df82a9cdd8570b7f7d43c3c16b74e
+content_sha256: af43642b57c8439cc9bd37840b0d43cd815dcf859cfec4efde77437d3e3a5acd
 cheapest_probe: null

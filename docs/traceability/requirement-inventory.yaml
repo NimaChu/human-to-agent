@@ -81,7 +81,7 @@
     },
     {
       "id": "H2A-014",
-      "source": "PR/supplements/Know your unknowns - complete.html",
+      "source": "PR/supplements/know-your-unknowns-method-cards.md",
       "locator": "Method cards",
       "statement": "Use discovery, during-work, and post-work Unknown methods."
     },
@@ -477,7 +477,7 @@
     },
     {
       "id": "H2A-080",
-      "source": "PR/supplements/Know your unknowns - complete.html",
+      "source": "PR/supplements/know-your-unknowns-method-cards.md",
       "locator": "Eleven method cards",
       "statement": "Unknown discovery exposes all eleven pre/during/post method cards."
     },
@@ -543,4 +543,3 @@
     }
   ]
 }
-

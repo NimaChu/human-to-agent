@@ -37,7 +37,7 @@ def test_all_authoritative_sources_have_inventory_rows() -> None:
     assert sources == {
         "PR/Harness Foundry PR.md",
         "PR/supplements/Agent-Harness.md",
-        "PR/supplements/Know your unknowns - complete.html",
+        "PR/supplements/know-your-unknowns-method-cards.md",
         "PR/supplements/Loop Engineering.md",
     }
     assert all((ROOT / source).is_file() for source in sources)

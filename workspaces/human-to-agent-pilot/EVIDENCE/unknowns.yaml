@@ -13,7 +13,7 @@
   "links": [],
   "evidence_refs": [],
   "type": "system_definition",
-  "source": "EVIDENCE/sources/1993c46fb8e10d97fafc63b428ed9c6a299df82a9cdd8570b7f7d43c3c16b74e.html",
+  "source": "EVIDENCE/sources/af43642b57c8439cc9bd37840b0d43cd815dcf859cfec4efde77437d3e3a5acd.md",
   "locator": "Method cards",
   "captured_by": "maintainer",
   "captured_at": "2026-07-10T00:00:00Z",
@@ -29,6 +29,6 @@
   "invalidation_conditions": [
     "Source or verification behavior changes."
   ],
-  "content_sha256": "1993c46fb8e10d97fafc63b428ed9c6a299df82a9cdd8570b7f7d43c3c16b74e",
+  "content_sha256": "af43642b57c8439cc9bd37840b0d43cd815dcf859cfec4efde77437d3e3a5acd",
   "cheapest_probe": null
 }

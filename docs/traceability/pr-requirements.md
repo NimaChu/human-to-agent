@@ -15,7 +15,7 @@
 | H2A-011 | PR/Harness Foundry PR.md#搂16 Permissions | achieved | tests/e2e/test_reference_pilot.py::test_release_prepares_package_but_never_executes_external_action |
 | H2A-012 | PR/Harness Foundry PR.md#搂18 Verification | achieved | tests/e2e/test_reference_pilot.py::test_pilot_is_independently_reproduced |
 | H2A-013 | PR/supplements/Agent-Harness.md#Harness semantic model | achieved | tests/e2e/test_reference_pilot.py::test_same_skill_passes_three_evaluated_cases |
-| H2A-014 | PR/supplements/Know your unknowns - complete.html#Method cards | achieved | tests/e2e/test_reference_pilot.py::test_unknown_skill_contains_all_discovery_cards |
+| H2A-014 | PR/supplements/know-your-unknowns-method-cards.md#Discovery | achieved | tests/e2e/test_reference_pilot.py::test_unknown_skill_contains_all_discovery_cards |
 | H2A-015 | PR/supplements/Loop Engineering.md#Loop readiness | achieved | tests/e2e/test_reference_pilot.py::test_pilot_is_conditionally_ready_or_better |
 | H2A-016 | PR/Harness Foundry PR.md#搂12 CLI | achieved | tests/e2e/test_reference_pilot.py::test_every_command_is_registered_and_supports_json_help |
 | H2A-017 | PR/Harness Foundry PR.md#搂17 Change impact | achieved | tests/e2e/test_reference_pilot.py::test_source_change_requires_adapter_recertification |
@@ -81,7 +81,7 @@
 | H2A-077 | PR/Harness Foundry PR.md#§22 core principles | achieved | tests/contract/test_documentation.py::test_agent_guidance_has_boundaries_and_verification |
 | H2A-078 | PR/Harness Foundry PR.md#§5 non-goals | achieved | tests/integration/test_human_gates.py::test_release_prepares_package_but_never_executes_external_action |
 | H2A-079 | PR/supplements/Agent-Harness.md#Harness concept mapping | achieved | tests/e2e/test_reference_pilot.py::test_e2e_harness_run_is_traceable |
-| H2A-080 | PR/supplements/Know your unknowns - complete.html#Eleven method cards | achieved | tests/contract/test_method_assets.py::test_unknown_skill_contains_all_discovery_cards |
+| H2A-080 | PR/supplements/know-your-unknowns-method-cards.md#Discovery | achieved | tests/contract/test_method_assets.py::test_unknown_skill_contains_all_discovery_cards |
 | H2A-081 | PR/supplements/Loop Engineering.md#Extended loop controls | achieved | tests/unit/domain/test_readiness.py::test_all_ten_core_and_six_supplemental_dimensions_are_assessed |
 | H2A-082 | PR/Harness Foundry PR.md#§5 first-release interface boundary | achieved | tests/contract/test_cli_contract.py::test_version_uses_stable_json_envelope |
 | H2A-083 | PR/Harness Foundry PR.md#§14 command operations | achieved | tests/contract/test_cli_commands.py::test_every_command_is_registered_and_supports_json_help |

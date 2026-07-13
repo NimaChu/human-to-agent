@@ -18,7 +18,7 @@
   ],
   "actor_id": "codex-final-current-tree-verifier",
   "actor_role": "independent_verifier",
-  "input_tree_digest": "805c20b020eb76b66e2e1ced09598c3f1483c4eccc72690e46a43c2f16afc0b0",
+  "input_tree_digest": "3de10c3fc05ed27cdf4538be760c44d0c18d175e08449dc6d5af3b46ae769222",
   "steps": [
     "inspect the current normative source tree",
     "run the harness-semantics conflict case through the automated verification suite",

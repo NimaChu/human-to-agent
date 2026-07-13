@@ -12,7 +12,7 @@
 - `PR/Harness Foundry PR.md`：五阶段方法、母工作区能力、子工作区结构与验收标准。
 - `PR/supplements/Agent-Harness.md`：Harness 的定义、治理语义、可替换执行接口与六元组 `⟨E,T,C,S,L,V⟩`。
 - `PR/supplements/Loop Engineering.md`：Automations、Worktrees、Skills、Connectors、Sub-agents、外部持久状态和 maker/checker 分离。
-- `PR/supplements/Know your unknowns - complete.html`：Unknown 的四象限、blindspot、逐题访谈、语义映射、可调整计划、实施偏差、buy-in 文档和理解测验。
+- `PR/supplements/know-your-unknowns-method-cards.md`：Unknown 的四象限、blindspot、逐题访谈、语义映射、可调整计划、实施偏差、buy-in 文档和理解测验。原始 HTML bundle 仅保留在本地，不进入公开仓库。
 
 资料中的 Acme 路径、角色、百分比、吞吐量、TTL、超时、权限、限流参数和颜色公式都是方法演示，不构成 Harness Foundry 的产品默认值。
 

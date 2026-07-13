@@ -133,7 +133,7 @@
     },
     {
       "id": "H2A-014",
-      "source_locator": "PR/supplements/Know your unknowns - complete.html#Method cards",
+      "source_locator": "PR/supplements/know-your-unknowns-method-cards.md#Discovery",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "src/human_to_agent",
       "evidence": "tests/e2e/test_reference_pilot.py::test_unknown_skill_contains_all_discovery_cards",
@@ -793,7 +793,7 @@
     },
     {
       "id": "H2A-080",
-      "source_locator": "PR/supplements/Know your unknowns - complete.html#Eleven method cards",
+      "source_locator": "PR/supplements/know-your-unknowns-method-cards.md#Discovery",
       "specification": "docs/superpowers/specs/2026-07-10-harness-foundry-design.md",
       "implementation": "skills/unknown-evidence/SKILL.md",
       "evidence": "tests/contract/test_method_assets.py::test_unknown_skill_contains_all_discovery_cards",
