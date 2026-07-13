@@ -77,7 +77,7 @@ def diff_view(root: Path, workspace_id: str) -> CommandResult:
     index_path = snapshot.workspace_path / ".foundry" / "artifact-index.yaml"
     if not index_path.is_file():
         raise FoundryError("filesystem", "index.missing", "Artifact index is missing.")
-    index = ArtifactIndex.model_validate(yaml.safe_load(index_path.read_text()))
+    index = ArtifactIndex.model_validate(yaml.safe_load(index_path.read_text(encoding="utf-8")))
     source = {item.path: item.sha256 for item in snapshot.files}
     recorded = {item.path: item.sha256 for item in index.entries}
     changed = sorted(

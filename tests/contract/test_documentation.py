@@ -13,7 +13,7 @@ def test_readme_has_exact_bootstrap_and_five_stage_happy_path() -> None:
         "uv run hta stage assess",
         "uv run hta stage advance",
         "uv run hta readiness assess",
-        "uv run hta build --workspace human-to-agent-pilot --release",
+        "uv run hta build --workspace <workspace> --release",
     ):
         assert command in text
     assert "Draft versus release" in text and "Exit codes" in text
@@ -49,6 +49,20 @@ def test_guided_onboarding_guidance_defines_fast_path_and_canonical_handoff() ->
         assert "`hta capture record`" in text
         assert "every provisional unknown" in text
         assert "normative" in text
+
+
+def test_guided_onboarding_keeps_task_deliverables_out_of_the_mother_workspace() -> None:
+    for relative in (
+        "AGENTS.md",
+        "agents/practitioner-guide.md",
+        "skills/_shared/method-contract.md",
+        "skills/guided-session-onboarding/SKILL.md",
+    ):
+        text = (ROOT / relative).read_text().lower()
+        assert "task-specific deliverables" in text
+        assert "mother workspace" in text
+        assert "workspaces/<id>/" in text
+        assert "explicitly requested" in text
 
 
 def test_readme_explains_conversational_entrypoint() -> None:

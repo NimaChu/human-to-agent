@@ -20,10 +20,8 @@ def test_active_workspace_identity_uses_human_to_agent() -> None:
     assert "Harness Foundry" not in readme
 
 
-def test_hta_cli_and_renamed_reference_pilot_are_operational() -> None:
+def test_hta_cli_is_operational_without_a_committed_reference_workspace() -> None:
     result = runner.invoke(app, ["version", "--format", "json"])
     payload = json.loads(result.stdout)
     assert result.exit_code == 0
     assert payload["command"] == "version"
-    assert (ROOT / "workspaces/human-to-agent-pilot").is_dir()
-    assert (ROOT / "dist/human-to-agent-pilot/release/BUILD-MANIFEST.json").is_file()

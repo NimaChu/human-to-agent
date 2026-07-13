@@ -11,5 +11,7 @@ htmlcov/
 
 # Local-only source material; keep the original offline bundle out of public Git.
 PR/supplements/Know your unknowns - complete.html
-workspaces/human-to-agent-pilot/EVIDENCE/sources/1993c46fb8e10d97fafc63b428ed9c6a299df82a9cdd8570b7f7d43c3c16b74e.html
-dist/human-to-agent-pilot/release/EVIDENCE/sources/1993c46fb8e10d97fafc63b428ed9c6a299df82a9cdd8570b7f7d43c3c16b74e.html
+
+# Child workspaces are local task assets, never public repository content.
+workspaces/*
+!workspaces/.gitkeep

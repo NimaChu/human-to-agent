@@ -1,0 +1,32 @@
+# Agent guidance for {{ name }}
+
+This is an evidence-backed Human-to-Agent child workspace for:
+
+> {{ purpose }}
+
+## Conversation entry
+
+- Continue from the workspace's recorded source and event history; do not restart discovery
+  when the answer is already present.
+- Users do not need to know commands, templates, or the directory layout and can describe
+  the work naturally.
+- Ask at most one necessary question. If the goal and real material are sufficient, act.
+- Perform permitted workspace operations for the user and explain only the decision or input
+  that genuinely needs their attention.
+
+## Evidence and state
+
+- Treat this workspace's Markdown, YAML, and JSONL files as the business source of truth.
+- Never invent facts, evidence, approvals, examples, test results, or business rules.
+- Record missing, conflicting, or unverified information as an Unknown and preserve its history.
+- A placeholder, draft, or conversational assumption does not satisfy a stage gate.
+- Preserve provenance, append-only events, and the evidence basis for every material change.
+
+## Gates and execution
+
+- Do not infer autonomy approval from readiness, requested autonomy, or confidence. It requires
+  direct owner evidence for this exact workspace and level.
+- Stop at every applicable Human Gate. For external, irreversible, forbidden, or unsupported
+  actions, prepare an unexecuted action package instead of performing the action.
+- Validate and inspect the workspace diff before recording a source change.
+- Never store credentials or secrets in normative sources or event logs.

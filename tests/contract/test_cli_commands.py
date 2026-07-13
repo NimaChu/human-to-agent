@@ -71,32 +71,6 @@ def test_schema_failure_maps_to_exit_3(tmp_path: Path) -> None:
     assert payload["diagnostics"][0]["category"] == "schema"
 
 
-def test_workspace_status_is_a_noninteractive_maturity_dashboard() -> None:
-    root = Path(__file__).parents[2]
-    result = runner.invoke(
-        app,
-        [
-            "workspace",
-            "status",
-            "--root",
-            str(root),
-            "--workspace",
-            "human-to-agent-pilot",
-            "--format",
-            "json",
-        ],
-    )
-    payload = json.loads(result.stdout)
-    values = set(payload["next_actions"])
-    assert result.exit_code == 0
-    assert "skills=1/1 validated" in values
-    assert "case_coverage=boundary,failure,normal" in values
-    assert "unknowns=1; unmanaged=0" in values
-    assert "harness=complete" in values
-    assert "readiness=conditional_ready" in values
-    assert "blocking=0" in values
-
-
 def test_workspace_status_rejects_linked_workspace_before_reading_manifest(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

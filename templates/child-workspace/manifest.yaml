@@ -1,5 +1,5 @@
 schema_version: "1"
-template_version: "1"
+template_version: "2"
 directories:
   - TASK-CONTRACT
   - SKILLS
@@ -22,6 +22,7 @@ directories:
   - .foundry/checkpoints
 templates:
   - workspace.yaml
+  - AGENTS.md
   - README.md
   - TASK-CONTRACT/contract.yaml
   - TASK-CONTRACT/narrative.md

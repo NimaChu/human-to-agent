@@ -1,8 +1,0 @@
-workspace_id: human-to-agent-pilot
-assessment_id: readiness.pilot
-level: h1
-owner_id: owner
-at: '2026-07-13T02:39:59.619926Z'
-evidence_refs:
-  - evidence.capture.e79d172a403bd2c9
-  - evidence.capture.8cbe697b157364a5
