@@ -318,6 +318,9 @@ def test_workspace_new_renders_every_manifest_entry(tmp_path: Path) -> None:
     assert all((workspace / relative).is_dir() for relative in template_manifest["directories"])
     assert all((workspace / relative).is_file() for relative in template_manifest["templates"])
     assert all((workspace / relative).is_file() for relative in template_manifest["state_files"])
+    guidance = (workspace / "AGENTS.md").read_text(encoding="utf-8")
+    assert "render-check" in guidance
+    assert "do not need to know commands" in guidance.lower()
 
 
 @pytest.mark.parametrize("unsafe", ("../escaped", "/absolute", r"nested\windows", "C:drive"))
@@ -467,6 +470,7 @@ def test_new_scaffold_is_a_recorded_valid_draft_that_passes_no_stage_gate(
     assert purpose in (workspace / "README.md").read_text(encoding="utf-8")
     assert (workspace / "CHANGELOG.md").is_file()
     assert (workspace / "TASK-CONTRACT/narrative.md").is_file()
+    assert (workspace / "AGENTS.md").is_file()
 
     validation = RUNNER.invoke(
         app,
@@ -479,3 +483,30 @@ def test_new_scaffold_is_a_recorded_valid_draft_that_passes_no_stage_gate(
         yaml.safe_load((workspace / ".foundry/artifact-index.yaml").read_text(encoding="utf-8"))
     )
     assert set(index.by_path()) == {item.path for item in snapshot.files}
+
+
+def test_diff_reads_a_utf8_index_when_a_child_workspace_has_unicode_paths(tmp_path: Path) -> None:
+    initialize(tmp_path, dry_run=False)
+    assert (
+        RUNNER.invoke(
+            app,
+            ["workspace", "new", "unicode-paths", "--root", str(tmp_path)],
+        ).exit_code
+        == 0
+    )
+    workspace = tmp_path / "workspaces/unicode-paths"
+    (workspace / "TOOLS/启动工具.bat").write_text("@echo off\n", encoding="utf-8")
+    assert (
+        RUNNER.invoke(
+            app,
+            ["record-change", "--root", str(tmp_path), "--workspace", "unicode-paths"],
+        ).exit_code
+        == 0
+    )
+
+    result = RUNNER.invoke(
+        app,
+        ["diff", "--root", str(tmp_path), "--workspace", "unicode-paths", "--format", "json"],
+    )
+
+    assert result.exit_code == 0, result.stdout

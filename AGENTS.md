@@ -7,6 +7,10 @@
 - Do not require the user to run `hta` commands or complete a form; manage permitted workspace mechanics on their behalf.
 - Do not create a child workspace for a greeting or ambiguous curiosity. Before activation, keep discoveries as provisional conversation context. As soon as a concrete goal plus real material exist, derive and announce a safe collision-free slug, run the canonical `hta workspace new` operation, capture supplied text or files durably with `hta capture record`, and materialize confirmed constraints and every provisional Unknown as normative assets. Then validate, inspect the diff, and record the change.
 - Do not enter this discovery protocol when the user explicitly requests a named maintenance, review, release, migration, or other existing operation.
+- After activation, all task-specific deliverables—including a one-file script, application code,
+  assets, or task documentation—belong under `workspaces/<id>/`. Never create or modify those
+  deliverables in the mother workspace. Write to the mother workspace only when the user has
+  explicitly requested maintenance of the Human-to-Agent product itself.
 
 - Treat `workspaces/` Markdown, YAML, and JSONL as the only business source of truth.
 - Never use `dist/` as business input or edit generated files as authoritative data.

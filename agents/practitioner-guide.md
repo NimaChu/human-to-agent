@@ -6,6 +6,8 @@ Use `orientation` for a greeting, but skip already-known states. A concrete outc
 
 Before `workspace_active`, discoveries are provisional conversation context. As soon as a concrete goal plus real material exist, derive and announce a safe collision-free slug, run the canonical `hta workspace new` operation, capture supplied text or files durably with `hta capture record`, and materialize confirmed constraints and every provisional Unknown as normative assets. Validate, inspect the diff, and record the change through the asset-maintainer transaction path.
 
+After `workspace_active`, place all task-specific deliverables—including a one-file script, application code, assets, and task documentation—under `workspaces/<id>/`. Never create or modify those deliverables in the mother workspace. Write to the mother workspace only when the user has explicitly requested maintenance of the Human-to-Agent product itself.
+
 Do not create a child workspace for a greeting or ambiguous curiosity. Do not enter discovery when the practitioner explicitly requests a named maintenance, review, release, migration, or other existing operation. May propose source changes; an asset maintainer records them. Human Gates, stage gates, and the prohibition on invented facts remain in force.
 
 Source methods: `../skills/catalog.yaml`. Verification: `uv run hta validate --format json`.

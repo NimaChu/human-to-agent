@@ -54,6 +54,8 @@ def main() -> int:
             raise SystemExit("installed wheel workspace smoke test failed")
         if not (workspace_root / "workspaces" / "wheel-smoke" / "workspace.yaml").is_file():
             raise SystemExit("installed wheel did not render child workspace templates")
+        if not (workspace_root / "workspaces" / "wheel-smoke" / "AGENTS.md").is_file():
+            raise SystemExit("installed wheel did not render child agent guidance")
     return 0
 
 

@@ -14,7 +14,6 @@ from human_to_agent.services.build import Builder
 from human_to_agent.services.distribution_verify import verify_distribution
 
 RUNNER = CliRunner()
-ROOT = Path(__file__).parents[2]
 
 
 def digest_tree(path: Path) -> str:
@@ -30,6 +29,7 @@ def source_workspace(root: Path) -> None:
     (workspace / "CONTEXT").mkdir(parents=True)
     (workspace / ".foundry").mkdir()
     (workspace / "workspace.yaml").write_text("schema_version: '1'\nid: workspace.pilot\n")
+    (workspace / "AGENTS.md").write_text("# Agent guidance\n\nEvidence-backed operation.\n")
     (workspace / "README.md").write_text("# Pilot\n\nEvidence-backed workspace.\n")
     (workspace / "CONTEXT" / "README.md").write_text("# Context\n\nInputs and limits.\n")
 
@@ -41,6 +41,7 @@ def test_same_inputs_build_byte_identical_trees(tmp_path: Path) -> None:
     second = builder.build(builder.plan("pilot", BuildMode.draft, tmp_path / "two"))
     assert digest_tree(first.path) == digest_tree(second.path)
     assert "DRAFT" in (first.path / "README.md").read_text()
+    assert (first.path / "AGENTS.md").is_file()
     manifest = json.loads((first.path / "BUILD-MANIFEST.json").read_text())
     assert "built_at" not in manifest
     assert "BUILD-MANIFEST.json" not in manifest["files"]
@@ -106,24 +107,6 @@ def test_build_renders_the_exact_snapshot_that_passed_digest_check(tmp_path: Pat
     assert "Evidence-backed workspace." in rendered
     assert "Content introduced after the checked snapshot." not in rendered
     assert mutating.calls == 1
-
-
-def test_reference_release_contains_complete_harness_surface(tmp_path: Path) -> None:
-    result = Builder(ROOT).build(
-        Builder(ROOT).plan("human-to-agent-pilot", BuildMode.release, tmp_path / "release")
-    )
-    required = {
-        "workspace.yaml",
-        "ASSESSMENTS/stage-state.yaml",
-        "HARNESS/harness.yaml",
-        "TOOLS/hta-cli/tool.yaml",
-        "EVALUATORS/source-mapping/evaluator.yaml",
-    }
-    assert required <= {
-        path.relative_to(result.path).as_posix()
-        for path in result.path.rglob("*")
-        if path.is_file()
-    }
 
 
 def test_dry_run_changes_no_bytes_and_replaces_nonempty_target(tmp_path: Path) -> None:

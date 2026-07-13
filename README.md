@@ -68,12 +68,12 @@ uv run hta record-change --workspace <workspace>
 uv run hta build --workspace <workspace> --draft
 ```
 
-The supplied real pilot is already release-gated:
+Once a child workspace has satisfied its release gates, build its standalone release:
 
 ```powershell
-uv run hta validate --workspace human-to-agent-pilot --format json
-uv run hta events verify --workspace human-to-agent-pilot --format json
-uv run hta build --workspace human-to-agent-pilot --release
+uv run hta validate --workspace <workspace> --format json
+uv run hta events verify --workspace <workspace> --format json
+uv run hta build --workspace <workspace> --release
 ```
 
 ## Draft versus release
@@ -89,7 +89,7 @@ The first release has no interactive UI and does not execute external or irrever
 - Crash recovery: `docs/operations/recovery.md`
 - Schema migration: `docs/operations/migration.md`
 - Change re-certification: `docs/operations/recertification.md`
-- Requirement proof: `docs/traceability/completion-audit.md`
+- Requirement source: the supplied product brief and theory supplements
 
 Run `uv run hta doctor --format json` for configuration, secret, transaction, event, and adapter checks. `hta events verify` detects truncation, sequence gaps, predecessor mismatch, and payload tampering.
 
