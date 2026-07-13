@@ -14,6 +14,7 @@
 - Follow red-green-refactor TDD for every behavior change.
 - Preserve evidence basis, Unknown history, Human Gates, and append-only events.
 - Never invent a business rule to make a stage gate pass.
+- Never infer autonomy approval from Readiness, a requested autonomy level, or conversational confidence. Only record `LOOP-READINESS/autonomy-approval.yaml` after capturing direct owner evidence for the exact level and workspace; otherwise keep approval missing or Unknown.
 - Never store credentials or secrets in normative sources or event logs.
 - Keep Codex and OpenCode adapters thin; shared methods live in `skills/` and `agents/`.
 - External and irreversible actions may only produce an unexecuted action package; obey every Human Gate and recovery entry.

@@ -1,102 +1,181 @@
 workspace_id: human-to-agent-pilot
 current_stage: 5
 facts:
-  - real_task
-  - basic_goal_understood
-  - inputs_identified
-  - outputs_identified
-  - manual_modifications_recorded
-  - initial_unknowns_recorded
-  - time_baseline_recorded
-  - initial_success_criteria
-  - owner_confirmed_usable
-  - third_party_understands_goal_output
-  - task_contract_exists
-  - skill_prototype_exists
-  - original_case_rerun
-  - manual_modifications_linked
-  - key_unknowns_classified
-  - next_case_plan_exists
-  - normal_paths_stable
-  - common_failures_detected
-  - result_evaluable
-  - skill_boundaries_clear
-  - independent_skill_run
-  - key_unknowns_managed
-  - skill_version_explainable
-  - end_to_end_harness_run
-  - steps_traceable
-  - harness_goal_and_completion
-  - context_defined
-  - state_defined
-  - policies_defined
-  - human_gates_defined
-  - exceptions_defined
-  - local_evaluators_defined
-  - final_evaluator_defined
-  - autonomy_approved
-  - noncreator_harness_run
-  - business_goal_clear
-  - task_contract_complete
-  - core_skill_validated
-  - unknowns_managed
-  - input_output_state_boundaries_clear
-  - key_exceptions_detectable
-  - high_risk_actions_have_human_gates
-  - stop_recovery_escalation_defined
-  - noncreator_can_maintain
-  - loop_readiness_conclusion
+- business_goal_clear
+- outputs_identified
+- common_failures_detected
+- basic_goal_understood
+- initial_success_criteria
+- human_gates_defined
+- exceptions_defined
+- manual_modifications_linked
+- task_contract_complete
+- third_party_understands_goal_output
+- input_output_state_boundaries_clear
+- state_defined
+- original_case_rerun
+- next_case_plan_exists
+- local_evaluators_defined
+- real_task
+- autonomy_approved
+- end_to_end_harness_run
+- normal_paths_stable
+- stop_recovery_escalation_defined
+- time_baseline_recorded
+- final_evaluator_defined
+- policies_defined
+- noncreator_harness_run
+- context_defined
+- skill_version_explainable
+- high_risk_actions_have_human_gates
+- harness_goal_and_completion
+- key_unknowns_managed
+- owner_confirmed_usable
+- unknowns_managed
+- noncreator_can_maintain
+- core_skill_validated
+- key_exceptions_detectable
+- independent_skill_run
+- manual_modifications_recorded
+- task_contract_exists
+- initial_unknowns_recorded
+- loop_readiness_conclusion
+- inputs_identified
+- result_evaluable
+- key_unknowns_classified
+- steps_traceable
+- skill_boundaries_clear
+- skill_prototype_exists
 evidence:
-  real_task: [evidence.pr, case.pr-mainline]
-  basic_goal_understood: [task-contract.human-to-agent]
-  inputs_identified: [task-contract.human-to-agent]
-  outputs_identified: [task-contract.human-to-agent]
-  manual_modifications_recorded: [evidence.output]
-  initial_unknowns_recorded: [unknown.release-environment]
-  time_baseline_recorded: [evidence.output]
-  initial_success_criteria: [task-contract.human-to-agent]
-  owner_confirmed_usable: [workspace.human-to-agent-pilot]
-  third_party_understands_goal_output: [run.independent-verification]
-  task_contract_exists: [task-contract.human-to-agent]
-  skill_prototype_exists: [skill.source-to-requirement-mapping]
-  original_case_rerun: [run.pr-mainline]
-  manual_modifications_linked: [evidence.output]
-  key_unknowns_classified: [unknown.release-environment]
-  next_case_plan_exists: [skill.source-to-requirement-mapping]
-  normal_paths_stable: [eval.pr-mainline]
-  common_failures_detected: [eval.acme-default-rejection]
-  result_evaluable: [evaluator.source-mapping]
-  skill_boundaries_clear: [skill.source-to-requirement-mapping]
-  independent_skill_run: [run.independent-verification]
-  key_unknowns_managed: [unknown.release-environment]
-  skill_version_explainable: [skill.source-to-requirement-mapping]
-  end_to_end_harness_run: [run.independent-verification]
-  steps_traceable: [workflow.source-to-release, run.independent-verification]
-  harness_goal_and_completion: [harness.pilot]
-  context_defined: [context.pilot]
-  state_defined: [state.pilot]
-  policies_defined: [policy.pilot, policy.loop-controls]
-  human_gates_defined: [human-gate.release]
-  exceptions_defined: [exception.source-conflict]
-  local_evaluators_defined: [evaluator.source-mapping]
-  final_evaluator_defined: [evaluator.source-mapping]
-  autonomy_approved: [workspace.human-to-agent-pilot, readiness.pilot]
-  noncreator_harness_run: [run.independent-verification]
-  business_goal_clear: [task-contract.human-to-agent]
-  task_contract_complete: [task-contract.human-to-agent]
-  core_skill_validated: [skill.source-to-requirement-mapping]
-  unknowns_managed: [unknown.release-environment]
-  input_output_state_boundaries_clear: [task-contract.human-to-agent, state.pilot]
-  key_exceptions_detectable: [exception.source-conflict, eval.acme-default-rejection]
-  high_risk_actions_have_human_gates: [human-gate.release, tool.hta-cli]
-  stop_recovery_escalation_defined: [policy.loop-controls, exception.source-conflict]
-  noncreator_can_maintain: [run.independent-verification]
-  loop_readiness_conclusion: [readiness.pilot]
-evaluated_case_kinds: [normal, boundary, failure]
-case_evaluation_refs:
+  real_task:
+  - evidence.pr
+  - case.pr-mainline
+  basic_goal_understood:
+  - task-contract.human-to-agent
+  inputs_identified:
+  - task-contract.human-to-agent
+  outputs_identified:
+  - task-contract.human-to-agent
+  manual_modifications_recorded:
+  - evidence.output
+  initial_unknowns_recorded:
+  - unknown.release-environment
+  time_baseline_recorded:
+  - evidence.output
+  initial_success_criteria:
+  - task-contract.human-to-agent
+  owner_confirmed_usable:
+  - workspace.human-to-agent-pilot
+  third_party_understands_goal_output:
+  - run.independent-verification
+  task_contract_exists:
+  - task-contract.human-to-agent
+  skill_prototype_exists:
+  - skill.source-to-requirement-mapping
+  manual_modifications_linked:
+  - evidence.output
+  key_unknowns_classified:
+  - unknown.release-environment
+  next_case_plan_exists:
+  - skill.source-to-requirement-mapping
+  normal_paths_stable:
   - eval.pr-mainline
-  - eval.harness-semantics-conflict
+  common_failures_detected:
   - eval.acme-default-rejection
+  result_evaluable:
+  - eval.acme-default-rejection
+  - eval.harness-semantics-conflict
+  - eval.pr-mainline
+  skill_boundaries_clear:
+  - skill.source-to-requirement-mapping
+  key_unknowns_managed:
+  - unknown.release-environment
+  skill_version_explainable:
+  - skill.source-to-requirement-mapping
+  harness_goal_and_completion:
+  - harness.pilot
+  context_defined:
+  - context.pilot
+  state_defined:
+  - state.pilot
+  policies_defined:
+  - policy.loop-controls
+  - policy.pilot
+  human_gates_defined:
+  - human-gate.release
+  exceptions_defined:
+  - exception.source-conflict
+  local_evaluators_defined:
+  - evaluator.source-mapping
+  final_evaluator_defined:
+  - evaluator.source-mapping
+  - workflow.source-to-release
+  autonomy_approved:
+  - evidence.capture.e79d172a403bd2c9
+  - evidence.capture.8cbe697b157364a5
+  business_goal_clear:
+  - task-contract.human-to-agent
+  task_contract_complete:
+  - task-contract.human-to-agent
+  core_skill_validated:
+  - skill.source-to-requirement-mapping
+  unknowns_managed:
+  - unknown.release-environment
+  input_output_state_boundaries_clear:
+  - skill.source-to-requirement-mapping
+  - state.pilot
+  - task-contract.human-to-agent
+  key_exceptions_detectable:
+  - eval.acme-default-rejection
+  - exception.source-conflict
+  high_risk_actions_have_human_gates:
+  - human-gate.release
+  stop_recovery_escalation_defined:
+  - exception.source-conflict
+  - policy.loop-controls
+  - policy.pilot
+  loop_readiness_conclusion:
+  - readiness.pilot
+  original_case_rerun:
+  - run.acme-default-rejection
+  - run.harness-semantics-conflict
+  - run.independent-verification
+  - run.pr-mainline
+  independent_skill_run:
+  - run.acme-default-rejection
+  - run.harness-semantics-conflict
+  - run.independent-verification
+  - run.pr-mainline
+  end_to_end_harness_run:
+  - run.acme-default-rejection
+  - run.harness-semantics-conflict
+  - run.independent-verification
+  - run.pr-mainline
+  steps_traceable:
+  - run.acme-default-rejection
+  - run.harness-semantics-conflict
+  - run.independent-verification
+  - run.pr-mainline
+  - workflow.source-to-release
+  noncreator_harness_run:
+  - run.acme-default-rejection
+  - run.harness-semantics-conflict
+  - run.independent-verification
+  - run.pr-mainline
+  noncreator_can_maintain:
+  - run.acme-default-rejection
+  - run.harness-semantics-conflict
+  - run.independent-verification
+  - run.pr-mainline
+evaluated_case_kinds:
+- failure
+- boundary
+- normal
+case_evaluation_refs:
+- eval.acme-default-rejection
+- eval.harness-semantics-conflict
+- eval.pr-mainline
 skill_count: 1
 readiness_result: conditional_ready
-readiness_evidence_refs: [readiness.pilot]
+readiness_evidence_refs:
+- readiness.pilot

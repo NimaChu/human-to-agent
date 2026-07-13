@@ -2,33 +2,38 @@
   "schema_version": "1",
   "id": "evidence.output",
   "workspace_id": "human-to-agent-pilot",
-  "revision": 1,
+  "revision": 4,
   "status": "validated",
   "owners": [
     "owner"
   ],
   "created_at": "2026-07-10T00:00:00Z",
-  "updated_at": "2026-07-10T00:00:00Z",
-  "provenance": "Human to Agent pilot",
-  "links": [],
-  "evidence_refs": [],
+  "updated_at": "2026-07-13T03:17:06.122669Z",
+  "provenance": "Observed final verification; exact report captured by hta capture record",
+  "links": [
+    "evidence.capture.424ac4d1aae33eaf"
+  ],
+  "evidence_refs": [
+    "evidence.capture.424ac4d1aae33eaf"
+  ],
   "type": "repeatable_validation",
-  "source": "EVIDENCE/sources/51527e47c320df4503195515f9107e2b8c642a00391d8629b97a558e31d6d504.txt",
+  "source": "EVIDENCE/sources/424ac4d1aae33eafe18f0f16256cec9c6f005e8c9b7e8ed70a998466e35e3b8b.txt",
   "locator": "entire captured verification report",
   "captured_by": "maintainer",
-  "captured_at": "2026-07-10T00:00:00Z",
-  "content_summary": "Direct source or repeatable verification evidence for the Human to Agent pilot.",
-  "claim": "The referenced source or validation supports the traced pilot requirement.",
+  "captured_at": "2026-07-13T03:17:06.122669Z",
+  "content_summary": "Exact final quality, test, Pilot, deterministic-build, and isolated wheel-install verification results.",
+  "claim": "The recorded commands passed with the exact outcomes stated in the captured report.",
   "basis": "observed",
   "applicability_scope": [
     "human-to-agent-pilot"
   ],
   "validity_conditions": [
-    "Recorded content hash remains unchanged."
+    "Recorded content hash remains unchanged.",
+    "Implementation and test behavior remain materially equivalent to the verified candidate."
   ],
   "invalidation_conditions": [
-    "Source or verification behavior changes."
+    "Implementation, tests, Pilot assets, or verification behavior change materially."
   ],
-  "content_sha256": "51527e47c320df4503195515f9107e2b8c642a00391d8629b97a558e31d6d504",
+  "content_sha256": "424ac4d1aae33eafe18f0f16256cec9c6f005e8c9b7e8ed70a998466e35e3b8b",
   "cheapest_probe": null
 }

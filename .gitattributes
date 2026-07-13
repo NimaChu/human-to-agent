@@ -1,3 +1,5 @@
 * text=auto eol=lf
 *.ps1 text eol=crlf
 
+workspaces/**/EVIDENCE/sources/** -whitespace
+dist/**/EVIDENCE/sources/** -whitespace

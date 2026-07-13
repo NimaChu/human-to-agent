@@ -15,9 +15,9 @@ uv run hta version --format json
 uv run hta init
 ```
 
-## Five-stage happy path
+## Agent-operated lifecycle reference
 
-All commands are non-interactive. Replace `<workspace>` with the child-workspace slug.
+Users do not need to run these commands. They are the deterministic operations the Agent performs behind the conversation; maintainers may use them directly for diagnosis or recovery. Replace `<workspace>` with the child-workspace slug when operating manually.
 
 ```powershell
 uv run hta workspace new <workspace>
@@ -42,7 +42,7 @@ uv run hta build --workspace human-to-agent-pilot --release
 
 ## Draft versus release
 
-Draft builds are allowed at any stage and contain a visible `DRAFT` warning. Release builds require a passing computed complete-release assessment, at least conditional Readiness, no unmanaged Unknown, and an artifact index matching every normative source byte. `BUILD-MANIFEST.json` contains deterministic versions, source digest, and per-file digests—never a clock or random ID. Handwritten `.foundry` gate flags have no release authority.
+Draft builds are allowed at any stage and contain a visible `DRAFT` warning. Release builds require a passing computed complete-release assessment, at least conditional Readiness, an explicit evidence-backed autonomy approval, no unmanaged Unknown, and an artifact index matching every normative source byte. Readiness recommends a ceiling but never acts as owner approval. `BUILD-MANIFEST.json` contains deterministic versions, source digest, and per-file digests—never a clock or random ID. Handwritten `.foundry` gate flags have no release authority.
 
 The first release has no interactive UI and does not execute external or irreversible actions. It can prepare an action package; a Human Gate records approve, reject, or modify, while a separate executor remains out of scope.
 

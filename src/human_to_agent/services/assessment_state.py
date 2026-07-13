@@ -29,7 +29,9 @@ from human_to_agent.domain.assets import (
     WorkflowSpec,
     WorkspaceManifest,
 )
+from human_to_agent.domain.evidence import Evidence
 from human_to_agent.domain.readiness import (
+    AutonomyApproval,
     AutonomyLevel,
     DimensionStatus,
     ReadinessAssessment,
@@ -93,6 +95,8 @@ def _identifier(model: BaseModel) -> str | None:
     value = getattr(model, "id", None)
     if isinstance(value, str):
         return value
+    if isinstance(model, AutonomyApproval):
+        return None
     value = getattr(model, "assessment_id", None)
     return value if isinstance(value, str) else None
 
@@ -365,26 +369,30 @@ def _computed_assessment(
 
     unknowns = tuple(
         sorted(
-            (
-                item
-                for item in models
-                if isinstance(item, Unknown) and item.status.lower() != "draft"
-            ),
+            (item for item in models if isinstance(item, Unknown)),
             key=lambda item: item.id,
         )
     )
-    unknown_refs = tuple(item.id for item in unknowns)
+    unknown_refs = tuple(item.id for item in unknowns if item.status.lower() != "draft")
+    all_unknowns_are_recorded = bool(unknowns) and len(unknown_refs) == len(unknowns)
     classified_refs = (
         unknown_refs
-        if unknowns and all(item.unknown_status is not UnknownStatus.new for item in unknowns)
+        if all_unknowns_are_recorded
+        and all(item.unknown_status is not UnknownStatus.new for item in unknowns)
         else ()
     )
     managed_refs = (
         unknown_refs
-        if unknowns and all(item.unknown_status in MANAGED_UNKNOWN_STATUSES for item in unknowns)
+        if all_unknowns_are_recorded
+        and all(item.unknown_status in MANAGED_UNKNOWN_STATUSES for item in unknowns)
         else ()
     )
-    _controlled_fact(facts, evidence, AssessmentFact.initial_unknowns_recorded, unknown_refs)
+    _controlled_fact(
+        facts,
+        evidence,
+        AssessmentFact.initial_unknowns_recorded,
+        unknown_refs if all_unknowns_are_recorded else (),
+    )
     _controlled_fact(facts, evidence, AssessmentFact.key_unknowns_classified, classified_refs)
     _controlled_fact(facts, evidence, AssessmentFact.key_unknowns_managed, managed_refs)
     _controlled_fact(facts, evidence, AssessmentFact.unknowns_managed, managed_refs)
@@ -447,6 +455,12 @@ def _computed_assessment(
         readiness_refs = (readiness.assessment_id,)
     _controlled_fact(facts, evidence, AssessmentFact.loop_readiness_conclusion, readiness_refs)
     autonomy_refs: tuple[str, ...] = ()
+    approvals = tuple(item for item in models if isinstance(item, AutonomyApproval))
+    valid_evidence = {
+        item.id: item
+        for item in models
+        if isinstance(item, Evidence) and item.status.lower() != "draft"
+    }
     if readiness_items and manifest.status == "validated":
         try:
             autonomy = AutonomyLevel(manifest.autonomy_level)
@@ -456,8 +470,28 @@ def _computed_assessment(
                 "workspace.autonomy_invalid",
                 f"Unknown autonomy level: {manifest.autonomy_level}",
             ) from error
-        if autonomy.rank <= readiness_items[0].recommended_ceiling.rank:
-            autonomy_refs = (manifest.id, readiness_items[0].assessment_id)
+        readiness = readiness_items[0]
+        matching = tuple(
+            approval
+            for approval in approvals
+            if approval.workspace_id == manifest.workspace_id
+            and approval.assessment_id == readiness.assessment_id
+            and approval.level is autonomy
+            and approval.owner_id == manifest.owner_id
+            and approval.level.rank <= readiness.recommended_ceiling.rank
+            and all(reference in valid_evidence for reference in approval.evidence_refs)
+            and all(
+                valid_evidence[reference].type.value == "owner_confirmation"
+                and valid_evidence[reference].basis.value == "observed"
+                for reference in approval.evidence_refs
+            )
+            and all(
+                approval.at >= valid_evidence[reference].captured_at
+                for reference in approval.evidence_refs
+            )
+        )
+        if len(matching) == 1:
+            autonomy_refs = matching[0].evidence_refs
     _controlled_fact(facts, evidence, AssessmentFact.autonomy_approved, autonomy_refs)
 
     return declared.model_copy(

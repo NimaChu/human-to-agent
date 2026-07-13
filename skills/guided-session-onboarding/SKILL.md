@@ -60,6 +60,8 @@ Before a child workspace exists, discoveries are provisional conversation contex
 
 Stop before external, irreversible, forbidden, unowned, or unsupported action. Do not advance a stage, close an Unknown, or prepare a release without the existing direct evidence and Human Gate requirements.
 
+Never infer autonomy approval from Readiness, a requested level, or conversational confidence. Capture direct owner evidence for the exact workspace and level before writing `LOOP-READINESS/autonomy-approval.yaml`; when that evidence is absent or ambiguous, keep approval missing and record the uncertainty as an Unknown.
+
 # Evaluator and acceptance
 
 The onboarding result is acceptable when the Agent has introduced the workspace once, asked at most one necessary question per response, skipped states already satisfied by supplied facts, avoided user CLI burden, and created no workspace before a concrete goal plus real context exist. Existing evaluators independently assess later cases, stages, readiness, and releases.

@@ -1,7 +1,9 @@
+import json
 from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
+from filelock import FileLock
 
 from human_to_agent.domain.events import EventDraft, EventScope
 from human_to_agent.repositories.events import EventStore
@@ -9,6 +11,7 @@ from human_to_agent.repositories.transactions import (
     FileMutation,
     InjectedCrash,
     MutationPlan,
+    TransactionBusyError,
     TransactionManager,
     TransactionPhase,
 )
@@ -67,6 +70,7 @@ def setup(
 @pytest.mark.parametrize(
     "crash_phase",
     [
+        TransactionPhase.prepared,
         TransactionPhase.staged,
         TransactionPhase.files_replaced,
         TransactionPhase.index_replaced,
@@ -104,3 +108,100 @@ def test_recovery_does_not_duplicate_committed_event(tmp_path: Path) -> None:
     service.recover_all()
     service.recover_all()
     assert tuple(item.event_id for item in EventStore().replay(scope).events) == ("event-crash",)
+
+
+def crashed_journal(tmp_path: Path) -> tuple[Path, Path]:
+    workspace, _, mutation_plan, draft, manager = setup(tmp_path, TransactionPhase.files_replaced)
+    with pytest.raises(InjectedCrash):
+        manager.commit(mutation_plan, draft)
+    journal_path = tmp_path / "state/transactions/tx-crash/journal.json"
+    return workspace, journal_path
+
+
+def test_recovery_rejects_tampered_relative_path_before_external_write(tmp_path: Path) -> None:
+    workspace, journal_path = crashed_journal(tmp_path)
+    external = tmp_path.parent / f"{tmp_path.name}-outside.txt"
+    external.write_bytes(b"outside must remain unchanged")
+    try:
+        journal = json.loads(journal_path.read_text(encoding="utf-8"))
+        journal["changes"][0]["relative_path"] = "../../../outside.txt"
+        journal_path.write_text(json.dumps(journal), encoding="utf-8")
+        before_workspace = (workspace / "data.txt").read_bytes()
+
+        with pytest.raises(ValueError, match="workspace-relative POSIX"):
+            RecoveryService(tmp_path, EventStore()).recover_all()
+
+        assert external.read_bytes() == b"outside must remain unchanged"
+        assert (workspace / "data.txt").read_bytes() == before_workspace
+    finally:
+        external.unlink(missing_ok=True)
+
+
+def test_recovery_rejects_backup_and_event_log_outside_transaction_boundaries(
+    tmp_path: Path,
+) -> None:
+    _, journal_path = crashed_journal(tmp_path)
+    journal = json.loads(journal_path.read_text(encoding="utf-8"))
+    journal["changes"][0]["backup"] = str(tmp_path / "outside-backup")
+    journal["event_scope"]["log_path"] = str(tmp_path / "outside-events.jsonl")
+    journal_path.write_text(json.dumps(journal), encoding="utf-8")
+
+    with pytest.raises(ValueError, match=r"backup path|event log"):
+        RecoveryService(tmp_path, EventStore()).recover_all()
+
+
+def test_recovery_rejects_tampered_workspace_id(tmp_path: Path) -> None:
+    _, journal_path = crashed_journal(tmp_path)
+    journal = json.loads(journal_path.read_text(encoding="utf-8"))
+    journal["workspace_id"] = "../outside"
+    journal_path.write_text(json.dumps(journal), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="workspace id"):
+        RecoveryService(tmp_path, EventStore()).recover_all()
+
+
+def test_recovery_uses_the_same_workspace_lock_as_live_transactions(tmp_path: Path) -> None:
+    crashed_journal(tmp_path)
+    lock_path = tmp_path / "state/locks/pilot.lock"
+    with FileLock(lock_path, timeout=0), pytest.raises(TransactionBusyError):
+        RecoveryService(tmp_path, EventStore(), lock_timeout=0.01).recover_all()
+
+
+@pytest.mark.parametrize("journal_content", (None, b"not valid json"))
+def test_recovery_explicitly_rejects_missing_or_invalid_journal(
+    tmp_path: Path, journal_content: bytes | None
+) -> None:
+    tx_dir = tmp_path / "state/transactions/orphan"
+    tx_dir.mkdir(parents=True)
+    if journal_content is not None:
+        (tx_dir / "journal.json").write_bytes(journal_content)
+
+    with pytest.raises(ValueError, match=r"journal is missing|journal is invalid"):
+        RecoveryService(tmp_path, EventStore()).recover_all()
+
+
+def test_recovery_rejects_invalid_event_chain_before_rollback(tmp_path: Path) -> None:
+    workspace, journal_path = crashed_journal(tmp_path)
+    event_log = workspace / ".foundry/events.jsonl"
+    event_log.write_bytes(b"not-an-event\n")
+    before = (workspace / "data.txt").read_bytes()
+
+    with pytest.raises(ValueError, match="event chain is invalid"):
+        RecoveryService(tmp_path, EventStore()).recover_all()
+
+    assert (workspace / "data.txt").read_bytes() == before
+    assert journal_path.exists()
+
+
+def test_recovery_rejects_committed_phase_without_recorded_event(tmp_path: Path) -> None:
+    workspace, journal_path = crashed_journal(tmp_path)
+    journal = json.loads(journal_path.read_text(encoding="utf-8"))
+    journal["phase"] = TransactionPhase.event_committed.value
+    journal_path.write_text(json.dumps(journal), encoding="utf-8")
+    before = (workspace / "data.txt").read_bytes()
+
+    with pytest.raises(ValueError, match="committed phase has no recorded event"):
+        RecoveryService(tmp_path, EventStore()).recover_all()
+
+    assert (workspace / "data.txt").read_bytes() == before
+    assert journal_path.exists()

@@ -1,9 +1,13 @@
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
 import yaml
 
 from human_to_agent.repositories.events import EventStore
+from human_to_agent.repositories.filesystem import SourceRepository
+from human_to_agent.repositories.index import ArtifactIndex
+from human_to_agent.services.changes import build_artifact_index, render_artifact_index
 from human_to_agent.services.migrations import Migration, MigrationService
 
 NOW = datetime(2026, 7, 10, tzinfo=UTC)
@@ -13,7 +17,10 @@ def workspace(root: Path) -> Path:
     target = root / "workspaces" / "pilot"
     (target / ".foundry").mkdir(parents=True)
     (target / "workspace.yaml").write_text("schema_version: '1'\nname: pilot\n")
-    (target / ".foundry" / "artifact-index.yaml").write_text("schema_version: '1'\nentries: []\n")
+    snapshot = SourceRepository(root).snapshot("pilot")
+    (target / ".foundry" / "artifact-index.yaml").write_bytes(
+        render_artifact_index(build_artifact_index(snapshot))
+    )
     return target
 
 
@@ -56,3 +63,16 @@ def test_success_records_versions_and_one_event(tmp_path: Path) -> None:
     assert len(events) == 1
     assert events[0].payload["from_version"] == "1"
     assert events[0].payload["to_version"] == "3"
+    recorded = ArtifactIndex.model_validate(
+        yaml.safe_load((target / ".foundry/artifact-index.yaml").read_text(encoding="utf-8"))
+    )
+    assert recorded == build_artifact_index(SourceRepository(tmp_path).snapshot("pilot"))
+
+
+def test_migration_rejects_unrecorded_source_instead_of_laundering_it(tmp_path: Path) -> None:
+    target = workspace(tmp_path)
+    (target / "unrecorded.txt").write_text("not yet recorded", encoding="utf-8")
+    service = MigrationService(tmp_path, EventStore(), validator=lambda _: True)
+
+    with pytest.raises(ValueError, match="unrecorded"):
+        service.migrate("pilot", migrations(), target_version="3", actor="owner", at=NOW)

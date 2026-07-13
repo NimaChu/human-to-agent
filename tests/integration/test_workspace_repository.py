@@ -1,3 +1,6 @@
+import os
+import subprocess
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -5,14 +8,38 @@ import yaml
 from typer.testing import CliRunner
 
 from human_to_agent.cli.app import app
+from human_to_agent.cli.errors import FoundryError
 from human_to_agent.domain.assessment import AssessmentSnapshot
 from human_to_agent.domain.assets import TaskContract, WorkspaceManifest
 from human_to_agent.domain.stages import Stage, assess_stage
 from human_to_agent.repositories.filesystem import SourceRepository, tree_digest
 from human_to_agent.repositories.index import ArtifactIndex
+from human_to_agent.services import workspaces as workspace_service
 from human_to_agent.services.workspaces import initialize
+from human_to_agent.validators.report import Diagnostic, ValidationReport
 
 RUNNER = CliRunner()
+
+
+def link_directory(link: Path, target: Path) -> None:
+    try:
+        link.symlink_to(target, target_is_directory=True)
+    except OSError as error:
+        if os.name != "nt":
+            pytest.skip(f"directory links are unavailable: {error}")
+        completed = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(link), str(target)],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if completed.returncode:
+            pytest.skip(f"directory links are unavailable: {completed.stderr or completed.stdout}")
+
+
+def unlink_directory_link(path: Path) -> None:
+    if path.exists() or path.is_symlink() or (hasattr(path, "is_junction") and path.is_junction()):
+        os.rmdir(path)
 
 
 def make_workspace(root: Path) -> Path:
@@ -54,8 +81,132 @@ def test_validation_snapshot_does_not_rewrite_source_bytes(tmp_path: Path) -> No
 
 def test_workspace_slug_cannot_escape_workspace_root(tmp_path: Path) -> None:
     (tmp_path / "workspaces").mkdir()
-    with pytest.raises(ValueError, match="outside workspace root"):
+    with pytest.raises(ValueError, match=r"single safe path component|outside workspace root"):
         SourceRepository(tmp_path).snapshot("../PR")
+
+
+@pytest.mark.parametrize("slug", ("nested/slug", r"nested\slug", "C:drive"))
+def test_snapshot_rejects_workspace_identifier_with_multiple_or_unsafe_components(
+    tmp_path: Path, slug: str
+) -> None:
+    nested = tmp_path / "workspaces/nested/slug"
+    nested.mkdir(parents=True)
+
+    with pytest.raises(ValueError, match="single safe path component"):
+        SourceRepository(tmp_path).snapshot(slug)
+
+
+def test_repository_rejects_workspace_root_junction_outside_repository(tmp_path: Path) -> None:
+    external = tmp_path.parent / f"{tmp_path.name}-external-workspaces"
+    external.mkdir()
+    try:
+        link_directory(tmp_path / "workspaces", external)
+
+        with pytest.raises(ValueError, match=r"workspace root|symlink|junction"):
+            SourceRepository(tmp_path)
+    finally:
+        workspace_link = tmp_path / "workspaces"
+        if workspace_link.exists() or (
+            hasattr(workspace_link, "is_junction") and workspace_link.is_junction()
+        ):
+            os.rmdir(workspace_link)
+        if external.exists():
+            external.rmdir()
+
+
+def test_repository_rejects_workspace_root_junction_inside_repository(tmp_path: Path) -> None:
+    target = tmp_path / "real-workspaces"
+    (target / "pilot").mkdir(parents=True)
+    link_directory(tmp_path / "workspaces", target)
+
+    with pytest.raises(ValueError, match=r"symlink|junction"):
+        SourceRepository(tmp_path)
+
+
+def test_snapshot_rejects_workspace_junction_alias_inside_workspace_root(
+    tmp_path: Path,
+) -> None:
+    workspace_root = tmp_path / "workspaces"
+    target = workspace_root / "real"
+    target.mkdir(parents=True)
+    (target / "workspace.yaml").write_text("id: workspace.real\n", encoding="utf-8")
+    link_directory(workspace_root / "pilot", target)
+
+    with pytest.raises(ValueError, match=r"symlink|junction"):
+        SourceRepository(tmp_path).snapshot("pilot")
+
+
+def test_workspace_new_rejects_linked_workspace_root_before_staging_writes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    (tmp_path / "human-to-agent.yaml").write_text('schema_version: "1"\n', encoding="utf-8")
+    external = tmp_path.parent / f"{tmp_path.name}-external-create"
+    external.mkdir()
+    workspaces_link = tmp_path / "workspaces"
+    link_directory(workspaces_link, external)
+    staging_attempted = False
+
+    def reject_staging(*_args: object, **_kwargs: object) -> str:
+        nonlocal staging_attempted
+        staging_attempted = True
+        raise AssertionError("workspace staging started through a linked workspace root")
+
+    monkeypatch.setattr(tempfile, "mkdtemp", reject_staging)
+    try:
+        with pytest.raises(FoundryError) as captured:
+            workspace_service.create_workspace(
+                tmp_path,
+                "pilot",
+                owner="maintainer",
+                purpose="Exercise safe workspace creation.",
+                dry_run=False,
+            )
+
+        assert captured.value.category == "filesystem"
+        assert captured.value.code == "filesystem.unsafe_workspace_root"
+        assert staging_attempted is False
+        assert not tuple(external.iterdir())
+    finally:
+        unlink_directory_link(workspaces_link)
+        external.rmdir()
+
+
+def test_snapshot_rejects_symlinked_file_before_reading_external_bytes(tmp_path: Path) -> None:
+    workspace = make_workspace(tmp_path)
+    external = tmp_path / "private.txt"
+    external.write_bytes(b"must not be read as workspace evidence")
+    linked = workspace / "linked.txt"
+    try:
+        linked.symlink_to(external)
+    except OSError as error:
+        pytest.skip(f"file symlinks are unavailable: {error}")
+
+    with pytest.raises(ValueError, match=r"symlink|junction"):
+        SourceRepository(tmp_path).snapshot("pilot")
+
+
+def test_snapshot_rejects_directory_link_that_resolves_outside_workspace(tmp_path: Path) -> None:
+    workspace = make_workspace(tmp_path)
+    external = tmp_path / "external-evidence"
+    external.mkdir()
+    (external / "secret.txt").write_bytes(b"outside")
+    linked = workspace / "EVIDENCE"
+    link_directory(linked, external)
+
+    with pytest.raises(ValueError, match=r"symlink|junction|outside"):
+        SourceRepository(tmp_path).snapshot("pilot")
+
+
+def test_snapshot_rejects_junction_even_when_target_stays_inside_workspace(
+    tmp_path: Path,
+) -> None:
+    workspace = make_workspace(tmp_path)
+    target = workspace / "real-evidence"
+    target.mkdir()
+    link_directory(workspace / "EVIDENCE", target)
+
+    with pytest.raises(ValueError, match=r"symlink|junction"):
+        SourceRepository(tmp_path).snapshot("pilot")
 
 
 def filesystem_state(root: Path) -> tuple[tuple[str, bool, bytes], ...]:
@@ -167,6 +318,112 @@ def test_workspace_new_renders_every_manifest_entry(tmp_path: Path) -> None:
     assert all((workspace / relative).is_dir() for relative in template_manifest["directories"])
     assert all((workspace / relative).is_file() for relative in template_manifest["templates"])
     assert all((workspace / relative).is_file() for relative in template_manifest["state_files"])
+
+
+@pytest.mark.parametrize("unsafe", ("../escaped", "/absolute", r"nested\windows", "C:drive"))
+def test_workspace_new_rejects_unsafe_template_manifest_paths_before_staging(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, unsafe: str
+) -> None:
+    initialize(tmp_path, dry_run=False)
+    template_root = tmp_path / "malicious-child-template"
+    template_root.mkdir()
+    (template_root / "manifest.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "template_version": "1",
+                "directories": [unsafe],
+                "templates": [],
+                "state_files": [],
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(workspace_service, "_child_template_root", lambda: template_root)
+
+    with pytest.raises(FoundryError) as captured:
+        workspace_service.create_workspace(
+            tmp_path,
+            "safe-slug",
+            owner="maintainer",
+            purpose="Reject unsafe template paths.",
+            dry_run=False,
+        )
+
+    assert captured.value.code == "template.path_unsafe"
+    assert not (tmp_path / "workspaces/safe-slug").exists()
+    assert not (tmp_path / "escaped").exists()
+
+
+def test_workspace_new_validates_staging_before_atomic_publication(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    initialize(tmp_path, dry_run=False)
+    destination = tmp_path / "workspaces/invalid-staging"
+    observed: dict[str, object] = {}
+
+    def reject_staging(snapshot, *_args, **_kwargs):  # type: ignore[no-untyped-def]
+        observed["workspace_path"] = snapshot.workspace_path
+        observed["destination_visible"] = destination.exists()
+        return ValidationReport(
+            diagnostics=(
+                Diagnostic(
+                    category="schema",
+                    code="schema.simulated_invalid",
+                    message="simulated staged validation failure",
+                ),
+            )
+        )
+
+    monkeypatch.setattr(workspace_service, "validate_workspace", reject_staging, raising=False)
+
+    with pytest.raises(FoundryError, match="simulated staged validation failure"):
+        workspace_service.create_workspace(
+            tmp_path,
+            "invalid-staging",
+            owner="maintainer",
+            purpose="Exercise staged validation.",
+            dry_run=False,
+        )
+
+    staged_path = observed["workspace_path"]
+    assert isinstance(staged_path, Path)
+    assert staged_path.parent == tmp_path / "workspaces"
+    assert staged_path.name.startswith(".invalid-staging.staging-")
+    assert observed["destination_visible"] is False
+    assert not destination.exists()
+    assert not tuple((tmp_path / "workspaces").glob(".invalid-staging.staging-*"))
+
+
+def test_workspace_new_cleans_staging_when_index_generation_fails(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    initialize(tmp_path, dry_run=False)
+    destination = tmp_path / "workspaces/index-failure"
+    observed: dict[str, object] = {}
+
+    def fail_index(_index):  # type: ignore[no-untyped-def]
+        observed["destination_visible"] = destination.exists()
+        observed["staging"] = tuple((tmp_path / "workspaces").glob(".index-failure.staging-*"))
+        observed["listed_workspaces"] = workspace_service.list_workspaces(tmp_path).next_actions
+        raise RuntimeError("simulated index generation failure")
+
+    monkeypatch.setattr(workspace_service, "render_artifact_index", fail_index)
+
+    with pytest.raises(RuntimeError, match="simulated index generation failure"):
+        workspace_service.create_workspace(
+            tmp_path,
+            "index-failure",
+            owner="maintainer",
+            purpose="Exercise staged index generation.",
+            dry_run=False,
+        )
+
+    assert observed["destination_visible"] is False
+    assert len(observed["staging"]) == 1  # type: ignore[arg-type]
+    assert observed["listed_workspaces"] == []
+    assert not destination.exists()
+    assert not tuple((tmp_path / "workspaces").glob(".index-failure.staging-*"))
 
 
 def test_new_scaffold_is_a_recorded_valid_draft_that_passes_no_stage_gate(

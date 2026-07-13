@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import json
+import os
 import re
+import shutil
+import stat as stat_module
+import tempfile
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from importlib import resources
 from importlib.resources.abc import Traversable
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import yaml
 
@@ -16,6 +20,8 @@ from human_to_agent.domain.stages import GateStatus, Stage, assess_complete_rele
 from human_to_agent.renderers.workspace import render_template
 from human_to_agent.repositories.filesystem import SourceRepository
 from human_to_agent.services.changes import build_artifact_index, render_artifact_index
+from human_to_agent.services.schema_catalog import DEFAULT_MODELS
+from human_to_agent.validators.workspace import validate_workspace
 
 WORKSPACE_SLUG_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 WORKSPACE_SLUG_MAX_LENGTH = 64
@@ -59,7 +65,28 @@ def _load_child_template_manifest() -> ChildTemplateManifest:
             raise FoundryError(
                 "config", "template.invalid", f"Child template manifest {key} must be a list."
             )
-        values[key] = tuple(items)
+        safe_items: list[str] = []
+        for item in items:
+            relative = PurePosixPath(item)
+            if (
+                not relative.parts
+                or relative.is_absolute()
+                or relative.as_posix() in {".", ".."}
+                or "\\" in item
+                or ".." in relative.parts
+                or any(":" in part for part in relative.parts)
+            ):
+                raise FoundryError(
+                    "config",
+                    "template.path_unsafe",
+                    f"Child template manifest {key} contains an unsafe path: {item}",
+                )
+            safe_items.append(relative.as_posix())
+        if len(set(safe_items)) != len(safe_items):
+            raise FoundryError(
+                "config", "template.invalid", f"Child template manifest {key} has duplicates."
+            )
+        values[key] = tuple(safe_items)
     template_version = raw.get("template_version")
     if not isinstance(template_version, str):
         raise FoundryError("config", "template.invalid", "Child template version must be a string.")
@@ -140,7 +167,14 @@ def create_workspace(
         )
     if not (root / "human-to-agent.yaml").is_file():
         raise FoundryError("config", "config.missing", "Run `hta init` before creating workspaces.")
-    workspace = root / "workspaces" / slug
+    workspace_root = _safe_workspace_root(root)
+    workspace = workspace_root / slug
+    if _is_link_or_junction(workspace):
+        raise FoundryError(
+            "filesystem",
+            "filesystem.unsafe_workspace_path",
+            "Workspace path cannot be a symlink or junction.",
+        )
     if workspace.exists() and not dry_run:
         raise FoundryError("filesystem", "workspace.exists", f"Workspace already exists: {slug}")
     manifest = _load_child_template_manifest()
@@ -152,29 +186,53 @@ def create_workspace(
         str(workspace / relative) for relative in (*manifest.templates, *manifest.state_files)
     ]
     if not dry_run:
-        for directory in manifest.directories:
-            (workspace / directory).mkdir(parents=True, exist_ok=True)
-        for relative, content in rendered.items():
-            target = workspace / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(content, encoding="utf-8", newline="\n")
-        for relative in manifest.state_files:
-            if relative == ARTIFACT_INDEX_PATH:
-                continue
-            target = workspace / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(b"")
-        snapshot = SourceRepository(root).snapshot(slug)
-        (workspace / ARTIFACT_INDEX_PATH).write_bytes(
-            render_artifact_index(build_artifact_index(snapshot))
-        )
+        workspace_root.mkdir(parents=True, exist_ok=True)
+        staging = Path(tempfile.mkdtemp(prefix=f".{slug}.staging-", dir=workspace_root))
+        try:
+            for directory in manifest.directories:
+                (staging / directory).mkdir(parents=True, exist_ok=True)
+            for relative, content in rendered.items():
+                target = staging / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(content, encoding="utf-8", newline="\n")
+            for relative in manifest.state_files:
+                if relative == ARTIFACT_INDEX_PATH:
+                    continue
+                target = staging / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(b"")
+
+            snapshot = SourceRepository(root).snapshot(staging.name)
+            validation = validate_workspace(snapshot, DEFAULT_MODELS)
+            if not validation.passed:
+                first = validation.diagnostics[0]
+                raise FoundryError(first.category, first.code, first.message)
+            index = build_artifact_index(snapshot)
+            (staging / ARTIFACT_INDEX_PATH).write_bytes(render_artifact_index(index))
+            recorded_validation = validate_workspace(snapshot, DEFAULT_MODELS, recorded_index=index)
+            if not recorded_validation.passed:
+                first = recorded_validation.diagnostics[0]
+                raise FoundryError(first.category, first.code, first.message)
+
+            if workspace.exists():
+                raise FoundryError(
+                    "filesystem", "workspace.exists", f"Workspace already exists: {slug}"
+                )
+            os.replace(staging, workspace)
+        finally:
+            if staging.exists():
+                shutil.rmtree(staging)
     return CommandResult(command="workspace new", changed_files=[] if dry_run else changed)
 
 
 def list_workspaces(root: Path) -> CommandResult:
-    workspace_root = root / "workspaces"
+    workspace_root = _safe_workspace_root(root)
     names = (
-        sorted(path.name for path in workspace_root.iterdir() if path.is_dir())
+        sorted(
+            path.name
+            for path in workspace_root.iterdir()
+            if not path.name.startswith(".") and _safe_workspace_directory(path, workspace_root)
+        )
         if workspace_root.exists()
         else []
     )
@@ -182,14 +240,21 @@ def list_workspaces(root: Path) -> CommandResult:
 
 
 def require_workspace(root: Path, slug: str) -> Path:
-    workspace = root / "workspaces" / slug
-    if not (workspace / "workspace.yaml").is_file():
+    workspace_root = _safe_workspace_root(root)
+    _validate_workspace_component(slug)
+    workspace = workspace_root / slug
+    if not _safe_workspace_directory(workspace, workspace_root):
+        raise FoundryError("schema", "workspace.missing", f"Workspace manifest is missing: {slug}")
+    manifest = workspace / "workspace.yaml"
+    _require_safe_member(manifest, workspace)
+    if not manifest.is_file():
         raise FoundryError("schema", "workspace.missing", f"Workspace manifest is missing: {slug}")
     return workspace
 
 
 def status(root: Path, slug: str) -> CommandResult:
     workspace = require_workspace(root, slug)
+    _assert_safe_workspace_tree(workspace)
     raw = yaml.safe_load((workspace / "workspace.yaml").read_text(encoding="utf-8"))
     skills = _yaml_assets(workspace / "SKILLS")
     cases = _yaml_assets(workspace / "CASES")
@@ -246,11 +311,111 @@ def status(root: Path, slug: str) -> CommandResult:
 
 
 def _yaml_assets(directory: Path) -> list[dict[str, object]]:
+    workspace = directory.parent
+    _require_safe_member(directory, workspace)
     if not directory.exists():
         return []
+    paths: list[Path] = []
+    pending = [directory]
+    while pending:
+        current = pending.pop()
+        for path in current.iterdir():
+            _require_safe_member(path, workspace)
+            if path.is_dir():
+                pending.append(path)
+            elif path.is_file() and path.suffix == ".yaml":
+                paths.append(path)
     assets: list[dict[str, object]] = []
-    for path in sorted(directory.rglob("*.yaml")):
+    for path in sorted(paths):
         value = yaml.safe_load(path.read_text(encoding="utf-8"))
         if isinstance(value, dict):
             assets.append(value)
     return assets
+
+
+def _is_link_or_junction(path: Path) -> bool:
+    if path.is_symlink():
+        return True
+    is_junction = getattr(path, "is_junction", None)
+    if is_junction is not None and is_junction():
+        return True
+    try:
+        attributes = getattr(path.lstat(), "st_file_attributes", 0)
+    except FileNotFoundError:
+        return False
+    reparse_point = getattr(stat_module, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+    return bool(attributes & reparse_point)
+
+
+def _safe_workspace_root(root: Path) -> Path:
+    repository_root = root.resolve()
+    workspace_root = root / "workspaces"
+    if _is_link_or_junction(workspace_root):
+        raise FoundryError(
+            "filesystem",
+            "filesystem.unsafe_workspace_root",
+            "Workspace root cannot be a symlink or junction.",
+        )
+    resolved = workspace_root.resolve()
+    if not resolved.is_relative_to(repository_root) or (
+        workspace_root.exists() and not workspace_root.is_dir()
+    ):
+        raise FoundryError(
+            "filesystem",
+            "filesystem.unsafe_workspace_root",
+            "Workspace root must be a real directory inside the repository.",
+        )
+    return workspace_root
+
+
+def _validate_workspace_component(slug: str) -> None:
+    identifier = PurePosixPath(slug)
+    if (
+        len(identifier.parts) != 1
+        or identifier.as_posix() in {"", ".", ".."}
+        or "\\" in slug
+        or ":" in slug
+    ):
+        raise FoundryError(
+            "filesystem",
+            "filesystem.unsafe_workspace_path",
+            "Workspace id must be a single safe path component.",
+        )
+
+
+def _safe_workspace_directory(path: Path, workspace_root: Path) -> bool:
+    if _is_link_or_junction(path):
+        raise FoundryError(
+            "filesystem",
+            "filesystem.unsafe_workspace_path",
+            "Workspace path cannot be a symlink or junction.",
+        )
+    if not path.exists():
+        return False
+    resolved = path.resolve()
+    if not resolved.is_relative_to(workspace_root.resolve()):
+        raise FoundryError(
+            "filesystem",
+            "filesystem.unsafe_workspace_path",
+            "Workspace path resolves outside the workspace root.",
+        )
+    return path.is_dir()
+
+
+def _require_safe_member(path: Path, workspace: Path) -> None:
+    if _is_link_or_junction(path) or not path.resolve().is_relative_to(workspace.resolve()):
+        raise FoundryError(
+            "filesystem",
+            "filesystem.unsafe_workspace_path",
+            "Workspace source contains a symlink, junction, or out-of-bound path.",
+        )
+
+
+def _assert_safe_workspace_tree(workspace: Path) -> None:
+    pending = [workspace]
+    while pending:
+        current = pending.pop()
+        for path in current.iterdir():
+            _require_safe_member(path, workspace)
+            if path.is_dir():
+                pending.append(path)

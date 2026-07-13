@@ -91,3 +91,31 @@ def test_artifact_index_detects_unrecorded_source_change(tmp_path: Path) -> None
         item.category == "filesystem" and item.code == "source.unrecorded"
         for item in report.diagnostics
     )
+
+
+def test_every_asset_workspace_id_must_match_manifest(tmp_path: Path) -> None:
+    repository = write_workspace(tmp_path, manifest())
+    workspace = tmp_path / "workspaces" / "pilot"
+    readiness: dict[str, object] = {
+        "assessment_id": "readiness.pilot",
+        "workspace_id": "different-workspace",
+        "policy_version": "1",
+        "result": "not_ready",
+        "dimensions": {},
+        "evidence_gaps": [],
+        "risks": [],
+        "next_actions": [],
+        "recommended_ceiling": "h0",
+        "approved_autonomy": None,
+    }
+    (workspace / "LOOP-READINESS").mkdir()
+    (workspace / "LOOP-READINESS/assessment.yaml").write_text(
+        yaml.safe_dump(readiness, sort_keys=False), encoding="utf-8"
+    )
+
+    report = validate_workspace(repository.snapshot("pilot"), DEFAULT_MODELS)
+
+    assert any(
+        item.code == "asset.workspace_mismatch" and item.path == "LOOP-READINESS/assessment.yaml"
+        for item in report.diagnostics
+    )

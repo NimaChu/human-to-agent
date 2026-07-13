@@ -11,7 +11,12 @@ from human_to_agent import __version__
 from human_to_agent.cli.errors import FoundryError
 from human_to_agent.domain.builds import BuildMode, BuildPlan, BuildResult
 from human_to_agent.domain.stages import Stage, assess_complete_release
-from human_to_agent.repositories.filesystem import SourceRepository, tree_digest
+from human_to_agent.repositories.filesystem import (
+    SourceRepository,
+    SourceSnapshot,
+    _is_link_or_junction,
+    tree_digest,
+)
 from human_to_agent.services.assessment_state import load_assessment_state
 from human_to_agent.services.distribution_verify import verify_distribution
 
@@ -38,6 +43,23 @@ PUBLIC_DIRECTORIES = (
 PUBLIC_ROOT_FILES = ("workspace.yaml", "README.md", "CHANGELOG.md")
 TEMPLATE_VERSION = "1"
 SCHEMA_VERSION = "1"
+PROTECTED_REPOSITORY_DIRECTORIES = (
+    ".codex",
+    ".git",
+    ".github",
+    ".opencode",
+    "PR",
+    "agents",
+    "docs",
+    "examples",
+    "schemas",
+    "skills",
+    "src",
+    "state",
+    "templates",
+    "tests",
+    "workspaces",
+)
 
 
 class Builder:
@@ -53,25 +75,13 @@ class Builder:
         *,
         dry_run: bool = False,
     ) -> BuildPlan:
-        snapshot = self.repository.snapshot(slug)
-        if mode is BuildMode.release:
-            try:
-                state = load_assessment_state(self.root, slug, require_recorded=True)
-            except FoundryError as error:
-                raise ValueError(f"release gate rejected {error.code}: {error.message}") from error
-            if state.manifest.current_stage != Stage.stage5:
-                raise ValueError("release requires current stage 5")
-            report = assess_complete_release(state.assessment)
-            if not report.passed:
-                gaps = "; ".join(
-                    check.message for check in report.checks if check.next_action is not None
-                )
-                raise ValueError(f"complete release gate failed: {gaps}")
-        target = destination or self.root / "dist" / slug / mode.value
-        return BuildPlan(slug, mode, target.resolve(), tree_digest(snapshot), dry_run)
+        snapshot = self._checked_snapshot(slug, mode)
+        target = self._validated_destination(destination or self.root / "dist" / slug / mode.value)
+        return BuildPlan(slug, mode, target, tree_digest(snapshot), dry_run)
 
     def build(self, plan: BuildPlan) -> BuildResult:
-        snapshot = self.repository.snapshot(plan.workspace_id)
+        destination = self._validated_destination(plan.destination)
+        snapshot = self._checked_snapshot(plan.workspace_id, plan.mode)
         if tree_digest(snapshot) != plan.source_digest:
             raise ValueError("source changed after build planning")
         changed = tuple(
@@ -84,45 +94,82 @@ class Builder:
             )
         )
         if plan.dry_run:
-            return BuildResult(plan.destination, plan.mode, plan.source_digest, changed, False)
-        plan.destination.parent.mkdir(parents=True, exist_ok=True)
+            return BuildResult(destination, plan.mode, plan.source_digest, changed, False)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination = self._validated_destination(destination)
         staging = Path(
-            tempfile.mkdtemp(
-                prefix=f".{plan.destination.name}.staging-", dir=plan.destination.parent
-            )
+            tempfile.mkdtemp(prefix=f".{destination.name}.staging-", dir=destination.parent)
         )
-        backup = plan.destination.with_name(f".{plan.destination.name}.backup")
+        backup_root: Path | None = None
+        backup: Path | None = None
         try:
-            self._render(staging, plan)
+            self._render(staging, plan, snapshot)
             report = verify_distribution(staging)
             if not report.passed:
                 raise ValueError("generated distribution failed standalone validation")
-            if backup.exists():
-                shutil.rmtree(backup)
-            if plan.destination.exists():
-                os.replace(plan.destination, backup)
+            if destination.exists():
+                backup_root = Path(
+                    tempfile.mkdtemp(prefix=f".{destination.name}.backup-", dir=destination.parent)
+                )
+                backup = backup_root / "previous"
+                os.replace(destination, backup)
             try:
-                os.replace(staging, plan.destination)
+                os.replace(staging, destination)
             except BaseException:
-                if backup.exists() and not plan.destination.exists():
-                    os.replace(backup, plan.destination)
+                if backup is not None and backup.exists() and not destination.exists():
+                    os.replace(backup, destination)
+                    if backup_root is not None and backup_root.exists():
+                        shutil.rmtree(backup_root)
                 raise
-            if backup.exists():
-                shutil.rmtree(backup)
+            if backup_root is not None and backup_root.exists():
+                shutil.rmtree(backup_root)
         finally:
             if staging.exists():
                 shutil.rmtree(staging)
-        return BuildResult(plan.destination, plan.mode, plan.source_digest, changed, True)
+        return BuildResult(destination, plan.mode, plan.source_digest, changed, True)
+
+    def _validated_destination(self, destination: Path) -> Path:
+        absolute = destination if destination.is_absolute() else self.root / destination
+        absolute = Path(os.path.abspath(absolute))
+        for candidate in (absolute, *absolute.parents):
+            if _is_link_or_junction(candidate):
+                raise ValueError("build destination ancestors cannot contain a symlink or junction")
+        resolved = absolute.resolve()
+        if self.root.is_relative_to(resolved):
+            raise ValueError("build destination is a protected repository path")
+        for relative in PROTECTED_REPOSITORY_DIRECTORIES:
+            protected = (self.root / relative).resolve()
+            if resolved == protected or resolved.is_relative_to(protected):
+                raise ValueError("build destination is a protected repository path")
+        if resolved.exists() and not resolved.is_dir():
+            raise ValueError("build destination must be a directory")
+        return resolved
+
+    def _checked_snapshot(self, slug: str, mode: BuildMode) -> SourceSnapshot:
+        if mode is not BuildMode.release:
+            return self.repository.snapshot(slug)
+        try:
+            state = load_assessment_state(self.root, slug, require_recorded=True)
+        except FoundryError as error:
+            raise ValueError(f"release gate rejected {error.code}: {error.message}") from error
+        if state.manifest.current_stage != Stage.stage5:
+            raise ValueError("release requires current stage 5")
+        report = assess_complete_release(state.assessment)
+        if not report.passed:
+            gaps = "; ".join(
+                check.message for check in report.checks if check.next_action is not None
+            )
+            raise ValueError(f"complete release gate failed: {gaps}")
+        return state.source
 
     @staticmethod
     def _is_public(relative: str) -> bool:
         parts = Path(relative).parts
         return bool(parts) and (parts[0] in PUBLIC_DIRECTORIES or relative in PUBLIC_ROOT_FILES)
 
-    def _render(self, staging: Path, plan: BuildPlan) -> None:
+    def _render(self, staging: Path, plan: BuildPlan, snapshot: SourceSnapshot) -> None:
         for directory in PUBLIC_DIRECTORIES:
             (staging / directory).mkdir(parents=True, exist_ok=True)
-        snapshot = self.repository.snapshot(plan.workspace_id)
         for source in snapshot.files:
             if not self._is_public(source.path):
                 continue

@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from human_to_agent.cli.errors import FoundryError
 from human_to_agent.cli.result import CommandResult
 from human_to_agent.domain.stages import Stage, assess_stage, decide_stage_transition
+from human_to_agent.repositories.filesystem import tree_digest
 from human_to_agent.services.assessment_state import load_assessment_state
 from human_to_agent.services.asset_writer import write_assets
 
@@ -73,6 +74,7 @@ def advance_stage(root: Path, workspace_id: str, *, actor: str, dry_run: bool) -
         actor=actor,
         dry_run=dry_run,
         event_payload={"from_stage": int(current), "to_stage": int(target)},
+        expected_source_digest=tree_digest(state.source),
     )
     return _transition_result(result, f"advanced_to={int(target)}")
 
@@ -126,5 +128,6 @@ def reopen_stage(
             "reason": reason,
             "evidence_ref": evidence_ref,
         },
+        expected_source_digest=tree_digest(state.source),
     )
     return _transition_result(result, f"reopened_to={target}")

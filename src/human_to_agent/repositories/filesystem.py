@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import stat as stat_module
 from dataclasses import dataclass
 from hashlib import sha256
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from human_to_agent.repositories.canonical import canonical_file
 
@@ -15,6 +16,20 @@ _EXCLUDED_PARTS = {
     "__pycache__",
     "dist",
 }
+
+
+def _is_link_or_junction(path: Path) -> bool:
+    if path.is_symlink():
+        return True
+    is_junction = getattr(path, "is_junction", None)
+    if is_junction is not None and is_junction():
+        return True
+    try:
+        attributes = getattr(path.lstat(), "st_file_attributes", 0)
+    except FileNotFoundError:
+        return False
+    reparse_point = getattr(stat_module, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+    return bool(attributes & reparse_point)
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,10 +53,26 @@ class SourceSnapshot:
 class SourceRepository:
     def __init__(self, repository_root: Path) -> None:
         self.repository_root = repository_root.resolve()
-        self.workspace_root = (self.repository_root / "workspaces").resolve()
+        workspace_root = self.repository_root / "workspaces"
+        if _is_link_or_junction(workspace_root):
+            raise ValueError("workspace root cannot be a symlink or junction")
+        self.workspace_root = workspace_root.resolve()
+        if not self.workspace_root.is_relative_to(self.repository_root):
+            raise ValueError("workspace root resolves outside repository")
 
     def workspace_path(self, slug: str) -> Path:
-        candidate = (self.workspace_root / slug).resolve()
+        identifier = PurePosixPath(slug)
+        if (
+            len(identifier.parts) != 1
+            or identifier.as_posix() in {"", ".", ".."}
+            or "\\" in slug
+            or ":" in slug
+        ):
+            raise ValueError("workspace id must be a single safe path component")
+        workspace_path = self.workspace_root / slug
+        if _is_link_or_junction(workspace_path):
+            raise ValueError("workspace path cannot be a symlink or junction")
+        candidate = workspace_path.resolve()
         if not candidate.is_relative_to(self.workspace_root):
             raise ValueError("workspace path is outside workspace root")
         if not candidate.is_dir():
@@ -52,20 +83,29 @@ class SourceRepository:
         workspace = self.workspace_path(slug)
         files: list[SourceFile] = []
         for path in workspace.rglob("*"):
+            relative = path.relative_to(workspace)
+            if _is_link_or_junction(path):
+                raise ValueError(
+                    f"workspace source cannot be a symlink or junction: {relative.as_posix()}"
+                )
+            resolved = path.resolve()
+            if not resolved.is_relative_to(workspace):
+                raise ValueError(
+                    f"workspace source resolves outside workspace: {relative.as_posix()}"
+                )
             if not path.is_file():
                 continue
-            relative = path.relative_to(workspace)
             if any(part in _EXCLUDED_PARTS for part in relative.parts):
                 continue
             canonical = (
-                path.read_bytes()
+                resolved.read_bytes()
                 if relative.parts[:2] == ("EVIDENCE", "sources")
-                else canonical_file(path)
+                else canonical_file(resolved)
             )
             files.append(
                 SourceFile(
                     path=relative.as_posix(),
-                    source_path=path,
+                    source_path=resolved,
                     canonical_content=canonical,
                     sha256=sha256(canonical).hexdigest(),
                 )

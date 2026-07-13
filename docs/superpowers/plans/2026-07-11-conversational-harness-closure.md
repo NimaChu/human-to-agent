@@ -94,6 +94,8 @@
 
 **Deliverable:** Stage assessment and transitions load `ASSESSMENTS/stage-state.yaml`, validate real evidence IDs, derive cases/Skills/Readiness/Unknown state, call `assess_stage`, reject unrecorded changes, and update manifest plus assessment state atomically.
 
+Readiness supplies only a ceiling. `autonomy_approved` requires a matching `LOOP-READINESS/autonomy-approval.yaml` backed by direct owner Evidence; the Agent must never synthesize this decision.
+
 - [ ] Add failing tests proving fake `.foundry` gates and fake evidence IDs cannot advance, unmanaged Unknowns remove managed facts, and valid evidence-backed state can advance.
 - [ ] Run focused tests and observe the bypass failures.
 - [ ] Register and validate the normative assessment path and all evidence references.

@@ -103,6 +103,18 @@ def test_guided_session_contract_defines_fast_path_and_canonical_handoff() -> No
         assert "normative" in text
 
 
+def test_guided_session_records_but_never_manufactures_autonomy_approval() -> None:
+    for relative in (
+        "skills/_shared/method-contract.md",
+        "skills/guided-session-onboarding/SKILL.md",
+    ):
+        text = (ROOT / relative).read_text().lower()
+        assert "autonomy approval" in text
+        assert "direct owner evidence" in text
+        assert "never infer" in text
+        assert "loop-readiness/autonomy-approval.yaml" in text
+
+
 def test_agents_are_separated_and_verifier_is_read_only() -> None:
     catalog = yaml.safe_load((ROOT / "agents/catalog.yaml").read_text())
     assert set(catalog["agents"]) == {

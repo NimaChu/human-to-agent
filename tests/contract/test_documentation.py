@@ -25,6 +25,13 @@ def test_agent_guidance_has_boundaries_and_verification() -> None:
     assert "uv run hta validate" in text and "uv run pytest" in text
 
 
+def test_agent_guidance_never_infers_owner_approval_from_readiness() -> None:
+    text = (ROOT / "AGENTS.md").read_text().lower()
+    assert "autonomy approval" in text
+    assert "direct owner evidence" in text
+    assert "never infer" in text
+
+
 def test_agent_guidance_defaults_new_sessions_to_guided_onboarding() -> None:
     text = (ROOT / "AGENTS.md").read_text().lower()
     assert "new project conversation" in text

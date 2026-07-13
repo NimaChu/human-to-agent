@@ -1,0 +1,28 @@
+schema_version: '1'
+id: evidence.capture.f745fe44c15be1e3
+workspace_id: human-to-agent-pilot
+revision: 1
+status: captured
+owners:
+- maintainer
+created_at: '2026-07-12T07:02:39.883791Z'
+updated_at: '2026-07-12T07:02:39.883791Z'
+provenance: hta capture record
+links: []
+evidence_refs: []
+type: real_case
+source: EVIDENCE/sources/f745fe44c15be1e365afdb5eeae97f0c62d4e591bc14c9701c3ce0a28a271b4f.txt
+locator: entire normative source copy
+captured_by: maintainer
+captured_at: '2026-07-12T07:02:39.883791Z'
+content_summary: Exact bytes supplied to Human to Agent and copied into this workspace.
+claim: The recorded bytes were supplied to the capture operation.
+basis: observed
+applicability_scope:
+- human-to-agent-pilot
+validity_conditions:
+- The normative source copy matches the recorded content hash.
+invalidation_conditions:
+- The normative source copy changes or the owner withdraws the capture.
+content_sha256: f745fe44c15be1e365afdb5eeae97f0c62d4e591bc14c9701c3ce0a28a271b4f
+cheapest_probe: null

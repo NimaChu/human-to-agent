@@ -13,8 +13,10 @@ from human_to_agent.cli.output import emit
 from human_to_agent.cli.result import CommandResult
 from human_to_agent.domain.builds import BuildMode
 from human_to_agent.domain.events import EventScope
+from human_to_agent.domain.evidence import EvidenceType
 from human_to_agent.domain.unknowns import UnknownCategory, UnknownDisposition
 from human_to_agent.repositories.events import EventStore
+from human_to_agent.repositories.filesystem import SourceRepository
 from human_to_agent.services.build import Builder
 from human_to_agent.services.capture import record_capture
 from human_to_agent.services.changes import record_change as record_source_change
@@ -144,6 +146,9 @@ def capture_record(
     workspace: WorkspaceOption = "workspace",
     input_path: Annotated[Path | None, typer.Option("--input")] = None,
     text: Annotated[str | None, typer.Option("--text")] = None,
+    evidence_type: Annotated[
+        EvidenceType, typer.Option("--evidence-type")
+    ] = EvidenceType.real_case,
     dry_run: DryRunOption = False,
 ) -> None:
     """Record a work-reproduction capture."""
@@ -157,6 +162,7 @@ def capture_record(
             text=text,
             actor="maintainer",
             dry_run=dry_run,
+            evidence_type=evidence_type,
         ),
     )
 
@@ -424,7 +430,21 @@ def build_command(
 
 def _event_scope(root: Path, workspace: str) -> EventScope:
     path = require_workspace(root, workspace)
-    return EventScope(scope_id=workspace, log_path=path / ".foundry" / "events.jsonl")
+    try:
+        safe_path = SourceRepository(root).snapshot(workspace).workspace_path
+    except (OSError, ValueError) as error:
+        raise FoundryError(
+            "filesystem",
+            "event.path_unsafe",
+            "Event operation cannot read an unsafe workspace path.",
+        ) from error
+    if safe_path != path.resolve():
+        raise FoundryError(
+            "filesystem",
+            "event.path_unsafe",
+            "Event operation resolved a different workspace path.",
+        )
+    return EventScope(scope_id=workspace, log_path=safe_path / ".foundry" / "events.jsonl")
 
 
 @events_app.command("verify")

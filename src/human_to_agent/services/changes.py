@@ -28,7 +28,13 @@ def build_artifact_index(snapshot: SourceSnapshot) -> ArtifactIndex:
         ):
             raw = yaml.safe_load(source.source_path.read_text(encoding="utf-8"))
             if isinstance(raw, dict):
-                asset_id = str(raw.get("id") or raw.get("assessment_id") or asset_id)
+                if source.path == "LOOP-READINESS/autonomy-approval.yaml":
+                    workspace_id = raw.get("workspace_id")
+                    level = raw.get("level")
+                    if isinstance(workspace_id, str) and isinstance(level, str):
+                        asset_id = f"autonomy-approval.{workspace_id}.{level}"
+                else:
+                    asset_id = str(raw.get("id") or raw.get("assessment_id") or asset_id)
                 revision = int(raw.get("revision", 1))
                 schema_version = str(raw.get("schema_version", "1"))
         entries.append(
@@ -55,6 +61,27 @@ def record_change(
     *,
     actor: str = "maintainer",
     dry_run: bool = False,
+) -> CommandResult:
+    manager = TransactionManager(root, EventStore())
+    return manager.run_locked(
+        workspace_id,
+        lambda: _record_change_locked(
+            root,
+            workspace_id,
+            actor=actor,
+            dry_run=dry_run,
+            manager=manager,
+        ),
+    )
+
+
+def _record_change_locked(
+    root: Path,
+    workspace_id: str,
+    *,
+    actor: str,
+    dry_run: bool,
+    manager: TransactionManager,
 ) -> CommandResult:
     repository = SourceRepository(root)
     try:
@@ -96,5 +123,5 @@ def record_change(
         mutations=(FileMutation(".foundry/artifact-index.yaml", rendered),),
         index_relative_path=".foundry/artifact-index.yaml",
     )
-    TransactionManager(root, EventStore()).commit(plan, event)
+    manager._commit_locked(plan, event)
     return CommandResult(command="record-change", changed_files=[str(index_path)])

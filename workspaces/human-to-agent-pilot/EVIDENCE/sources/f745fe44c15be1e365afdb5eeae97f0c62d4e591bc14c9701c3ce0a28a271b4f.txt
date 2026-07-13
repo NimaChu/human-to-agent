@@ -1,0 +1,14 @@
+Observed final pre-publication verification on 2026-07-12 in the human-to-agent guided-session-onboarding worktree after path, transaction, evidence, approval, and release hardening.
+uv run ruff format --check . -> exit code 0; 86 files already formatted.
+uv run ruff check . -> exit code 0; all checks passed.
+uv run mypy src tests -> exit code 0; no issues in 84 source files.
+uv run python -m human_to_agent.services.schema_catalog --check schemas/v1 -> exit code 0.
+uv run pytest -q -> exit code 0; 280 passed and 3 skipped in 38.51 seconds.
+uv run hta doctor --root . --format json -> exit code 0; no diagnostics.
+uv run hta validate --root . --workspace human-to-agent-pilot --format json -> exit code 0; no diagnostics.
+uv run hta stage assess --root . --workspace human-to-agent-pilot --format json -> exit code 0; complete_release passed.
+uv run hta diff --root . --workspace human-to-agent-pilot --format json -> exit code 0; no source or generated drift.
+uv run hta events verify --root . --workspace human-to-agent-pilot --format json -> exit code 0; 15 events verified.
+Standalone distribution verification -> exit code 0; no diagnostics.
+git diff --check -> exit code 0.
+No command output, content hash, stage fact, owner decision, or business evidence was invented or manually changed to obtain these results.

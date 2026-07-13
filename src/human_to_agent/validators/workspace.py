@@ -9,8 +9,9 @@ from pydantic import BaseModel, ValidationError
 from human_to_agent.domain.assessment import AssessmentSnapshot
 from human_to_agent.domain.assets import WorkspaceManifest
 from human_to_agent.domain.evidence import Evidence
-from human_to_agent.domain.readiness import ReadinessAssessment
+from human_to_agent.domain.readiness import AutonomyApproval, AutonomyLevel, ReadinessAssessment
 from human_to_agent.domain.references import ReferenceGraph, validate_references
+from human_to_agent.domain.unknowns import Unknown
 from human_to_agent.repositories.filesystem import SourceSnapshot
 from human_to_agent.repositories.index import ArtifactIndex
 from human_to_agent.validators.report import Diagnostic, ValidationReport
@@ -19,6 +20,8 @@ from human_to_agent.validators.report import Diagnostic, ValidationReport
 def infer_schema_name(path: str) -> str | None:
     if path == "workspace.yaml":
         return "workspace"
+    if path == "LOOP-READINESS/autonomy-approval.yaml":
+        return "autonomy-approval"
     parts = path.split("/")
     roots = {
         "TASK-CONTRACT": "task-contract",
@@ -55,7 +58,9 @@ def validate_workspace(
     assessment: AssessmentSnapshot | None = None
     manifest: WorkspaceManifest | None = None
     readiness_assessments: list[ReadinessAssessment] = []
+    autonomy_approvals: list[AutonomyApproval] = []
     evidence_assets: list[Evidence] = []
+    located_assets: list[tuple[str, BaseModel]] = []
     for source in snapshot.files:
         if source.path.startswith("EVIDENCE/sources/"):
             continue
@@ -77,6 +82,7 @@ def validate_workspace(
             if not isinstance(raw, dict):
                 raise ValueError("asset root must be a mapping")
             asset = model_catalog[schema_name].model_validate(raw)
+            located_assets.append((source.path, asset))
             asset_id = getattr(asset, "id", None)
             if isinstance(asset_id, str):
                 if asset_id in identifiers:
@@ -92,7 +98,7 @@ def validate_workspace(
                 assets[asset_id] = asset
                 identifiers[asset_id] = asset
             assessment_id = getattr(asset, "assessment_id", None)
-            if isinstance(assessment_id, str):
+            if isinstance(assessment_id, str) and not isinstance(asset, AutonomyApproval):
                 if assessment_id in identifiers:
                     diagnostics.append(
                         Diagnostic(
@@ -110,6 +116,8 @@ def validate_workspace(
                 manifest = asset
             elif isinstance(asset, ReadinessAssessment):
                 readiness_assessments.append(asset)
+            elif isinstance(asset, AutonomyApproval):
+                autonomy_approvals.append(asset)
             if isinstance(asset, Evidence):
                 evidence_assets.append(asset)
         except (ValidationError, ValueError, yaml.YAMLError) as error:
@@ -121,6 +129,24 @@ def validate_workspace(
                     path=source.path,
                 )
             )
+
+    if manifest is not None:
+        for path, asset in located_assets:
+            asset_workspace_id = getattr(asset, "workspace_id", None)
+            if (
+                isinstance(asset_workspace_id, str)
+                and asset_workspace_id != manifest.workspace_id
+                and not isinstance(asset, AssessmentSnapshot)
+            ):
+                diagnostics.append(
+                    Diagnostic(
+                        category="schema",
+                        code="asset.workspace_mismatch",
+                        message="Asset workspace_id does not match workspace.yaml.",
+                        path=path,
+                        asset_id=getattr(asset, "id", None),
+                    )
+                )
 
     graph = ReferenceGraph.from_assets(assets)
     reference_report = validate_references(graph, known_ids=set(identifiers))
@@ -135,7 +161,9 @@ def validate_workspace(
         for item in reference_report.errors
     )
 
-    def validate_direct_refs(source_id: str, refs: set[str]) -> None:
+    def validate_direct_refs(
+        source_id: str, refs: set[str], *, evidence_only: bool = False
+    ) -> None:
         for target_id in sorted(refs):
             target = identifiers.get(target_id)
             if target is None:
@@ -154,6 +182,19 @@ def validate_workspace(
                         category="evidence",
                         code="evidence.draft",
                         message=f"{source_id} references draft evidence {target_id}",
+                        asset_id=source_id,
+                        target_id=target_id,
+                    )
+                )
+            elif evidence_only and not isinstance(target, Evidence):
+                diagnostics.append(
+                    Diagnostic(
+                        category="evidence",
+                        code="evidence.reference_type",
+                        message=(
+                            f"{source_id} requires Evidence, not "
+                            f"{type(target).__name__}: {target_id}"
+                        ),
                         asset_id=source_id,
                         target_id=target_id,
                     )
@@ -190,6 +231,97 @@ def validate_workspace(
             ref for dimension in readiness.dimensions.values() for ref in dimension.evidence_refs
         }
         validate_direct_refs(readiness.assessment_id, readiness_refs)
+
+    for _source_path, asset in located_assets:
+        if not isinstance(asset, Unknown):
+            continue
+        lifecycle_refs = {ref for entry in asset.history for ref in entry.evidence_refs}
+        if asset.closure is not None:
+            lifecycle_refs.update(asset.closure.evidence_refs)
+        validate_direct_refs(asset.id, lifecycle_refs, evidence_only=True)
+
+    readiness_by_id = {item.assessment_id: item for item in readiness_assessments}
+    for approval in autonomy_approvals:
+        validate_direct_refs("autonomy-approval", set(approval.evidence_refs), evidence_only=True)
+        matching_readiness = readiness_by_id.get(approval.assessment_id)
+        if matching_readiness is None:
+            diagnostics.append(
+                Diagnostic(
+                    category="reference",
+                    code="approval.assessment_mismatch",
+                    message=(
+                        "Autonomy approval does not name this workspace's Readiness assessment."
+                    ),
+                    path="LOOP-READINESS/autonomy-approval.yaml",
+                    target_id=approval.assessment_id,
+                )
+            )
+        if manifest is not None:
+            try:
+                manifest_level = AutonomyLevel(manifest.autonomy_level)
+            except ValueError:
+                manifest_level = None
+            if manifest_level is not None and approval.level is not manifest_level:
+                diagnostics.append(
+                    Diagnostic(
+                        category="evidence",
+                        code="approval.level_mismatch",
+                        message="Autonomy approval level does not match workspace.yaml.",
+                        path="LOOP-READINESS/autonomy-approval.yaml",
+                    )
+                )
+            if approval.owner_id != manifest.owner_id:
+                diagnostics.append(
+                    Diagnostic(
+                        category="evidence",
+                        code="approval.owner_mismatch",
+                        message="Autonomy approval owner does not match workspace.yaml.",
+                        path="LOOP-READINESS/autonomy-approval.yaml",
+                    )
+                )
+        if (
+            matching_readiness is not None
+            and approval.level.rank > matching_readiness.recommended_ceiling.rank
+        ):
+            diagnostics.append(
+                Diagnostic(
+                    category="evidence",
+                    code="approval.ceiling_exceeded",
+                    message="Autonomy approval exceeds the Readiness ceiling.",
+                    path="LOOP-READINESS/autonomy-approval.yaml",
+                )
+            )
+        referenced_evidence = tuple(
+            target
+            for reference in approval.evidence_refs
+            if isinstance((target := identifiers.get(reference)), Evidence)
+            and target.status.lower() != "draft"
+        )
+        if len(referenced_evidence) == len(approval.evidence_refs) and any(
+            item.type.value != "owner_confirmation" or item.basis.value != "observed"
+            for item in referenced_evidence
+        ):
+            diagnostics.append(
+                Diagnostic(
+                    category="evidence",
+                    code="approval.evidence_type",
+                    message=(
+                        "Autonomy approval requires direct observed owner_confirmation Evidence."
+                    ),
+                    path="LOOP-READINESS/autonomy-approval.yaml",
+                )
+            )
+        if len(referenced_evidence) == len(approval.evidence_refs) and any(
+            approval.at < item.captured_at for item in referenced_evidence
+        ):
+            diagnostics.append(
+                Diagnostic(
+                    category="evidence",
+                    code="approval.evidence_order",
+                    message="Autonomy approval cannot predate its supporting Evidence.",
+                    path="LOOP-READINESS/autonomy-approval.yaml",
+                )
+            )
 
     source_by_path = snapshot.by_path()
     for evidence in evidence_assets:

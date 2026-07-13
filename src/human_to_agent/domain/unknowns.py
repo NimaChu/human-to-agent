@@ -121,6 +121,8 @@ def close_unknown(
     missing = tuple(ref for ref in closure.evidence_refs if ref not in evidence)
     if missing:
         raise ValueError(f"missing evidence: {', '.join(missing)}")
+    if any(evidence[ref].status.lower() == "draft" for ref in closure.evidence_refs):
+        raise ValueError("closure evidence cannot be draft")
 
     allowed = set(item.allowed_closure_evidence)
     if not any(evidence[ref].type in allowed for ref in closure.evidence_refs):

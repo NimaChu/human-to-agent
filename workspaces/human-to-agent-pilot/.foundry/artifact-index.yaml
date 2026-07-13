@@ -4,7 +4,7 @@ entries:
   path: ASSESSMENTS/stage-state.yaml
   revision: 1
   asset_schema_version: '1'
-  sha256: f0da7450de59ab5fff41765b354fbcaea45c6d0c30d01f634a281d6686d04e45
+  sha256: d16528eafef9fc71f73cc63c06f8b6e60bc4d19f8d23afe8f32619525004793a
 - asset_id: case.acme-default-rejection
   path: CASES/acme-default-rejection/case.yaml
   revision: 1
@@ -65,6 +65,11 @@ entries:
   revision: 1
   asset_schema_version: '1'
   sha256: a8b109b31e8dd1c78c28490dc40eb6b3b79d98dd4890adacae4a8dc9be47c5d7
+- asset_id: evidence.capture.424ac4d1aae33eaf
+  path: EVIDENCE/capture-424ac4d1aae33eaf.yaml
+  revision: 1
+  asset_schema_version: '1'
+  sha256: 06a4e88087c491049ca97aa4628fd2707803f9ee7aa9821326c796eff4998078
 - asset_id: evidence.capture.47492f597858b029
   path: EVIDENCE/capture-47492f597858b029.yaml
   revision: 1
@@ -80,6 +85,11 @@ entries:
   revision: 1
   asset_schema_version: '1'
   sha256: 54d26a2dd10e87ae0fbcd3b52c4da8f61b4191061b5439c8d52ad5df86e1e9bf
+- asset_id: evidence.capture.8cbe697b157364a5
+  path: EVIDENCE/capture-8cbe697b157364a5.yaml
+  revision: 1
+  asset_schema_version: '1'
+  sha256: fd9c8c08159faedbad5f39b2dd647f7eb46af60781bc05cf0e863ee6c85da88a
 - asset_id: evidence.capture.9634f55cbcd51744
   path: EVIDENCE/capture-9634f55cbcd51744.yaml
   revision: 1
@@ -95,6 +105,21 @@ entries:
   revision: 1
   asset_schema_version: '1'
   sha256: a93ac17cae9293d313caa29220f00ee06afe8c73a42a336929a6f32bbd4441c6
+- asset_id: evidence.capture.d68238e82fc6f495
+  path: EVIDENCE/capture-d68238e82fc6f495.yaml
+  revision: 1
+  asset_schema_version: '1'
+  sha256: 3cc4edd93c494edcd5ea0ec6eaf425aa635e9b00bc286eadd6e26b85cbedf94b
+- asset_id: evidence.capture.e79d172a403bd2c9
+  path: EVIDENCE/capture-e79d172a403bd2c9.yaml
+  revision: 1
+  asset_schema_version: '1'
+  sha256: d3d974a388bd20fe004ce9d38059faec50d3709f4c6cf9d95ae3c1fbad859ae1
+- asset_id: evidence.capture.f745fe44c15be1e3
+  path: EVIDENCE/capture-f745fe44c15be1e3.yaml
+  revision: 1
+  asset_schema_version: '1'
+  sha256: 809ac574fa0333beac95479f3191678aa0e8cbacf2b759fc25541905898a7b6a
 - asset_id: evidence.loop-engineering
   path: EVIDENCE/loop-engineering.yaml
   revision: 1
@@ -102,9 +127,9 @@ entries:
   sha256: dcfe5762d1f4f5c09e4137bbceb42fadac689c639eeb2b14bcd764e660ce7d40
 - asset_id: evidence.output
   path: EVIDENCE/output.yaml
-  revision: 1
+  revision: 4
   asset_schema_version: '1'
-  sha256: e621a6dc5e21b18cef82fdddaca7ec21409c49bf8c38188dd46e6b697efcfc9f
+  sha256: 2801f1c75ea006ab7960f86c88139eea56303fb007218041e9161c02dd7ef41d
 - asset_id: evidence.pr
   path: EVIDENCE/pr.yaml
   revision: 1
@@ -115,6 +140,11 @@ entries:
   revision: 1
   asset_schema_version: '1'
   sha256: 1993c46fb8e10d97fafc63b428ed9c6a299df82a9cdd8570b7f7d43c3c16b74e
+- asset_id: file.evidence.sources.424ac4d1aae33eafe18f0f16256cec9c6f005e8c9b7e8ed70a998466e35e3b8b.txt
+  path: EVIDENCE/sources/424ac4d1aae33eafe18f0f16256cec9c6f005e8c9b7e8ed70a998466e35e3b8b.txt
+  revision: 1
+  asset_schema_version: '1'
+  sha256: 424ac4d1aae33eafe18f0f16256cec9c6f005e8c9b7e8ed70a998466e35e3b8b
 - asset_id: file.evidence.sources.47492f597858b029f324aa5fcf9474a11b9fcf1145cb5124f9b2b143f219d78e.md
   path: EVIDENCE/sources/47492f597858b029f324aa5fcf9474a11b9fcf1145cb5124f9b2b143f219d78e.md
   revision: 1
@@ -130,6 +160,11 @@ entries:
   revision: 1
   asset_schema_version: '1'
   sha256: 5791ee20977c479effbb9a13d5eda7c57fdc42da503d893492bdaa4eea7a3e0a
+- asset_id: file.evidence.sources.8cbe697b157364a5b13646285b38409dc53ec5287deeb7913493e65b275cd14d.txt
+  path: EVIDENCE/sources/8cbe697b157364a5b13646285b38409dc53ec5287deeb7913493e65b275cd14d.txt
+  revision: 1
+  asset_schema_version: '1'
+  sha256: 8cbe697b157364a5b13646285b38409dc53ec5287deeb7913493e65b275cd14d
 - asset_id: file.evidence.sources.9634f55cbcd517447a3928d98534d2f7029e76886ac3ff3a71ebc5bd5432a4d8.txt
   path: EVIDENCE/sources/9634f55cbcd517447a3928d98534d2f7029e76886ac3ff3a71ebc5bd5432a4d8.txt
   revision: 1
@@ -145,6 +180,21 @@ entries:
   revision: 1
   asset_schema_version: '1'
   sha256: bfab46504077187bcaa9d1282c1a09ab6bd5cd525e177fdfde2a8439daa7191b
+- asset_id: file.evidence.sources.d68238e82fc6f495b3108c96a4c2642ed6ffbe25a0af1b63f421de87b78a1f07.txt
+  path: EVIDENCE/sources/d68238e82fc6f495b3108c96a4c2642ed6ffbe25a0af1b63f421de87b78a1f07.txt
+  revision: 1
+  asset_schema_version: '1'
+  sha256: d68238e82fc6f495b3108c96a4c2642ed6ffbe25a0af1b63f421de87b78a1f07
+- asset_id: file.evidence.sources.e79d172a403bd2c90ccff01454f4fc9776a1afa46117a262cb42f981a29f3e24.txt
+  path: EVIDENCE/sources/e79d172a403bd2c90ccff01454f4fc9776a1afa46117a262cb42f981a29f3e24.txt
+  revision: 1
+  asset_schema_version: '1'
+  sha256: e79d172a403bd2c90ccff01454f4fc9776a1afa46117a262cb42f981a29f3e24
+- asset_id: file.evidence.sources.f745fe44c15be1e365afdb5eeae97f0c62d4e591bc14c9701c3ce0a28a271b4f.txt
+  path: EVIDENCE/sources/f745fe44c15be1e365afdb5eeae97f0c62d4e591bc14c9701c3ce0a28a271b4f.txt
+  revision: 1
+  asset_schema_version: '1'
+  sha256: f745fe44c15be1e365afdb5eeae97f0c62d4e591bc14c9701c3ce0a28a271b4f
 - asset_id: evidence.unknowns
   path: EVIDENCE/unknowns.yaml
   revision: 1
@@ -170,6 +220,11 @@ entries:
   revision: 1
   asset_schema_version: '1'
   sha256: 32eebd2cea10866be3696062d88f4eaad89f0a40c9dfe07b16584640d9d37346
+- asset_id: autonomy-approval.human-to-agent-pilot.h1
+  path: LOOP-READINESS/autonomy-approval.yaml
+  revision: 1
+  asset_schema_version: '1'
+  sha256: 91ce638ce1234606ac51a64395f084358067ca347d64001a42d6d9ff48eded75
 - asset_id: policy.loop-controls
   path: POLICIES/loop-controls.yaml
   revision: 1
@@ -187,24 +242,24 @@ entries:
   sha256: 8c4fec6797d7c9e4ee4b8da8d80f70f040f5a47dee9f956cbdbc1d0a33805921
 - asset_id: run.acme-default-rejection
   path: RUNS/acme-default-rejection/run.yaml
-  revision: 1
+  revision: 2
   asset_schema_version: '1'
-  sha256: 6f3795414fd6d4bcaedc9bb0fdaf28ac3618589d0f9e927448a9ec1ef7d2acc5
+  sha256: d8112b5520d83164b23901c5cda4b7692ce98377f57ec544132d477e60f858dc
 - asset_id: run.harness-semantics-conflict
   path: RUNS/harness-semantics-conflict/run.yaml
-  revision: 1
+  revision: 2
   asset_schema_version: '1'
-  sha256: b71d93622a3b1ba3793dc98c21e842f13fc940d799dd231269b73e5966f2554f
+  sha256: b8f3e8375a0ba2c2eae5c29705cb5af0a2a83bb20383b40a5409fde22c12b735
 - asset_id: run.independent-verification
   path: RUNS/independent-verification/run.yaml
-  revision: 1
+  revision: 2
   asset_schema_version: '1'
-  sha256: 9a7b5a1d884281817899945fa2a4252ca4f983b180054fdd80e745f986db0dd6
+  sha256: 1f805477fb02d5cec0f42b1e3d198e39e11ffb5b54f56b929854b7bb463d96d8
 - asset_id: run.pr-mainline
   path: RUNS/pr-mainline/run.yaml
-  revision: 1
+  revision: 2
   asset_schema_version: '1'
-  sha256: 5cde72532bbcecc16d0701b12cbe0fafa69064a2cca7bb505712dd69ab67ac96
+  sha256: b79b4ddf8d29628823d9211ed68c819dc4250833012771f1acff8b955ee444ff
 - asset_id: file.skills.source-to-requirement-mapping.skill.md
   path: SKILLS/source-to-requirement-mapping/SKILL.md
   revision: 1
@@ -242,6 +297,6 @@ entries:
   sha256: 062693d1f2069c2a719355e2fd57cb90afbfc142a9b33036f736e2f2fa8cbf32
 - asset_id: workspace.human-to-agent-pilot
   path: workspace.yaml
-  revision: 1
+  revision: 5
   asset_schema_version: '1'
-  sha256: 25acf0bff154f9aa2b9477e26070abdd4e30f139fece12ebcb2d7d07917f3209
+  sha256: 7ae74334a6831e12c342e4cf461eb8c043618b5269f7e0521a30945ec6eba135

@@ -1,13 +1,16 @@
 from datetime import UTC, datetime
 from hashlib import sha256
 from pathlib import Path
+from typing import Any
 
+import pytest
 import yaml
 from typer.testing import CliRunner
 
 from human_to_agent.cli.app import app
 from human_to_agent.domain.assessment import AssessmentFact
 from human_to_agent.repositories.filesystem import SourceRepository
+from human_to_agent.services import stage_transitions
 from human_to_agent.services.assessment_state import load_assessment_state
 
 RUNNER = CliRunner()
@@ -29,10 +32,26 @@ def initialized(root: Path) -> Path:
     return root / "workspaces/pilot"
 
 
-def capture(root: Path, text: str = "Owner-confirmed task evidence") -> str:
+def capture(
+    root: Path,
+    text: str = "Owner-confirmed task evidence",
+    *,
+    evidence_type: str = "real_case",
+) -> str:
     result = RUNNER.invoke(
         app,
-        ["capture", "record", "--root", str(root), "-w", "pilot", "--text", text],
+        [
+            "capture",
+            "record",
+            "--root",
+            str(root),
+            "-w",
+            "pilot",
+            "--text",
+            text,
+            "--evidence-type",
+            evidence_type,
+        ],
     )
     assert result.exit_code == 0, result.stdout
     path = next((root / "workspaces/pilot/EVIDENCE").glob("capture-*.yaml"))
@@ -262,6 +281,220 @@ def test_unmanaged_unknown_removes_claimed_managed_facts(tmp_path: Path) -> None
     assert AssessmentFact.unknowns_managed not in computed.facts
 
 
+@pytest.mark.parametrize("blocking_status", ["new", "reopened", "resolved"])
+def test_draft_unknown_cannot_disappear_from_managed_gate(
+    tmp_path: Path, blocking_status: str
+) -> None:
+    workspace = initialized(tmp_path)
+    evidence_id = capture(tmp_path)
+    first = RUNNER.invoke(
+        app,
+        ["unknown", "add", "--root", str(tmp_path), "-w", "pilot", "--title", "Resolved"],
+    )
+    assert first.exit_code == 0, first.stdout
+    resolved_path = next((workspace / "UNKNOWNS").glob("*.yaml"))
+    resolved_id = str(yaml.safe_load(resolved_path.read_text(encoding="utf-8"))["id"])
+    closed = RUNNER.invoke(
+        app,
+        [
+            "unknown",
+            "close",
+            "--root",
+            str(tmp_path),
+            "-w",
+            "pilot",
+            "--id",
+            resolved_id,
+            "--evidence",
+            evidence_id,
+            "--disposition",
+            "resolved",
+        ],
+    )
+    assert closed.exit_code == 0, closed.stdout
+    second = RUNNER.invoke(
+        app,
+        ["unknown", "add", "--root", str(tmp_path), "-w", "pilot", "--title", "Draft"],
+    )
+    assert second.exit_code == 0, second.stdout
+    draft_path = next(
+        path
+        for path in (workspace / "UNKNOWNS").glob("*.yaml")
+        if yaml.safe_load(path.read_text(encoding="utf-8"))["title"] == "Draft"
+    )
+    draft = yaml.safe_load(draft_path.read_text(encoding="utf-8"))
+    draft["status"] = "draft"
+    draft["unknown_status"] = blocking_status
+    draft_path.write_text(yaml.safe_dump(draft, sort_keys=False), encoding="utf-8")
+    write_assessment(
+        workspace,
+        (
+            AssessmentFact.key_unknowns_classified,
+            AssessmentFact.key_unknowns_managed,
+            AssessmentFact.unknowns_managed,
+        ),
+        evidence_id,
+    )
+
+    computed = load_assessment_state(tmp_path, "pilot").assessment
+
+    assert AssessmentFact.initial_unknowns_recorded not in computed.facts
+    assert AssessmentFact.key_unknowns_classified not in computed.facts
+    assert AssessmentFact.key_unknowns_managed not in computed.facts
+    assert AssessmentFact.unknowns_managed not in computed.facts
+
+
+def install_readiness(workspace: Path) -> None:
+    readiness: dict[str, object] = {
+        "assessment_id": "readiness.pilot",
+        "workspace_id": "pilot",
+        "policy_version": "1",
+        "result": "not_ready",
+        "dimensions": {},
+        "evidence_gaps": [],
+        "risks": [],
+        "next_actions": [],
+        "recommended_ceiling": "h0",
+        "approved_autonomy": None,
+    }
+    (workspace / "LOOP-READINESS/assessment.yaml").write_text(
+        yaml.safe_dump(readiness, sort_keys=False), encoding="utf-8"
+    )
+    manifest_path = workspace / "workspace.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["status"] = "validated"
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+
+
+def test_autonomy_fact_requires_explicit_approval_asset(tmp_path: Path) -> None:
+    workspace = initialized(tmp_path)
+    install_readiness(workspace)
+
+    computed = load_assessment_state(tmp_path, "pilot").assessment
+
+    assert AssessmentFact.autonomy_approved not in computed.facts
+
+
+def test_matching_autonomy_approval_uses_real_evidence_without_identifier_collision(
+    tmp_path: Path,
+) -> None:
+    workspace = initialized(tmp_path)
+    evidence_id = capture(
+        tmp_path,
+        "Owner approves h0 autonomy for this workspace.",
+        evidence_type="owner_confirmation",
+    )
+    install_readiness(workspace)
+    approval = {
+        "workspace_id": "pilot",
+        "assessment_id": "readiness.pilot",
+        "level": "h0",
+        "owner_id": "maintainer",
+        "at": yaml.safe_load(
+            next((workspace / "EVIDENCE").glob("capture-*.yaml")).read_text(encoding="utf-8")
+        )["captured_at"],
+        "evidence_refs": [evidence_id],
+    }
+    (workspace / "LOOP-READINESS/autonomy-approval.yaml").write_text(
+        yaml.safe_dump(approval, sort_keys=False), encoding="utf-8"
+    )
+
+    computed = load_assessment_state(tmp_path, "pilot").assessment
+
+    assert AssessmentFact.autonomy_approved in computed.facts
+    assert computed.evidence[AssessmentFact.autonomy_approved] == (evidence_id,)
+
+
+@pytest.mark.parametrize(
+    ("approval_patch", "expected_code"),
+    [
+        ({"evidence_refs": ["evidence.missing"]}, "reference.missing"),
+        ({"evidence_refs": ["readiness.pilot"]}, "evidence.reference_type"),
+        ({"workspace_id": "other"}, "asset.workspace_mismatch"),
+        ({"assessment_id": "readiness.other"}, "approval.assessment_mismatch"),
+        ({"level": "h1"}, "approval.level_mismatch"),
+    ],
+)
+def test_invalid_autonomy_approval_is_rejected(
+    tmp_path: Path, approval_patch: dict[str, object], expected_code: str
+) -> None:
+    workspace = initialized(tmp_path)
+    evidence_id = capture(tmp_path, "Owner approval evidence", evidence_type="owner_confirmation")
+    install_readiness(workspace)
+    approval = {
+        "workspace_id": "pilot",
+        "assessment_id": "readiness.pilot",
+        "level": "h0",
+        "owner_id": "maintainer",
+        "at": yaml.safe_load(
+            next((workspace / "EVIDENCE").glob("capture-*.yaml")).read_text(encoding="utf-8")
+        )["captured_at"],
+        "evidence_refs": [evidence_id],
+    } | approval_patch
+    (workspace / "LOOP-READINESS/autonomy-approval.yaml").write_text(
+        yaml.safe_dump(approval, sort_keys=False), encoding="utf-8"
+    )
+
+    result = RUNNER.invoke(
+        app, ["stage", "assess", "--root", str(tmp_path), "-w", "pilot", "--format", "json"]
+    )
+
+    assert result.exit_code != 0, result.stdout
+    assert expected_code in result.stdout
+
+
+def test_autonomy_approval_rejects_draft_evidence(tmp_path: Path) -> None:
+    workspace = initialized(tmp_path)
+    evidence_id = capture(tmp_path, "Owner approval evidence", evidence_type="owner_confirmation")
+    evidence_path = next((workspace / "EVIDENCE").glob("capture-*.yaml"))
+    evidence = yaml.safe_load(evidence_path.read_text(encoding="utf-8"))
+    evidence["status"] = "draft"
+    evidence_path.write_text(yaml.safe_dump(evidence, sort_keys=False), encoding="utf-8")
+    install_readiness(workspace)
+    approval = {
+        "workspace_id": "pilot",
+        "assessment_id": "readiness.pilot",
+        "level": "h0",
+        "owner_id": "maintainer",
+        "at": evidence["captured_at"],
+        "evidence_refs": [evidence_id],
+    }
+    (workspace / "LOOP-READINESS/autonomy-approval.yaml").write_text(
+        yaml.safe_dump(approval, sort_keys=False), encoding="utf-8"
+    )
+
+    result = RUNNER.invoke(
+        app, ["stage", "assess", "--root", str(tmp_path), "-w", "pilot", "--format", "json"]
+    )
+
+    assert result.exit_code == 5, result.stdout
+    assert "evidence.draft" in result.stdout
+
+
+def test_autonomy_approval_cannot_predate_its_evidence(tmp_path: Path) -> None:
+    workspace = initialized(tmp_path)
+    evidence_id = capture(tmp_path, "Owner approval evidence", evidence_type="owner_confirmation")
+    install_readiness(workspace)
+    approval = {
+        "workspace_id": "pilot",
+        "assessment_id": "readiness.pilot",
+        "level": "h0",
+        "owner_id": "maintainer",
+        "at": "2020-01-01T00:00:00Z",
+        "evidence_refs": [evidence_id],
+    }
+    (workspace / "LOOP-READINESS/autonomy-approval.yaml").write_text(
+        yaml.safe_dump(approval, sort_keys=False), encoding="utf-8"
+    )
+
+    result = RUNNER.invoke(
+        app, ["stage", "assess", "--root", str(tmp_path), "-w", "pilot", "--format", "json"]
+    )
+
+    assert result.exit_code == 5, result.stdout
+    assert "approval.evidence_order" in result.stdout
+
+
 def test_missing_structural_assets_remove_claimed_structural_facts(tmp_path: Path) -> None:
     workspace = initialized(tmp_path)
     evidence_id = capture(tmp_path)
@@ -280,7 +513,7 @@ def test_missing_structural_assets_remove_claimed_structural_facts(tmp_path: Pat
 
 def test_readiness_claim_cannot_exceed_dimension_evidence(tmp_path: Path) -> None:
     workspace = initialized(tmp_path)
-    readiness = {
+    readiness: dict[str, object] = {
         "assessment_id": "readiness.pilot",
         "workspace_id": "pilot",
         "policy_version": "1",
@@ -329,6 +562,45 @@ def test_unrecorded_change_blocks_advance(tmp_path: Path) -> None:
 
     assert result.exit_code == 8, result.stdout
     assert "source.unrecorded" in result.stdout
+
+
+def test_concurrent_recorded_change_blocks_stale_stage_advance(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    workspace, _ = prepare_stage2(tmp_path)
+    original_write = stage_transitions.__dict__["write_assets"]
+    injected = False
+
+    def write_after_concurrent_capture(*args: Any, **kwargs: Any) -> Any:
+        nonlocal injected
+        assert kwargs.get("expected_source_digest")
+        if not injected:
+            injected = True
+            captured = RUNNER.invoke(
+                app,
+                [
+                    "capture",
+                    "record",
+                    "--root",
+                    str(tmp_path),
+                    "-w",
+                    "pilot",
+                    "--text",
+                    "concurrent owner evidence",
+                ],
+            )
+            assert captured.exit_code == 0, captured.stdout
+        return original_write(*args, **kwargs)
+
+    monkeypatch.setattr(stage_transitions, "write_assets", write_after_concurrent_capture)
+    result = RUNNER.invoke(
+        app,
+        ["stage", "advance", "--root", str(tmp_path), "-w", "pilot", "--format", "json"],
+    )
+
+    assert result.exit_code == 8, result.stdout
+    assert "asset.stale_source" in result.stdout
+    assert yaml.safe_load((workspace / "workspace.yaml").read_text())["current_stage"] == 1
 
 
 def test_reopen_requires_existing_evidence_and_updates_both_records(tmp_path: Path) -> None:

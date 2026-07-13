@@ -54,6 +54,8 @@ Mechanical facts are recomputed from assets rather than trusted from prose:
 - Readiness result and reference from a validated Readiness assessment;
 - initial, classified, and managed Unknown facts from actual Unknown state.
 
+Autonomy approval is never inferred from the workspace request or Readiness ceiling. The exact `LOOP-READINESS/autonomy-approval.yaml` asset must match the workspace, owner, Readiness assessment, and selected level, stay within the recommended ceiling, and reference direct non-draft owner Evidence captured no later than the approval.
+
 An unmanaged Unknown removes the managed-Unknown facts even if the assessment file claims them. A claimed Readiness result may be more conservative than the result recomputed from dimensions, but never more mature.
 
 ## Computed stage gates
@@ -71,6 +73,7 @@ Release planning ignores handwritten `.foundry/release-gate.yaml`. It requires:
 - current stage 5;
 - a passing `assess_complete_release` report computed from the recorded normative tree;
 - at least conditional Readiness that is not more mature than its dimension evidence permits;
+- a matching, direct-evidence-backed owner autonomy approval;
 - no unmanaged Unknown;
 - a byte-matching artifact index.
 

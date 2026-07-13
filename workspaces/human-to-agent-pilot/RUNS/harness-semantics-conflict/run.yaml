@@ -2,23 +2,27 @@
   "schema_version": "1",
   "id": "run.harness-semantics-conflict",
   "workspace_id": "human-to-agent-pilot",
-  "revision": 1,
+  "revision": 2,
   "status": "validated",
   "owners": [
     "owner"
   ],
   "created_at": "2026-07-10T00:00:00Z",
-  "updated_at": "2026-07-10T00:00:00Z",
-  "provenance": "Human to Agent pilot",
-  "links": [],
-  "evidence_refs": [],
-  "actor_id": "verifier-1",
+  "updated_at": "2026-07-13T03:10:51.083463Z",
+  "provenance": "Independent current-tree audit findings remediated; maintainer recertified with observed automated verification",
+  "links": [
+    "evidence.output"
+  ],
+  "evidence_refs": [
+    "evidence.output"
+  ],
+  "actor_id": "codex-final-current-tree-verifier",
   "actor_role": "independent_verifier",
-  "input_tree_digest": "c79fefeb2374d3d784ac5eaf7b3d846ac36df737a3476c4847279886589c63da",
+  "input_tree_digest": "805c20b020eb76b66e2e1ced09598c3f1483c4eccc72690e46a43c2f16afc0b0",
   "steps": [
-    "load recorded sources",
-    "execute mapping",
-    "evaluate result"
+    "inspect the current normative source tree",
+    "run the harness-semantics conflict case through the automated verification suite",
+    "verify that the conflict remains detected and evidence-backed"
   ],
   "skill_ref": "skill.source-to-requirement-mapping",
   "case_ref": "case.harness-semantics-conflict",
