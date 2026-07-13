@@ -1,10 +1,46 @@
 # Human to Agent
 
-Human to Agent is a file-first mother workspace for turning a real task into an evidence-backed Task Contract, validated Skills and cases, a controlled E/T/C/S/L/V Harness, and a Loop Readiness decision. Markdown, YAML, and JSONL under `workspaces/` are authoritative; `dist/` is generated and never becomes business input.
+Turn work you currently do by hand into a reusable Agent workspace—by talking naturally and sharing the real files or examples you already have.
+
+You do not need to know commands, fill in templates, or organize the repository yourself. You also do not need to write a special prompt. Start a new conversation in this project and explain what you are trying to accomplish. The Agent guides you one question at a time and handles the workspace operations for you.
+
+## What this project does
+
+Human to Agent helps an Agent turn an existing piece of work into a reliable, transferable harness:
+
+1. Understands the result you want and inspects the material you provide.
+2. Saves original inputs as traceable evidence instead of inventing missing facts.
+3. Records unclear, conflicting, or unverified information as explicit Unknowns.
+4. Distills the work into instructions, cases, checks, policies, state, tools, and Human Gates.
+5. Tests whether another Agent can reproduce the work and evaluates how much autonomy is safe.
+6. Builds a self-contained child workspace that can be reviewed, versioned, and reused.
+
+In short: **bring a real task; leave with an evidence-backed Agent harness.**
 
 ## Start a conversation
 
-Open a new project conversation and speak naturally: describe the result you want or share the material you already have. The Agent introduces Human-to-Agent once, asks one question at a time, and manages permitted workspace commands. You do not need to know commands, templates, or the directory layout.
+Open a new project conversation and describe the work in your own words. For example:
+
+> I prepare this report every week. Here are last week's source files and final report.
+
+or:
+
+> I want an Agent to review these requirements the same way our team does.
+
+The Agent briefly introduces the process, identifies the most useful next piece of information, and does the repository work on your behalf. Attach files, examples, rules, or past outputs as they become relevant.
+
+## What you get
+
+Each real task becomes a child workspace under `workspaces/` containing the evidence, Task Contract, Unknowns, Skills, test cases, evaluators, workflow, policies, Human Gates, state model, and readiness decision needed to operate it responsibly.
+
+The authoritative business record is the Markdown, YAML, and JSONL under `workspaces/`. Generated releases under `dist/` are outputs only and are never treated as source evidence.
+
+## Current scope
+
+- Conversation-first and file-first; there is no interactive UI yet.
+- The Agent may manage local workspace operations for the user.
+- External or irreversible actions are not executed directly. The workspace can prepare an action package, but a Human Gate must approve, reject, or modify it.
+- Readiness may recommend an autonomy ceiling, but only direct owner evidence can approve an autonomy level.
 
 ## Bootstrap
 
