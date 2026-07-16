@@ -111,9 +111,10 @@ def test_runbooks_cover_failure_states() -> None:
         assert all(term.lower() in text for term in terms)
 
 
-def test_ci_has_required_cross_platform_matrix_and_steps() -> None:
+def test_ci_has_required_windows_matrix_and_steps() -> None:
     text = (ROOT / ".github/workflows/ci.yml").read_text()
-    assert "ubuntu-latest" in text and "windows-latest" in text
+    assert "windows-latest" in text
+    assert "ubuntu-latest" not in text
     assert 'python-version: ["3.11", "3.12"]' in text
     assert "actions/checkout@v4" in text and "astral-sh/setup-uv@v6" in text
     for command in (
