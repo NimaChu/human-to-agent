@@ -119,10 +119,18 @@ def _initial_unknown(
         affected_assets=(f"workspace.{workspace_id}",),
         confidence_basis=EvidenceBasis.unverified,
         owner_id=owner,
-        expected_responder_role="responsible owner",
-        cheapest_probe="Ask the named owner for one direct decision or source locator.",
-        prompt_patch="State the Unknown explicitly and stop before relying on it.",
-        automation_restriction="Do not automate decisions that depend on this Unknown.",
+        expected_responder_role="agent probe or responsible owner",
+        cheapest_probe=(
+            "Inspect available workspace evidence first; ask the named owner only for an "
+            "unresolved decision."
+        ),
+        prompt_patch=(
+            "Resolve observable facts from evidence; for an owner decision, ask one question "
+            "with a recommended answer and its impact or tradeoff."
+        ),
+        automation_restriction=(
+            "Continue only unaffected work; do not automate decisions that depend on this Unknown."
+        ),
         allowed_closure_evidence=(
             EvidenceType.formal_rule,
             EvidenceType.real_case,

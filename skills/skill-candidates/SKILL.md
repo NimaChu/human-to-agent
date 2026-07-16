@@ -1,6 +1,6 @@
 ---
 name: skill-candidates
-description: Identify reusable Skill candidates from repeated evidence-backed task steps and explicit boundaries.
+description: Identify reusable Skill candidates inside a child workspace; never promote them into the mother workspace without explicit owner authorization.
 ---
 
 # Outcome
@@ -33,7 +33,7 @@ Read and write only the relevant files under `workspaces/<id>/`; generated `dist
 
 # Procedure
 
-Cluster repeatable steps, separate business judgment, define triggers and boundaries, link cases and evaluators, and leave uncertain candidates as Unknowns.
+Inside the child workspace, cluster repeatable steps, separate business judgment, define triggers and non-triggers, specify inputs and outputs, link normal/boundary/failure cases and evaluators, define checkable completion criteria, and leave uncertain candidates as Unknowns. Candidate discovery does not edit mother-workspace `skills/` or `agents/`.
 
 # Unknown handling
 
@@ -41,11 +41,11 @@ Record missing or conflicting facts as Unknowns with an owner, impact, evidence 
 
 # Human gates and stop conditions
 
-Stop before external, irreversible, forbidden, unowned, or unsupported action. Prepare an action package when allowed; Human Gate approval never executes it.
+Stop before external, irreversible, forbidden, unowned, or unsupported action. Promoting a candidate into mother-workspace `skills/` or `agents/` is a separate product-maintenance operation and requires explicit owner authorization for the exact target. A mature candidate, passed evaluator, or recommendation is not authorization. Prepare an action package when allowed; Human Gate approval never executes it.
 
 # Evaluator and acceptance
 
-Use explicit acceptance criteria and evidence. The implementer cannot be the sole verifier of a release or independent-reproduction claim.
+A candidate is acceptable only when its triggers, non-triggers, inputs, outputs, dependencies, Human Gates, evaluator, evidence cases, and checkable completion criteria are explicit inside the child workspace. This acceptance does not authorize promotion into the mother workspace. The implementer cannot be the sole verifier of a release or independent-reproduction claim.
 
 # Error semantics
 
@@ -58,4 +58,3 @@ Write source-linked evidence, case/evaluation or review records, Unknown history
 # Verification commands
 
 Run `uv run hta validate --workspace <id> --format json`, then `uv run hta diff --workspace <id> --format json`; record changes only after both are understood.
-

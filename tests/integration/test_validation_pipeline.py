@@ -5,6 +5,7 @@ import yaml
 
 from human_to_agent.repositories.filesystem import SourceRepository
 from human_to_agent.repositories.index import ArtifactIndex, ArtifactIndexEntry
+from human_to_agent.services.changes import build_artifact_index
 from human_to_agent.services.schema_catalog import DEFAULT_MODELS
 from human_to_agent.validators.workspace import validate_workspace
 
@@ -48,6 +49,26 @@ def test_valid_workspace_has_no_diagnostics(tmp_path: Path) -> None:
     report = validate_workspace(repository.snapshot("pilot"), DEFAULT_MODELS)
     assert report.passed
     assert report.diagnostics == ()
+
+
+def test_non_normative_asset_yaml_is_indexed_without_schema_or_yaml_parsing(
+    tmp_path: Path,
+) -> None:
+    repository = write_workspace(tmp_path, manifest())
+    workspace = tmp_path / "workspaces" / "pilot"
+    asset = workspace / "ASSETS" / "roles.yaml"
+    asset.parent.mkdir()
+    asset_bytes = b"roles:\n  - !custom-role\n    name: editor\n"
+    asset.write_bytes(asset_bytes)
+
+    snapshot = repository.snapshot("pilot")
+    report = validate_workspace(snapshot, DEFAULT_MODELS)
+    index = build_artifact_index(snapshot)
+
+    source = snapshot.by_path()["ASSETS/roles.yaml"]
+    assert source.canonical_content == asset_bytes
+    assert report.passed
+    assert index.by_path()["ASSETS/roles.yaml"].sha256 == source.sha256
 
 
 def test_schema_errors_are_reported_without_stopping_other_files(tmp_path: Path) -> None:

@@ -48,6 +48,29 @@ def test_same_inputs_build_byte_identical_trees(tmp_path: Path) -> None:
     assert verify_distribution(first.path).passed
 
 
+def test_build_includes_untyped_data_and_assets_as_original_bytes(tmp_path: Path) -> None:
+    source_workspace(tmp_path)
+    workspace = tmp_path / "workspaces/pilot"
+    asset = workspace / "ASSETS/roles.yaml"
+    asset.parent.mkdir()
+    asset_bytes = b"roles:\n  - !custom-role\n    name: editor\n"
+    asset.write_bytes(asset_bytes)
+    database = workspace / "DATA/project.sqlite"
+    database.parent.mkdir()
+    database_bytes = b"SQLite format 3\x00fixture"
+    database.write_bytes(database_bytes)
+
+    built = Builder(tmp_path).build(
+        Builder(tmp_path).plan("pilot", BuildMode.draft, tmp_path / "out")
+    )
+    manifest = json.loads((built.path / "BUILD-MANIFEST.json").read_text(encoding="utf-8"))
+
+    assert (built.path / "ASSETS/roles.yaml").read_bytes() == asset_bytes
+    assert (built.path / "DATA/project.sqlite").read_bytes() == database_bytes
+    assert {"ASSETS/roles.yaml", "DATA/project.sqlite"} <= set(manifest["files"])
+    assert verify_distribution(built.path).passed
+
+
 def test_release_rejects_fake_gate_for_empty_workspace(tmp_path: Path) -> None:
     assert RUNNER.invoke(app, ["init", "--root", str(tmp_path)]).exit_code == 0
     assert RUNNER.invoke(app, ["workspace", "new", "pilot", "--root", str(tmp_path)]).exit_code == 0

@@ -65,6 +65,34 @@ def test_guided_onboarding_keeps_task_deliverables_out_of_the_mother_workspace()
         assert "explicitly requested" in text
 
 
+def test_guidance_separates_automatic_child_workspaces_from_explicit_promotion() -> None:
+    for relative in (
+        "AGENTS.md",
+        "agents/practitioner-guide.md",
+        "skills/_shared/method-contract.md",
+        "skills/guided-session-onboarding/SKILL.md",
+    ):
+        text = (ROOT / relative).read_text().lower()
+        assert "do not ask the user to choose" in text
+        assert all(term in text for term in ("workspace", "skill", "agent"))
+        assert "child workspace" in text
+        assert "explicit owner" in text and "authorization" in text
+        assert "skills/" in text and "agents/" in text
+
+
+def test_guidance_defines_indexed_non_normative_data_and_asset_directories() -> None:
+    for relative in (
+        "AGENTS.md",
+        "agents/practitioner-guide.md",
+        "skills/_shared/method-contract.md",
+        "skills/guided-session-onboarding/SKILL.md",
+    ):
+        text = (ROOT / relative).read_text().lower()
+        assert "assets/" in text and "data/" in text
+        assert "indexed" in text and "path-safety" in text
+        assert "business-schema" in text
+
+
 def test_readme_explains_conversational_entrypoint() -> None:
     text = (ROOT / "README.md").read_text().lower()
     assert "start a conversation" in text
@@ -83,9 +111,10 @@ def test_runbooks_cover_failure_states() -> None:
         assert all(term.lower() in text for term in terms)
 
 
-def test_ci_has_required_cross_platform_matrix_and_steps() -> None:
+def test_ci_has_required_windows_matrix_and_steps() -> None:
     text = (ROOT / ".github/workflows/ci.yml").read_text()
-    assert "ubuntu-latest" in text and "windows-latest" in text
+    assert "windows-latest" in text
+    assert "ubuntu-latest" not in text
     assert 'python-version: ["3.11", "3.12"]' in text
     assert "actions/checkout@v4" in text and "astral-sh/setup-uv@v6" in text
     for command in (

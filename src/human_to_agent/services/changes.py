@@ -10,7 +10,12 @@ from human_to_agent.cli.errors import FoundryError
 from human_to_agent.cli.result import CommandResult
 from human_to_agent.domain.events import EventDraft, EventScope
 from human_to_agent.repositories.events import EventStore
-from human_to_agent.repositories.filesystem import SourceRepository, SourceSnapshot, tree_digest
+from human_to_agent.repositories.filesystem import (
+    SourceRepository,
+    SourceSnapshot,
+    is_non_normative_asset_path,
+    tree_digest,
+)
 from human_to_agent.repositories.index import ArtifactIndex, ArtifactIndexEntry
 from human_to_agent.repositories.transactions import FileMutation, MutationPlan, TransactionManager
 from human_to_agent.services.schema_catalog import DEFAULT_MODELS
@@ -23,8 +28,10 @@ def build_artifact_index(snapshot: SourceSnapshot) -> ArtifactIndex:
         asset_id = f"file.{source.path.replace('/', '.').lower()}"
         revision = 1
         schema_version = "1"
-        if source.path.endswith((".yaml", ".yml")) and not source.path.startswith(
-            "EVIDENCE/sources/"
+        if (
+            source.path.endswith((".yaml", ".yml"))
+            and not source.path.startswith("EVIDENCE/sources/")
+            and not is_non_normative_asset_path(source.path)
         ):
             raw = yaml.safe_load(source.source_path.read_text(encoding="utf-8"))
             if isinstance(raw, dict):

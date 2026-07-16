@@ -72,6 +72,26 @@ def test_unknown_skill_contains_all_discovery_cards() -> None:
     assert all(card in text for card in cards)
 
 
+def test_unknown_skill_routes_observable_facts_before_owner_decisions() -> None:
+    text = (ROOT / "skills/unknown-evidence/SKILL.md").read_text().lower()
+    assert "observable fact" in text
+    assert "inspect available evidence before asking" in text
+    assert "owner decision" in text
+    assert "one question" in text
+    assert "recommended answer" in text
+    assert "impact or tradeoff" in text
+
+
+def test_skill_and_harness_methods_stop_at_the_child_workspace_promotion_boundary() -> None:
+    for name in ("skill-candidates", "harness-composition"):
+        text = (ROOT / "skills" / name / "SKILL.md").read_text().lower()
+        assert "child workspace" in text
+        assert "explicit owner authorization" in text
+        assert "mother workspace" in text
+        assert "candidate" in text
+        assert "completion criteria" in text
+
+
 def test_guided_session_skill_defines_safe_discovery_protocol() -> None:
     text = (ROOT / "skills/guided-session-onboarding/SKILL.md").read_text().lower()
     for state in (

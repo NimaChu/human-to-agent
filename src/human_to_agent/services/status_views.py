@@ -7,6 +7,7 @@ import yaml
 
 from human_to_agent.cli.errors import FoundryError
 from human_to_agent.cli.result import CommandResult
+from human_to_agent.domain.events import EventScope
 from human_to_agent.domain.readiness import ReadinessAssessment
 from human_to_agent.domain.stages import (
     GateStatus,
@@ -14,9 +15,14 @@ from human_to_agent.domain.stages import (
     assess_complete_release,
     assess_stage,
 )
+from human_to_agent.domain.unknowns import Unknown
+from human_to_agent.repositories.events import EventStore
 from human_to_agent.repositories.filesystem import SourceRepository, tree_digest
 from human_to_agent.repositories.index import ArtifactIndex
-from human_to_agent.services.assessment_state import load_assessment_state
+from human_to_agent.services.assessment_state import (
+    MANAGED_UNKNOWN_STATUSES,
+    load_assessment_state,
+)
 
 
 def assess_stage_view(root: Path, workspace_id: str) -> CommandResult:
@@ -69,6 +75,56 @@ def readiness_view(root: Path, workspace_id: str) -> CommandResult:
             f"recommended_ceiling={assessment.recommended_ceiling.value}",
             *assessment.next_actions,
         ],
+    )
+
+
+def resume_view(root: Path, workspace_id: str) -> CommandResult:
+    """Return a read-only, source-linked view for continuing work in a new conversation."""
+    state = load_assessment_state(root, workspace_id)
+    diff = diff_view(root, workspace_id)
+    scope = EventScope(
+        scope_id=workspace_id,
+        log_path=state.source.workspace_path / ".foundry" / "events.jsonl",
+    )
+    event_store = EventStore()
+    verification = event_store.verify(scope)
+    if not verification.valid:
+        raise FoundryError(
+            "event",
+            "event.invalid",
+            "Cannot resume from an invalid event chain: " + "; ".join(verification.errors),
+        )
+    events = event_store.replay(scope).events
+    unmanaged = sorted(
+        item.id
+        for item in state.models
+        if isinstance(item, Unknown) and item.unknown_status not in MANAGED_UNKNOWN_STATUSES
+    )
+    next_gate = (
+        "complete-release"
+        if state.manifest.current_stage == Stage.stage5
+        else f"stage{state.manifest.current_stage + 1}"
+    )
+    next_actions = [
+        f"workspace={workspace_id}",
+        "mission_ref=workspace.yaml#purpose",
+        "task_contract_ref=TASK-CONTRACT/contract.yaml",
+        "unknowns_ref=UNKNOWNS/",
+        "events_ref=.foundry/events.jsonl",
+        f"stage={state.manifest.current_stage}",
+        f"next_gate={next_gate}",
+        f"recorded_state={'changed' if diff.changed_files else 'clean'}",
+        *[f"unmanaged_unknown={item}" for item in unmanaged],
+        *diff.next_actions,
+    ]
+    if events:
+        latest = events[-1]
+        next_actions.append(f"latest_event={latest.sequence}:{latest.command}")
+    return CommandResult(
+        command="workspace resume",
+        status=diff.status,
+        changed_files=diff.changed_files,
+        next_actions=next_actions,
     )
 
 

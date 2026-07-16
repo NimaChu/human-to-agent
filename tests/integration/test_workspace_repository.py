@@ -510,3 +510,40 @@ def test_diff_reads_a_utf8_index_when_a_child_workspace_has_unicode_paths(tmp_pa
     )
 
     assert result.exit_code == 0, result.stdout
+
+
+def test_child_workspace_records_untyped_data_and_assets_without_schema_errors(
+    tmp_path: Path,
+) -> None:
+    initialize(tmp_path, dry_run=False)
+    assert (
+        RUNNER.invoke(
+            app,
+            ["workspace", "new", "asset-check", "--root", str(tmp_path)],
+        ).exit_code
+        == 0
+    )
+    workspace = tmp_path / "workspaces/asset-check"
+    roles = workspace / "ASSETS/roles.yaml"
+    roles.write_bytes(b"roles:\n  - !custom-role\n    name: editor\n")
+    database = workspace / "DATA/project.sqlite"
+    database.write_bytes(b"SQLite format 3\x00fixture")
+
+    assert (
+        RUNNER.invoke(
+            app,
+            ["record-change", "--root", str(tmp_path), "--workspace", "asset-check"],
+        ).exit_code
+        == 0
+    )
+    assert (
+        RUNNER.invoke(
+            app,
+            ["validate", "--root", str(tmp_path), "--workspace", "asset-check", "--format", "json"],
+        ).exit_code
+        == 0
+    )
+    index = ArtifactIndex.model_validate(
+        yaml.safe_load((workspace / ".foundry/artifact-index.yaml").read_text(encoding="utf-8"))
+    )
+    assert {"ASSETS/roles.yaml", "DATA/project.sqlite"} <= set(index.by_path())

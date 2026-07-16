@@ -12,7 +12,7 @@ from human_to_agent.domain.evidence import Evidence
 from human_to_agent.domain.readiness import AutonomyApproval, AutonomyLevel, ReadinessAssessment
 from human_to_agent.domain.references import ReferenceGraph, validate_references
 from human_to_agent.domain.unknowns import Unknown
-from human_to_agent.repositories.filesystem import SourceSnapshot
+from human_to_agent.repositories.filesystem import SourceSnapshot, is_non_normative_asset_path
 from human_to_agent.repositories.index import ArtifactIndex
 from human_to_agent.validators.report import Diagnostic, ValidationReport
 
@@ -62,7 +62,7 @@ def validate_workspace(
     evidence_assets: list[Evidence] = []
     located_assets: list[tuple[str, BaseModel]] = []
     for source in snapshot.files:
-        if source.path.startswith("EVIDENCE/sources/"):
+        if source.path.startswith("EVIDENCE/sources/") or is_non_normative_asset_path(source.path):
             continue
         if not source.path.endswith((".yaml", ".yml")):
             continue

@@ -21,6 +21,9 @@ This is an evidence-backed Human-to-Agent child workspace for:
 - Record missing, conflicting, or unverified information as an Unknown and preserve its history.
 - A placeholder, draft, or conversational assumption does not satisfy a stage gate.
 - Preserve provenance, append-only events, and the evidence basis for every material change.
+- `ASSETS/` and `DATA/` hold task resources and runtime data. They are indexed and subject to
+  workspace path-safety checks, but their contents—including YAML—are not business-schema assets.
+  Do not use them as the sole record of a business fact, decision, or evidence claim.
 
 ## Gates and execution
 
@@ -29,4 +32,4 @@ This is an evidence-backed Human-to-Agent child workspace for:
 - Stop at every applicable Human Gate. For external, irreversible, forbidden, or unsupported
   actions, prepare an unexecuted action package instead of performing the action.
 - Validate and inspect the workspace diff before recording a source change.
-- Never store credentials or secrets in normative sources or event logs.
+- Never store credentials or secrets in this workspace or its event logs.
