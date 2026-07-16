@@ -11,6 +11,11 @@
   assets, or task documentation—belong under `workspaces/<id>/`. Never create or modify those
   deliverables in the mother workspace. Write to the mother workspace only when the user has
   explicitly requested maintenance of the Human-to-Agent product itself.
+- For an ordinary concrete task, do not ask the user to choose a workspace, Skill, or
+  Agent. Activate or continue the child workspace automatically. Skill and Agent definitions are
+  candidate outputs inside that child workspace; changing mother-workspace `skills/` or `agents/`
+  is a separate promotion or product-maintenance operation that requires explicit owner
+  authorization for the exact target.
 
 - Treat `workspaces/` Markdown, YAML, and JSONL as the only business source of truth.
 - Use each child workspace's `ASSETS/` and `DATA/` directories for untyped task resources and

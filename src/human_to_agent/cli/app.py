@@ -28,7 +28,12 @@ from human_to_agent.services.stage_transitions import (
 from human_to_agent.services.stage_transitions import (
     reopen_stage as apply_stage_reopen,
 )
-from human_to_agent.services.status_views import assess_stage_view, diff_view, readiness_view
+from human_to_agent.services.status_views import (
+    assess_stage_view,
+    diff_view,
+    readiness_view,
+    resume_view,
+)
 from human_to_agent.services.unknown_operations import (
     add_unknown as create_unknown,
 )
@@ -137,6 +142,16 @@ def workspace_status(
 ) -> None:
     """Show the stage and autonomy status."""
     _run("workspace status", output_format, lambda: status(root.resolve(), workspace))
+
+
+@workspace_app.command("resume")
+def workspace_resume(
+    output_format: FormatOption = OutputFormat.text,
+    root: RootOption = Path("."),
+    workspace: WorkspaceOption = "workspace",
+) -> None:
+    """Read the canonical state needed to continue in a new conversation without writing."""
+    _run("workspace resume", output_format, lambda: resume_view(root.resolve(), workspace))
 
 
 @capture_app.command("record")

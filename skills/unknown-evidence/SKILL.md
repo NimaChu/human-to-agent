@@ -33,11 +33,11 @@ Read and write only the relevant files under `workspaces/<id>/`; generated `dist
 
 # Procedure
 
-Run the eleven method cards: four-quadrant inventory; blindspot pass; vocabulary teaching; contrasting design directions; intervention brainstorming; blast-radius interview; reference semantics map; tweakable plan; implementation deviation log; buy-in artifact; understanding quiz. For each Unknown, record impact, owner, evidence basis, cheapest probe, restriction, and propagation targets.
+Run the eleven method cards: four-quadrant inventory; blindspot pass; vocabulary teaching; contrasting design directions; intervention brainstorming; blast-radius interview; reference semantics map; tweakable plan; implementation deviation log; buy-in artifact; understanding quiz. For each Unknown, classify the resolution route before questioning the user. For an observable fact, inspect available evidence before asking, using workspace sources, supplied files, permitted tools, or a cheap reversible probe. For an owner decision that cannot be discovered, ask one question with a recommended answer and its impact or tradeoff. Record impact, owner, evidence basis, cheapest probe, restriction, and propagation targets.
 
 # Unknown handling
 
-Record missing or conflicting facts as Unknowns with an owner, impact, evidence basis, cheapest probe, restriction, and propagation target.
+Record missing or conflicting facts as Unknowns with an owner, impact, evidence basis, cheapest probe, restriction, and propagation target. Do not turn an unanswered but non-blocking Unknown into a user interruption; continue only work unaffected by it.
 
 # Human gates and stop conditions
 
@@ -45,7 +45,7 @@ Stop before external, irreversible, forbidden, unowned, or unsupported action. P
 
 # Evaluator and acceptance
 
-Use explicit acceptance criteria and evidence. The implementer cannot be the sole verifier of a release or independent-reproduction claim.
+Acceptance requires every material Unknown to have an owner, evidence basis, cheapest probe, automation restriction, and propagation target; every discoverable observable fact to have been probed before asking the user; and every blocking owner decision question to include one recommended answer and its impact or tradeoff. The implementer cannot be the sole verifier of a release or independent-reproduction claim.
 
 # Error semantics
 
@@ -58,4 +58,3 @@ Write source-linked evidence, case/evaluation or review records, Unknown history
 # Verification commands
 
 Run `uv run hta validate --workspace <id> --format json`, then `uv run hta diff --workspace <id> --format json`; record changes only after both are understood.
-

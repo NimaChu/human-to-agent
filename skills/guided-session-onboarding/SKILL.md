@@ -1,6 +1,6 @@
 ---
 name: guided-session-onboarding
-description: Start every new project conversation with one-question evidence-first guidance and safely enter a real child workspace.
+description: Route every ordinary concrete task into a child workspace; never offer Skill or Agent promotion as a conversion choice.
 ---
 
 # Outcome
@@ -52,9 +52,11 @@ For the activation handoff:
 
 Do not require the user to run commands. Use permitted workspace mechanics on their behalf. Explicit maintenance, review, release, migration, resume, and other named existing-workspace operations bypass initial discovery and operate on the selected workspace.
 
+For an ordinary concrete task, do not ask the user to choose a workspace, Skill, or Agent. Activate or continue the child workspace automatically. Skill and Agent definitions remain candidates inside it. Editing mother-workspace `skills/` or `agents/` is a separate promotion or product-maintenance operation that requires explicit owner authorization for the exact target; completion, readiness, or an Agent recommendation is not authorization.
+
 # Unknown handling
 
-Before a child workspace exists, discoveries are provisional conversation context. After activation, every missing, conflicting, or unverified fact becomes an explicit normative Unknown with evidence basis, owner, impact, cheapest probe, restriction, and propagation target. Never convert conversational confidence into a proven rule.
+Before a child workspace exists, discoveries are provisional conversation context. After activation, every missing, conflicting, or unverified fact becomes an explicit normative Unknown with evidence basis, owner, impact, cheapest probe, restriction, and propagation target. Resolve an observable fact by inspecting available evidence before asking. For an owner decision, ask one question with a recommended answer and its impact or tradeoff. Never convert conversational confidence into a proven rule.
 
 # Human gates and stop conditions
 
@@ -64,7 +66,7 @@ Never infer autonomy approval from Readiness, a requested level, or conversation
 
 # Evaluator and acceptance
 
-The onboarding result is acceptable when the Agent has introduced the workspace once, asked at most one necessary question per response, skipped states already satisfied by supplied facts, avoided user CLI burden, and created no workspace before a concrete goal plus real context exist. Existing evaluators independently assess later cases, stages, readiness, and releases.
+The onboarding result is acceptable when the Agent has introduced the workspace once, asked at most one necessary question per response, skipped states already satisfied by supplied facts, avoided user CLI burden, never presented workspace/Skill/Agent as a conversion choice, created no workspace before a concrete goal plus real context exist, and activated a child workspace once both exist. Existing evaluators independently assess later cases, stages, readiness, and releases.
 
 # Error semantics
 

@@ -45,6 +45,19 @@ def test_guided_session_adapters_are_thin_and_linked() -> None:
         assert "skills/guided-session-onboarding/SKILL.md" in text
         assert "hta validate" in text
         assert len(text.splitlines()) <= 20
+        description = str(yaml.safe_load(text.split("---", 2)[1])["description"]).lower()
+        assert "ordinary concrete task" in description
+        assert "child workspace" in description
+        assert "skill or agent promotion" in description
+
+
+def test_promotion_related_adapter_descriptions_keep_results_in_the_child_workspace() -> None:
+    for name in ("skill-candidates", "harness-composition"):
+        for tool in (".codex", ".opencode"):
+            text = (ROOT / tool / "skills" / name / "SKILL.md").read_text()
+            description = str(yaml.safe_load(text.split("---", 2)[1])["description"]).lower()
+            assert "child workspace" in description
+            assert "mother workspace" in description
 
 
 def test_adapter_configs_and_commands_are_discoverable() -> None:

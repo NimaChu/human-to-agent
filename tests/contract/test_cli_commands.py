@@ -17,6 +17,7 @@ COMMANDS = (
     ("workspace", "new"),
     ("workspace", "list"),
     ("workspace", "status"),
+    ("workspace", "resume"),
     ("capture", "record"),
     ("unknown", "add"),
     ("unknown", "update"),
@@ -103,6 +104,108 @@ def test_workspace_status_rejects_linked_workspace_before_reading_manifest(
         assert payload["diagnostics"][0]["code"] == "filesystem.unsafe_workspace_path"
     finally:
         unlink_directory_link(linked)
+
+
+def test_workspace_resume_is_read_only_and_points_to_canonical_state(tmp_path: Path) -> None:
+    initialize(tmp_path, dry_run=False)
+    create_workspace(
+        tmp_path,
+        "pilot",
+        owner="maintainer",
+        purpose="Turn a recurring review into a harness.",
+        dry_run=False,
+    )
+    added = runner.invoke(
+        app,
+        [
+            "unknown",
+            "add",
+            "--root",
+            str(tmp_path),
+            "-w",
+            "pilot",
+            "--title",
+            "Which release boundary does the owner approve?",
+        ],
+    )
+    assert added.exit_code == 0, added.stdout
+    workspace = tmp_path / "workspaces/pilot"
+    before = {
+        path.relative_to(workspace).as_posix(): path.read_bytes()
+        for path in workspace.rglob("*")
+        if path.is_file()
+    }
+
+    result = runner.invoke(
+        app,
+        ["workspace", "resume", "--root", str(tmp_path), "-w", "pilot", "--format", "json"],
+    )
+
+    payload = json.loads(result.stdout)
+    after = {
+        path.relative_to(workspace).as_posix(): path.read_bytes()
+        for path in workspace.rglob("*")
+        if path.is_file()
+    }
+    assert result.exit_code == 0, result.stdout
+    assert payload["command"] == "workspace resume"
+    assert payload["changed_files"] == []
+    assert before == after
+    actions = payload["next_actions"]
+    assert "workspace=pilot" in actions
+    assert "mission_ref=workspace.yaml#purpose" in actions
+    assert "task_contract_ref=TASK-CONTRACT/contract.yaml" in actions
+    assert "unknowns_ref=UNKNOWNS/" in actions
+    assert "events_ref=.foundry/events.jsonl" in actions
+    assert "stage=1" in actions
+    assert any(item.startswith("unmanaged_unknown=") for item in actions)
+    assert "latest_event=1:unknown add" in actions
+
+
+def test_workspace_resume_reports_unrecorded_source_change(tmp_path: Path) -> None:
+    initialize(tmp_path, dry_run=False)
+    create_workspace(
+        tmp_path,
+        "pilot",
+        owner="maintainer",
+        purpose="Resume without hiding drift.",
+        dry_run=False,
+    )
+    workspace = tmp_path / "workspaces/pilot"
+    (workspace / "README.md").write_text("# Changed outside the recorded index\n", encoding="utf-8")
+
+    result = runner.invoke(
+        app,
+        ["workspace", "resume", "--root", str(tmp_path), "-w", "pilot", "--format", "json"],
+    )
+
+    payload = json.loads(result.stdout)
+    assert result.exit_code == 0, result.stdout
+    assert payload["status"] == "changed"
+    assert payload["changed_files"] == ["README.md"]
+    assert "recorded_state=changed" in payload["next_actions"]
+
+
+def test_workspace_resume_refuses_to_summarize_an_invalid_event_chain(tmp_path: Path) -> None:
+    initialize(tmp_path, dry_run=False)
+    create_workspace(
+        tmp_path,
+        "pilot",
+        owner="maintainer",
+        purpose="Do not trust broken history.",
+        dry_run=False,
+    )
+    event_log = tmp_path / "workspaces/pilot/.foundry/events.jsonl"
+    event_log.write_text('{"broken": true}', encoding="utf-8")
+
+    result = runner.invoke(
+        app,
+        ["workspace", "resume", "--root", str(tmp_path), "-w", "pilot", "--format", "json"],
+    )
+
+    payload = json.loads(result.stdout)
+    assert result.exit_code == payload["exit_code"] == 9
+    assert payload["diagnostics"][0]["code"] == "event.invalid"
 
 
 def test_workspace_status_rejects_linked_asset_directory_before_reading_it(

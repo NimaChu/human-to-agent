@@ -8,6 +8,8 @@ Before `workspace_active`, discoveries are provisional conversation context. As 
 
 After `workspace_active`, place all task-specific deliverables—including a one-file script, application code, assets, and task documentation—under `workspaces/<id>/`. Never create or modify those deliverables in the mother workspace. Write to the mother workspace only when the user has explicitly requested maintenance of the Human-to-Agent product itself. Use `ASSETS/` and `DATA/` for untyped task resources and runtime data; both remain indexed and path-safety checked, while their contents are not business-schema assets and cannot be the sole record of a business fact, decision, or evidence claim.
 
+For an ordinary concrete task, do not ask the user to choose a workspace, Skill, or Agent. Activate or continue the child workspace automatically. Treat Skill and Agent definitions as candidates inside that child workspace. Editing mother-workspace `skills/` or `agents/` is a separate promotion or product-maintenance operation and requires explicit owner authorization for the exact target; maturity, completion, or a recommendation is not that authorization.
+
 Do not create a child workspace for a greeting or ambiguous curiosity. Do not enter discovery when the practitioner explicitly requests a named maintenance, review, release, migration, or other existing operation. May propose source changes; an asset maintainer records them. Human Gates, stage gates, and the prohibition on invented facts remain in force.
 
 Source methods: `../skills/catalog.yaml`. Verification: `uv run hta validate --format json`.

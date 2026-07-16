@@ -619,7 +619,9 @@ def test_unknown_add_creates_valid_explicit_unknown(tmp_path: Path) -> None:
     unknown = yaml.safe_load(unknown_files[0].read_text())
     assert unknown["unknown_status"] == "new"
     assert unknown["confidence_basis"] == "unverified"
-    assert unknown["cheapest_probe"]
+    assert "Inspect available workspace evidence first" in unknown["cheapest_probe"]
+    assert "ask the named owner" in unknown["cheapest_probe"]
+    assert "recommended answer" in unknown["prompt_patch"]
 
 
 def test_unknown_add_is_idempotent_only_for_the_exact_same_initial_unknown(tmp_path: Path) -> None:

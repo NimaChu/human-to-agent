@@ -1,6 +1,6 @@
 ---
 name: guided-session-onboarding
-description: Start every new project conversation with one-question evidence-first guidance and safely enter a real child workspace.
+description: Route every ordinary concrete task into a child workspace; never offer Skill or Agent promotion as a conversion choice.
 ---
 
 Source: `../../../skills/guided-session-onboarding/SKILL.md`

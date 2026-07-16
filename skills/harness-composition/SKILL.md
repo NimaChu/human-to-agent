@@ -1,6 +1,6 @@
 ---
 name: harness-composition
-description: Compose validated Skills into an E/T/C/S/L/V Harness with policies, state, gates, and recovery.
+description: Compose validated Skills inside a child workspace; keep Harness candidates out of the mother workspace without explicit owner authorization.
 ---
 
 # Outcome
@@ -33,7 +33,7 @@ Read and write only the relevant files under `workspaces/<id>/`; generated `dist
 
 # Procedure
 
-Compose Goal, Skills, Context, State, Policies, Human Gates, Exceptions, local Evaluators, final Evaluator, stop conditions, recovery, and observability.
+Inside the child workspace, compose Goal, Skills, Context, State, Policies, Human Gates, Exceptions, local Evaluators, final Evaluator, stop conditions, recovery, observability, and checkable completion criteria. The resulting Harness and Agent definitions remain candidates in that child workspace.
 
 # Unknown handling
 
@@ -41,11 +41,11 @@ Record missing or conflicting facts as Unknowns with an owner, impact, evidence 
 
 # Human gates and stop conditions
 
-Stop before external, irreversible, forbidden, unowned, or unsupported action. Prepare an action package when allowed; Human Gate approval never executes it.
+Stop before external, irreversible, forbidden, unowned, or unsupported action. Promoting a candidate into mother-workspace `skills/` or `agents/` is a separate product-maintenance operation and requires explicit owner authorization for the exact target. Harness completion, readiness, or a recommendation is not authorization. Prepare an action package when allowed; Human Gate approval never executes it.
 
 # Evaluator and acceptance
 
-Use explicit acceptance criteria and evidence. The implementer cannot be the sole verifier of a release or independent-reproduction claim.
+Acceptance requires the composed candidate to have explicit policies, state, Human Gates, stop conditions, recovery, observability, local and final evaluators, evidence links, and checkable completion criteria inside the child workspace. Acceptance does not authorize promotion into the mother workspace. The implementer cannot be the sole verifier of a release or independent-reproduction claim.
 
 # Error semantics
 
@@ -58,4 +58,3 @@ Write source-linked evidence, case/evaluation or review records, Unknown history
 # Verification commands
 
 Run `uv run hta validate --workspace <id> --format json`, then `uv run hta diff --workspace <id> --format json`; record changes only after both are understood.
-
